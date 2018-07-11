@@ -26,5 +26,8 @@
   },
   "dependencies": {
     "conjunction-junction": "^1.0.1"
+  },
+  "directories": {
+    "test": "tests"
   }
 }
