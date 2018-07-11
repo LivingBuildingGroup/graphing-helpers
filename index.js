@@ -1,13 +1,15 @@
-import { isPrimitiveNumber, 
-  isObjectLiteral }            from './lib-basic';
-import { immutableArrayInsert, 
-  convertCcToSpace }           from './lib';
+'use strict';
+
+const { isPrimitiveNumber, 
+  isObjectLiteral,
+  immutableArrayInsert, 
+  convertCcToSpace }  = require('conjunction-junction');
 
 const alpha = ['A','B','C','D','E','F','G','H'];
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-export const parseDataArraysByKeys = (arrayOfDataObjects, arrayOfKeys) => {
+const parseDataArraysByKeys = (arrayOfDataObjects, arrayOfKeys) => {
   if(!Array.isArray(arrayOfDataObjects)) return [[]];
   if(!Array.isArray(arrayOfKeys)) return [[]];
   const dataArrays = arrayOfKeys.map(key=>{
@@ -16,37 +18,37 @@ export const parseDataArraysByKeys = (arrayOfDataObjects, arrayOfKeys) => {
   return dataArrays;
 };
 
-export const parseLabelsByKeys = (legendObject, arrayOfKeys) => {
+const parseLabelsByKeys = (legendObject, arrayOfKeys) => {
   const dataLabelArray = arrayOfKeys.map(key=>{
     const label = 
       typeof legendObject[key] === 'string' ?
-      legendObject[key] : 
-      !Array.isArray(legendObject[key]) ? 
-      key :
-      typeof legendObject[key][0] === 'string' ?
-      legendObject[key][0] :
-      key;
+        legendObject[key] : 
+        !Array.isArray(legendObject[key]) ? 
+          key :
+          typeof legendObject[key][0] === 'string' ?
+            legendObject[key][0] :
+            key;
     return label;
   });
   return dataLabelArray;
 };
 
-export const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
+const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
   const axesUsed = [];
   const yAxisIdArray = [];
   const yAxisArray = arrayOfKeys.map((key,i)=>{
     const yAxisLabel = 
       typeof legendObject[key] === 'string' ?
-      'units' : 
-      !Array.isArray(legendObject[key]) ? 
-      'units' :
-      typeof legendObject[key][1] === 'string' ?
-      legendObject[key][1] :
-      'units' ;
+        'units' : 
+        !Array.isArray(legendObject[key]) ? 
+          'units' :
+          typeof legendObject[key][1] === 'string' ?
+            legendObject[key][1] :
+            'units' ;
     const axisIndex = axesUsed.findIndex(a=>a===yAxisLabel);
     if(axisIndex<0){
       yAxisIdArray[i] = alpha[axesUsed.length];
-      axesUsed.push(yAxisLabel)
+      axesUsed.push(yAxisLabel);
     } else {
       yAxisIdArray[i] = alpha[axisIndex];
     }
@@ -58,7 +60,7 @@ export const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
   };
 };
 
-export const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys) => {
+const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys) => {
   if(
     !Array.isArray(arrayOfDataObjects) ||
     !Array.isArray(arrayOfKeys) ||
@@ -77,7 +79,7 @@ export const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys)
   const {
     yAxisArray,
     yAxisIdArray,
-   } = parseYAxisByKeys(legendObject, arrayOfKeys);
+  } = parseYAxisByKeys(legendObject, arrayOfKeys);
   return {
     dataArraysRaw,
     dataLabelArray,
@@ -86,7 +88,7 @@ export const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys)
   };
 };
 
-export const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
+const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arraysOfDataObjects[0]) ||
@@ -121,7 +123,7 @@ export const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legend
   const {
     yAxisArray,
     yAxisIdArray,
-   } = parseYAxisByKeys(legendObject, rawArrayOfKeys);
+  } = parseYAxisByKeys(legendObject, rawArrayOfKeys);
   return {
     dataArraysRaw,
     dataLabelArray,
@@ -131,7 +133,7 @@ export const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legend
   };
 };
 
-export const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
+const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arrayOfDataGroups)
@@ -184,11 +186,11 @@ export const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legend
   arraysOfDataObjects.forEach((group,i)=>{
     const prefix = arrayOfDataGroups[i];
     group.forEach((innerObject,pt)=>{
-        for(let key in innerObject){
-          // the double underscore is intentional
-          // we might want to un-prefix later
-          arrayOfDataObjects[pt][`${prefix}__${key}`] = innerObject[key];
-        }
+      for(let key in innerObject){
+        // the double underscore is intentional
+        // we might want to un-prefix later
+        arrayOfDataObjects[pt][`${prefix}__${key}`] = innerObject[key];
+      }
     });
   });
 
@@ -201,11 +203,11 @@ export const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legend
   };
 };
 
-export const calcDataLength = (dataArraysRaw, start, end) => {
+const calcDataLength = (dataArraysRaw, start, end) => {
   const oneDataset = !Array.isArray(dataArraysRaw) ? null :
     !Array.isArray(dataArraysRaw[0]) ? null :
-    dataArraysRaw[0];
-    if(!oneDataset) return {
+      dataArraysRaw[0];
+  if(!oneDataset) return {
     first: 0,
     last: 0,
     dataLength: 0,
@@ -217,7 +219,7 @@ export const calcDataLength = (dataArraysRaw, start, end) => {
   };
   if( !isPrimitiveNumber(start) || !isPrimitiveNumber(end)) return same;
   const first = start < 0 ? 0 : start;
-  const last = end > oneDataset.length-1 ? oneDataset.length-1 : end
+  const last = end > oneDataset.length-1 ? oneDataset.length-1 : end;
   if( first >= last ) return same;
   // should be validated that we have at least 2 datapoints, start before end, within array
   return {
@@ -227,10 +229,10 @@ export const calcDataLength = (dataArraysRaw, start, end) => {
   };
 };
 
-export const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => {
+const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => {
   const oneDataset = !Array.isArray(dataArraysRaw) ? [] :
     !Array.isArray(dataArraysRaw[0]) ? [] :
-    dataArraysRaw[0];
+      dataArraysRaw[0];
   if(oneDataset.length === length) return dataArraysRaw;
   const end = first + length;
   const extension = [];
@@ -249,63 +251,78 @@ export const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => 
   return dataArrays;
 };
 
-export const addDataset = input => {
+const addDataset = input => {
   const { graphData, data, label, style, styles } = input;
-  const gd = {...graphData};
+  const gd = Object.assign({}, graphData);
   const theLabel = typeof label === 'string' ? label : `dataset ${gd.datasets.length}`;
   const styl =
     style ? style :
-    styles ? styles.style2 :// make this pick from the array
-    gd.datasets[0] ;
-  const newDataset = {
-    ...styl,
-    data,
-    label: theLabel,
-  };
+      styles ? styles.style2 :// make this pick from the array
+        gd.datasets[0] ;
+  const newDataset = Object.assign({},
+    styl,
+    {
+      data,
+      label: theLabel,
+    }
+  );
   const datasets = [...gd.datasets, newDataset];
-  return {
-    ...gd,
-    datasets
-  };
+  return Object.assign({},
+    gd,
+    {
+      datasets
+    }
+  );
 };
 
-export const addDatapoints = input => {
+const addDatapoints = input => {
   const { graphData, data, label } = input;
   const newLabel =
     typeof label === 'string' ? label :
-    `point${graphData.labels.length}`;
+      `point${graphData.labels.length}`;
   const newLabels = [...graphData.labels, newLabel];
   const newDatasets = graphData.datasets.map((d,i)=>{
     const newDat = [...d.data, data[i]];
-    return {...d, data: newDat};
+    return Object.assign({},
+      d,
+      {
+        data: newDat
+      }
+    );
   });
-  return {
-    ...graphData,
-    datasets: newDatasets,
-    labels: newLabels,
-  };
+  return Object.assign({},
+    graphData,
+    {
+      datasets: newDatasets,
+      labels: newLabels,
+    }
+  );
 };
 
-export const editDatapoint = input => {
+const editDatapoint = input => {
   const { graphData, data, setIndex, index } = input;
   if(!isPrimitiveNumber(setIndex)) return graphData;
   if(!isPrimitiveNumber(index)) return graphData;
 
   const dataset = graphData.datasets[setIndex];
   const newData = immutableArrayInsert(index, dataset.data, data);
-  const newDataset = {
-    ...dataset,
-    data: newData,
-  };
+  const newDataset = Object.assign({},
+    dataset,
+    {
+      data: newData,
+    }
+  );
   const newDatasets = immutableArrayInsert(setIndex, graphData.datasets, newDataset);
 
-  return {
-    ...graphData,
-    datasets: newDatasets,
-  };
+  return Object.assign({},
+    graphData,
+    {
+      datasets: newDatasets,
+    }
+  );
 };
 
-export const createGraphData = input => {
+const createGraphData = input => {
   // create entirely new data
   const { 
     keysSelected,
@@ -326,24 +343,26 @@ export const createGraphData = input => {
     const yAxisID = unitsIndex < 0 ?
       yAxisIdArray[0] :
       yAxisIdArray[unitsIndex];
-    return {
-      ...stylesArray[i],
-      label: dataLabelArray[i],
-      yAxisID,
-      data: dataArrays[i],
-    }
+    return Object.assign({},
+      stylesArray[i],
+      {
+        label: dataLabelArray[i],
+        yAxisID,
+        data: dataArrays[i],
+      }
+    );
   });
 
   const startAt = isPrimitiveNumber(xLabelStartAt) ?
     xLabelStartAt : 0 ;
   const labels = 
     Array.isArray(xLabelsArray) ?
-    xLabelsArray : 
-    !Array.isArray(dataArrays) ?
-    [] :
-    !Array.isArray(dataArrays[0]) ?
-    [] :
-    dataArrays[0].map((x,i)=>i+startAt);
+      xLabelsArray : 
+      !Array.isArray(dataArrays) ?
+        [] :
+        !Array.isArray(dataArrays[0]) ?
+          [] :
+          dataArrays[0].map((x,i)=>i+startAt);
 
   return {
     labels,
@@ -354,7 +373,7 @@ export const createGraphData = input => {
 
 // @@@@@@@@@@@@@@@ SIZE @@@@@@@@@@@@@@@
 
-export const calcCanvasDimensions = input => {
+const calcCanvasDimensions = input => {
   const {
     win,
     marginVertical,
@@ -374,17 +393,17 @@ export const calcCanvasDimensions = input => {
   const ratio = wAvailable / hAvailable ;
   const category = 
     ratio < 0.7 ? 'Pnarrow' :
-    ratio < 1.1 ? 'Pwide'   :
-    ratio < 1.6 ? 'Square'  :
-    ratio < 2.0 ? 'Ltall'   :
-                  'Lshort'  ;
+      ratio < 1.1 ? 'Pwide'   :
+        ratio < 1.6 ? 'Square'  :
+          ratio < 2.0 ? 'Ltall'   :
+            'Lshort'  ;
   const idealRatio = 1.618; // golden mean!
   const wIdeal = 
     category === 'Pnarrow' ? 0.95 * wAvailable :
-    category === 'Pwide'   ? 0.90 * wAvailable :
-    category === 'Square'  ? 0.95 * wAvailable :
-    category === 'Ltall'   ? 0.95 * wAvailable :
-                             0.90 * wAvailable ;
+      category === 'Pwide'   ? 0.90 * wAvailable :
+        category === 'Square'  ? 0.95 * wAvailable :
+          category === 'Ltall'   ? 0.95 * wAvailable :
+            0.90 * wAvailable ;
   const hIdeal = wIdeal / idealRatio ;    
   const hAdj = hIdeal <= hAvailable ? hIdeal : hAvailable ;
   // through this point, we calculate a rectangle for the graph
@@ -392,15 +411,15 @@ export const calcCanvasDimensions = input => {
   // otherwise, legend eats into graph space
   const legendDeviceHeight =
     hAvailable < 500       ? 180 : // correct for landscape phones
-    category === 'Pnarrow' ? 150 :
-    category === 'Pwide'   ? 100 :
-    category === 'Square'  ?  50 :
-    category === 'Ltall'   ?   0 :
-                               0 ;
+      category === 'Pnarrow' ? 150 :
+        category === 'Pwide'   ? 100 :
+          category === 'Square'  ?  50 :
+            category === 'Ltall'   ?   0 :
+              0 ;
   const canvasWidth = 
     (hAdj * idealRatio) <= wAvailable ? 
-    hAdj * idealRatio : 
-    wAvailable ;               
+      hAdj * idealRatio : 
+      wAvailable ;               
   const canvasHeight = hAdj + legendDeviceHeight;
   return { 
     canvasWidth, 
@@ -410,14 +429,14 @@ export const calcCanvasDimensions = input => {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-export const calcTicks = (dataLength, idealSpacing) => {
+const calcTicks = (dataLength, idealSpacing) => {
   // dataLength should be the data we want to show, i.e. after cropping, if any
   // dataLength should be 1 over ideal, so the final label is an even increment
   const maxTicksLimitDown = Math.floor(dataLength/idealSpacing);
   const lengthRoundDown = 
     ((maxTicksLimitDown * idealSpacing) + 1) > dataLength ?
-    (maxTicksLimitDown * idealSpacing) + 1 - idealSpacing :
-    (maxTicksLimitDown * idealSpacing) + 1 ;
+      (maxTicksLimitDown * idealSpacing) + 1 - idealSpacing :
+      (maxTicksLimitDown * idealSpacing) + 1 ;
 
   const pointsToRemove = dataLength - lengthRoundDown;
 
@@ -427,8 +446,8 @@ export const calcTicks = (dataLength, idealSpacing) => {
 
   const lengthRoundUp = 
     ((maxTicksLimitUp * idealSpacing) + 1) > dataLength + idealSpacing ?
-    (maxTicksLimitUp * idealSpacing) + 1 - idealSpacing :
-    (maxTicksLimitUp * idealSpacing) + 1 ;
+      (maxTicksLimitUp * idealSpacing) + 1 - idealSpacing :
+      (maxTicksLimitUp * idealSpacing) + 1 ;
 
   const pointsToAdd = lengthRoundUp - dataLength;
 
@@ -466,44 +485,52 @@ const defaultXAxis = {
   }
 };
 
-export const createXAxis = options => {
+const createXAxis = options => {
   const { label, background, min, max, maxTicksLimit } = options;
   const zeroLineColor = 
     background === 'white' ?
-    'black':
-    'white';
+      'black':
+      'white';
   const gridLinesColor =
     background === 'white' ?
-    '#444':
-    '#777';
+      '#444':
+      '#777';
   const scaleAndTickColor =
     background === 'white' ?
-    'rgb(0, 0, 77)':
-    'white';
-  const gridLines = {
-    ...defaultXAxis.gridLines,
-    zeroLineColor,
-    color: gridLinesColor,
-    axisColor: gridLinesColor,
-  };
-  const ticks = {
-    ...defaultXAxis.ticks,
-    fontColor: scaleAndTickColor,
-    min: min || 0,
-    max: max || 500,
-    maxTicksLimit: maxTicksLimit || 100,
-  };
-  const scaleLabel = {
-    ...defaultXAxis.scaleLabel,
-    labelString: label,
-    fontColor: scaleAndTickColor,
-  };
-  return {
-    ...defaultXAxis,
-    gridLines,
-    ticks,
-    scaleLabel,
-  }
+      'rgb(0, 0, 77)':
+      'white';
+  const gridLines = Object.assign({},
+    defaultXAxis.gridLines,
+    {
+      zeroLineColor,
+      color: gridLinesColor,
+      axisColor: gridLinesColor,
+    }
+  );
+  const ticks = Object.assign({},
+    defaultXAxis.ticks,
+    {
+      fontColor: scaleAndTickColor,
+      min: min || 0,
+      max: max || 500,
+      maxTicksLimit: maxTicksLimit || 100,
+    }
+  );
+  const scaleLabel = Object.assign({},
+    defaultXAxis.scaleLabel,
+    {
+      labelString: label,
+      fontColor: scaleAndTickColor,
+    }
+  );
+  return Object.assign({},
+    defaultXAxis,
+    {
+      gridLines,
+      ticks,
+      scaleLabel,
+    }
+  );
 };
 
 const defaultYAxis = {
@@ -523,46 +550,55 @@ const defaultYAxis = {
   },
 };
 
-export const createYAxis = options => {
+const createYAxis = options => {
   const { label, id, position, background } = options;
   const zeroLineColor = 
     background === 'white' ?
-    'black':
-    'white';
+      'black':
+      'white';
   const gridLinesColor =
     background === 'white' ?
-    '#444':
-    '#777';
+      '#444':
+      '#777';
   const scaleAndTickColor =
     background === 'white' ?
-    'rgb(0, 0, 77)':
-    'white';
-  const gridLines = {
-    ...defaultYAxis.gridLines,
-    zeroLineColor,
-    color: gridLinesColor,
-    axisColor: gridLinesColor,
-  };
-  const ticks = {
-    ...defaultYAxis.ticks,
-    fontColor: scaleAndTickColor,
-  };
-  const scaleLabel = {
-    ...defaultYAxis.scaleLabel,
-    labelString: convertCcToSpace(label),
-    fontColor: scaleAndTickColor,
-  };
-  return {
-    ...defaultYAxis,
-    id: id || 'A',
-    position: position || 'left',
-    gridLines,
-    ticks,
-    scaleLabel,
-  };
+      'rgb(0, 0, 77)':
+      'white';
+  const gridLines = Object.assign({},
+    defaultYAxis.gridLines,
+    {
+      zeroLineColor,
+      color: gridLinesColor,
+      axisColor: gridLinesColor,
+    }
+  );
+  const ticks = Object.assign({},
+    defaultYAxis.ticks,
+    {
+      fontColor: scaleAndTickColor,
+
+    }
+  );
+  const scaleLabel = Object.assign({},
+    defaultYAxis.scaleLabel,
+    {
+      labelString: convertCcToSpace(label),
+      fontColor: scaleAndTickColor,
+    }
+  );
+  return Object.assign({},
+    defaultYAxis,
+    {
+      id: id || 'A',
+      position: position || 'left',
+      gridLines,
+      ticks,
+      scaleLabel,
+    }
+  );
 };
 
-export const createYAxesOptions = options => {
+const createYAxesOptions = options => {
   const { labels, background } = options;
   let labelsUsed = [];
   const subOptions = [];
@@ -584,10 +620,10 @@ export const createYAxesOptions = options => {
   return subOptions;
 };
 
-export const createYAxes = arrayOfOptions => {
+const createYAxes = arrayOfOptions => {
   const yAxes = arrayOfOptions.map(o=>{
     return createYAxis(o);
-  })
+  });
   return yAxes;
 };
 
@@ -602,34 +638,38 @@ const defaultLegend = {
   labels: {}  
 };
 
-export const createLegend = options => {
+const createLegend = options => {
   const { position, background } = options;
   const legendFontColor = 
     background === 'white' ?
-    'black':
-    'white';
-  const labels = {
-    ...defaultLegend.labels,
-    fontColor: legendFontColor,
-  };
-  return {
-    ...defaultLegend,
-    position: position || 'bottom',
-    labels,
-  };
+      'black':
+      'white';
+  const labels = Object.assign({},
+    defaultLegend.labels,
+    {
+      fontColor: legendFontColor,
+    }
+  );
+  return Object.assign({},
+    defaultLegend,
+    {
+      position: position || 'bottom',
+      labels,
+    }
+  );
 };
 
 // @@@@@@@@@@@@@@@ OPTIONS @@@@@@@@@@@@@@@
 
 const defaultOptions = {
   responsive: true,
-    tooltips: {
-      mode: 'label'
-    },
-    maintainAspectRatio: true,
+  tooltips: {
+    mode: 'label'
+  },
+  maintainAspectRatio: true,
 };
 
-export const createGraphOptions = options => {
+const createGraphOptions = options => {
   const {
     labelsY, 
     labelX, 
@@ -643,7 +683,7 @@ export const createGraphOptions = options => {
   const yAxesOptions = {
     labels: labelsY,
     background,
-  }
+  };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
   const xAxisOptions = {
     label: labelX,
@@ -651,43 +691,45 @@ export const createGraphOptions = options => {
     min: minX,
     max: maxX,
     maxTicksLimit: maxTicksLimitX,
-  }
+  };
   const legendOptions = {
     background,
     position: legendPosition,
   };
-  return {
-    ...defaultOptions,
-    legend: createLegend(legendOptions),
-    scales: {
-      xAxes: [ createXAxis(xAxisOptions) ],
-      yAxes: createYAxes(arrayOfYOptions)
-    },
-  };
+  return Object.assign({},
+    defaultOptions,
+    {
+      legend: createLegend(legendOptions),
+      scales: {
+        xAxes: [ createXAxis(xAxisOptions) ],
+        yAxes: createYAxes(arrayOfYOptions)
+      },
+    }
+  );
 }; 
 
 // @@@@@@@@@@@@@ REFRESH @@@@@@@@@@@
 
-export const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged) => {
+const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged) => {
   let message = 'ok';
   let needRefresh = background !== backgroundPrior ;
   if(needRefresh) return {needRefresh, message: 'background changed'};
 
   if(ticksXChanged) {
     needRefresh = true;
-    return {needRefresh, message: `X-axis tick count changed`};
+    return {needRefresh, message: 'X-axis tick count changed'};
   }
 
   const yAxes =
     !graphOptions ? [] :
-    !graphOptions.scales ? [] :
-    !Array.isArray(graphOptions.scales.yAxes) ? [] :
-    graphOptions.scales.yAxes ;
+      !graphOptions.scales ? [] :
+        !Array.isArray(graphOptions.scales.yAxes) ? [] :
+          graphOptions.scales.yAxes ;
   const yAxesPrior =
     !graphOptionsPrior ? [] :
-    !graphOptionsPrior.scales ? [] :
-    !Array.isArray(graphOptionsPrior.scales.yAxes) ? [] :
-    graphOptionsPrior.scales.yAxes ;
+      !graphOptionsPrior.scales ? [] :
+        !Array.isArray(graphOptionsPrior.scales.yAxes) ? [] :
+          graphOptionsPrior.scales.yAxes ;
 
   if(yAxes.length !== yAxesPrior.length) {
     needRefresh = true;
@@ -698,12 +740,12 @@ export const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background
     if(!needRefresh){ // only check if we don't need a refresh so far
       const oldLabel =
         !yAxesPrior[i].scaleLabel ? '<no scale label>' :
-        !yAxesPrior[i].scaleLabel.labelString ? '<no label string>' :
-        yAxesPrior[i].scaleLabel.labelString;
+          !yAxesPrior[i].scaleLabel.labelString ? '<no label string>' :
+            yAxesPrior[i].scaleLabel.labelString;
       const newLabel = 
         !a.scaleLabel ? '<no scale label>' :
-        !a.scaleLabel.labelString ? '<no label string>' :
-        a.scaleLabel.labelString;
+          !a.scaleLabel.labelString ? '<no label string>' :
+            a.scaleLabel.labelString;
       if(a.id !== yAxesPrior[i].id) {
         needRefresh = true;
         message = `id mismatch at index ${i} (old: ${yAxesPrior[i].id}, new: ${a.id})`;
@@ -714,11 +756,11 @@ export const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background
     }
   });
   return {needRefresh, message };
-}
+};
 
 // @@@@@@@@@@@@@ FULL GRAPH @@@@@@@@@@@
 
-export const createGraph = input => {
+const createGraph = input => {
 
   const {
     measurements,
@@ -745,7 +787,7 @@ export const createGraph = input => {
   } = parseDataType1To0(
     measurements,
     legendObject,
-    keysSelected,
+    keysSelected
   );
   
   const {
@@ -767,7 +809,7 @@ export const createGraph = input => {
     dataArraysRaw, 
     first, 
     lengthRoundUp, 
-    pointsToAdd,
+    pointsToAdd
   );
   
   const optionsInput = {
@@ -787,7 +829,7 @@ export const createGraph = input => {
   const {needRefresh} = checkForGraphRefresh(
     graphOptions, graphOptionsPrior,
     background, backgroundPrior,
-    ticksXChanged,
+    ticksXChanged
   );
 
   const xLabelsArray = xLabelKey ?
@@ -821,7 +863,7 @@ export const createGraph = input => {
   };
 };
 
-export const createSelectors = input => {
+const createSelectors = input => {
 
   const {
     measurementsConvert, // 1 or 2 or 0
@@ -852,7 +894,7 @@ export const createSelectors = input => {
           keysAll.push(prefixedKey); // superset of keys with units and without
         });
       });
-     } else if(measurements[0]){
+    } else if(measurements[0]){
       for(let prefixedKey in measurements[0]){
         const unPrefix = prefixedKey.split('__');
         const prefix   = unPrefix[0];
@@ -868,7 +910,7 @@ export const createSelectors = input => {
       }
     }
   } else if(measurementsConvert === 0 ){
-      
+    console.log('WE HAVE NOT WRITTEN THIS YET!');
   } else {
     if(measurements[0]){
       for(let key in measurements[0]){
@@ -889,4 +931,35 @@ export const createSelectors = input => {
     keysAll,
     legendObject,
   };
-}
+};
+
+module.exports = { 
+  // data
+  parseDataArraysByKeys,
+  parseLabelsByKeys,
+  parseYAxisByKeys,
+  parseDataType1To0,
+  parseDataType2To1,
+  parseDataType2To0,
+  calcDataLength,
+  conformDataLength,
+  addDataset, 
+  addDatapoints,
+  editDatapoint,
+  createGraphData,
+  // size
+  calcCanvasDimensions,
+  // axes
+  calcTicks,
+  createXAxis,
+  createYAxis, // tested via createYAxes
+  createYAxesOptions,
+  createYAxes,
+  // legend
+  createLegend,
+  // options
+  createGraphOptions,
+  checkForGraphRefresh,
+  createGraph,
+  // selectors
+  createSelectors };

@@ -1,22 +1,30 @@
 {
-  "name": "icon-indexer",
+  "name": "graphing-helpers",
   "version": "1.0.0",
-  "description": "Helper library to manage font-awesome icons",
+  "description": "Helper library as a data preprocessor for react-chartjs-2",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha --colors  tests/*.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bradcgarner/icon-indexer.git"
+    "url": "git+https://github.com/bradcgarner/graphing-helpers.git"
   },
   "keywords": [
-    "font-awesome"
+    "graphing"
   ],
   "author": "Brad C. Garner <brad@bradgarner.com> (http://bradgarner.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bradcgarner/icon-indexer/issues"
+    "url": "https://github.com/bradcgarner/graphing-helpers/issues"
   },
-  "homepage": "https://github.com/bradcgarner/icon-indexer#readme"
+  "homepage": "https://github.com/bradcgarner/graphing-helpers#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.3",
+    "nyc": "^11.2.1"
+  },
+  "dependencies": {
+    "conjunction-junction": "^1.0.1"
+  }
 }

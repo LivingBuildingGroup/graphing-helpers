@@ -1,4 +1,9 @@
-import { 
+'use strict';
+
+const chai = require('chai');
+const expect = chai.expect;
+
+const { 
   // data
   parseDataArraysByKeys,
   parseLabelsByKeys,
@@ -27,9 +32,7 @@ import {
   checkForGraphRefresh,
   createGraph,
   // selectors
-  createSelectors,
-   } from '../helpers/graph';
-import { labels } from '../_tests_/labels';
+  createSelectors } = require('../index');
 
 describe('helpers graph', ()=> { 
 
@@ -58,7 +61,7 @@ describe('helpers graph', ()=> {
       [5, 52],
     ];
     const result = parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseLabelsByKeys no Y-axis keys', () => {
@@ -76,7 +79,7 @@ describe('helpers graph', ()=> {
       'the first key', 'banana',
     ];
     const result = parseLabelsByKeys(legendObject, arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('parseLabelsByKeys with Y-axis keys', () => {
     const arrayOfKeys = [
@@ -93,7 +96,7 @@ describe('helpers graph', ()=> {
       'the first key', 'banana',
     ];
     const result = parseLabelsByKeys(legendObject, arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseYAxisByKeys with no keys', () => {
@@ -109,14 +112,14 @@ describe('helpers graph', ()=> {
     };
     const expectedResult = {
       yAxisArray: [
-      'units', 'units',
+        'units', 'units',
       ],
       yAxisIdArray: [
         'A', 'A'
       ],
     };
     const result = parseYAxisByKeys(legendObject, arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('parseYAxisByKeys w/ keys', () => {
     const arrayOfKeys = [
@@ -138,7 +141,7 @@ describe('helpers graph', ()=> {
       ],
     };
     const result = parseYAxisByKeys(legendObject, arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseDataType1To0', () => {
@@ -174,7 +177,7 @@ describe('helpers graph', ()=> {
         [1, 15], // test1 key1
         [5, 52], // test1 key3
       ],
-      labelArray: [
+      dataLabelArray: [
         'the first key', 'banana',
       ],
       yAxisArray: [
@@ -188,7 +191,7 @@ describe('helpers graph', ()=> {
       arrayOfDataObjects, 
       legendObject, 
       arrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseDataType2To0', () => {
@@ -247,7 +250,7 @@ describe('helpers graph', ()=> {
         [11, 151], // test7 key1
         [51, 521], // test7 key3
       ],
-      labelArray: [
+      dataLabelArray: [
         'test1 the first key', 'test1 banana',
         'test7 the first key', 'test7 banana',
       ],
@@ -267,7 +270,7 @@ describe('helpers graph', ()=> {
       arrayOfDataGroups,
       legendObject, 
       rawArrayOfKeys);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseDataType2To1', () => {
@@ -338,7 +341,7 @@ describe('helpers graph', ()=> {
           test7__keyX: 711,
         },
       ],
-      // labelArray: [
+      // dataLabelArray: [
       //   'test1 the first key', 'test1 banana',
       //   'test7 the first key', 'test7 banana',
       // ],
@@ -348,7 +351,7 @@ describe('helpers graph', ()=> {
     const result = parseDataType2To1(
       arraysOfDataObjects, 
       arrayOfDataGroups);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('calcDataLength', ()=>{
@@ -362,9 +365,9 @@ describe('helpers graph', ()=> {
       first: 2,
       last: 5,
       dataLength: 4,
-    }
+    };
     const result = calcDataLength(dataArraysRaw, start, end);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('conformDataLength trim either end', ()=>{
@@ -385,7 +388,7 @@ describe('helpers graph', ()=> {
       length,
       pointsToAdd
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('conformDataLength trim and extend', ()=>{
@@ -406,53 +409,65 @@ describe('helpers graph', ()=> {
       length,
       pointsToAdd
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('addDataset', ()=> {
     const style = {
       styling: 'stuff',
-    }
+    };
     const graphData = {
       labels: [ 'point1', 'point2', 'point3' ],
       datasets: [
-        {...style,
-          data: [
-            0.01,
-            0.12,
-            0.08,
-          ],
-          label: 'dataset 0',
-        },
-        {...style,
-          data: [
-            0.03,
-            0.15,
-            0.14,
-          ],
-          label: 'dataset 1',
-        },
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.01,
+              0.12,
+              0.08,
+            ],
+            label: 'dataset 0',
+          }
+        ),
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.03,
+              0.15,
+              0.14,
+            ],
+            label: 'dataset 1',
+          }
+        )
       ],
     };
     const newData = graphData.datasets[0].data.map(d=>2);
     const expectedResult = {
       labels: [ 'point1', 'point2', 'point3' ],
       datasets: [
-        {...style,
-          data: [
-            0.01,
-            0.12,
-            0.08,
-          ],
-          label: 'dataset 0',
-        },
-        {...style,
-          data: [
-            0.03,
-            0.15,
-            0.14,
-          ],
-          label: 'dataset 1',
-        },
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.01,
+              0.12,
+              0.08,
+            ],
+            label: 'dataset 0',
+          }
+        ),
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.03,
+              0.15,
+              0.14,
+            ],
+            label: 'dataset 1',
+          }
+        ),
         {
           styling: 'stuff',
           data: [
@@ -469,63 +484,73 @@ describe('helpers graph', ()=> {
       data: newData,
       style,
     });
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('addDatapoints', ()=> {
     const style = {
       styling: 'stuff',
-    }
+    };
     const graphData = {
       labels: [ 'point0', 'point1', 'point2' ],
       datasets: [
-        {...style,
-          data: [
-            0.01,
-            0.12,
-            0.08,
-          ],
-          label: 'dataset 0',
-        },
-        {...style,
-          data: [
-            0.03,
-            0.15,
-            0.14,
-          ],
-          label: 'dataset 1',
-        },
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.01,
+              0.12,
+              0.08,
+            ],
+            label: 'dataset 0',
+          }
+        ),
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.03,
+              0.15,
+              0.14,
+            ],
+            label: 'dataset 1',
+          }
+        )
       ],
     };
     const newData = [1,2];
     const expectedResult = {
       labels: [ 'point0', 'point1', 'point2', 'point3' ],
       datasets: [
-        {...style,
-          data: [
-            0.01,
-            0.12,
-            0.08,
-            1,
-          ],
-          label: 'dataset 0',
-        },
-        {...style,
-          data: [
-            0.03,
-            0.15,
-            0.14,
-            2,
-          ],
-          label: 'dataset 1',
-        },
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.01,
+              0.12,
+              0.08,
+            ],
+            label: 'dataset 0',
+          }
+        ),
+        Object.assign({},
+          style,
+          {
+            data: [
+              0.03,
+              0.15,
+              0.14,
+            ],
+            label: 'dataset 1',
+          }
+        )
       ],
     };
     const result = addDatapoints({
       graphData,
       data: newData,
     });
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('editDatapoint', ()=> {
@@ -577,7 +602,7 @@ describe('helpers graph', ()=> {
       setIndex: 1,
       index: 2
     });
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('editDatapoint', ()=> {
@@ -629,7 +654,7 @@ describe('helpers graph', ()=> {
       setIndex: 1,
       index: 2
     });
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createGraphData 1', ()=>{
@@ -640,7 +665,7 @@ describe('helpers graph', ()=> {
         [5, 52],
         [3, 77],
       ],
-      labelArray: [
+      dataLabelArray: [
         'the first key', 'banana', 'time',
       ],
       yAxisArray: [
@@ -679,7 +704,7 @@ describe('helpers graph', ()=> {
       ],
     }; 
     const result = createGraphData(input);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createGraphData 1 specific labels', ()=>{
@@ -691,7 +716,7 @@ describe('helpers graph', ()=> {
         [5, 52],
         [3, 77],
       ],
-      labelArray: [
+      dataLabelArray: [
         'the first key', 'banana', 'time',
       ],
       yAxisArray: [
@@ -730,7 +755,7 @@ describe('helpers graph', ()=> {
       ],
     }; 
     const result = createGraphData(input);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('calcTicks 33/6', ()=> {
@@ -745,7 +770,7 @@ describe('helpers graph', ()=> {
       pointsToAdd:        4,
     };
     const result = calcTicks(dataLength, idealSpacing);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('calcTicks 77/4', ()=> {
     const dataLength =   77;
@@ -759,7 +784,7 @@ describe('helpers graph', ()=> {
       pointsToAdd:        0,
     };
     const result = calcTicks(dataLength, idealSpacing);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('calcTicks 80/5', ()=> {
     const dataLength =   80;
@@ -773,7 +798,7 @@ describe('helpers graph', ()=> {
       pointsToAdd:        1,// actual math + 1,
     };
     const result = calcTicks(dataLength, idealSpacing);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createXAxis over white', ()=>{
@@ -810,7 +835,7 @@ describe('helpers graph', ()=> {
       },
     }; 
     const result = createXAxis(options);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('createXAxis over gray with defaults', ()=>{
     const options = {
@@ -846,14 +871,14 @@ describe('helpers graph', ()=> {
       },
     }; 
     const result = createXAxis(options);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createYAxesOptions', ()=>{
     const options = {
       labels: ['one', 'two'],
       background: 'white',
-    }
+    };
     const expectedResult = [
       {
         label: 'one',
@@ -867,9 +892,9 @@ describe('helpers graph', ()=> {
         position: 'right',
         background: 'white',
       }
-    ]
+    ];
     const result = createYAxesOptions(options);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createYAxes over white', ()=>{
@@ -936,9 +961,9 @@ describe('helpers graph', ()=> {
           fontColor: 'rgb(0, 0, 77)', // calculated
         },
       }
-    ]
+    ];
     const result = createYAxes(arrayOfOptions);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('createYAxes over gray', ()=>{
     const arrayOfOptions = [
@@ -1004,9 +1029,9 @@ describe('helpers graph', ()=> {
           fontColor: 'white', // calculated
         },
       }
-    ]
+    ];
     const result = createYAxes(arrayOfOptions);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createLegend over white', ()=>{
@@ -1024,7 +1049,7 @@ describe('helpers graph', ()=> {
       },
     }; 
     const result = createLegend(options);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createGraphOptions over white', ()=>{
@@ -1134,7 +1159,7 @@ describe('helpers graph', ()=> {
       
     }; 
     const result = createGraphOptions(options);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('checkForGraphRefresh nothing passed in is false', () => {
@@ -1143,7 +1168,7 @@ describe('helpers graph', ()=> {
       message: 'ok',
     };
     const result = checkForGraphRefresh();
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh array is longer', () => {
     const graphOptions = {
@@ -1198,7 +1223,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptionsPrior, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh array is shorter', () => {
     const graphOptions = {
@@ -1253,7 +1278,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptionsPrior, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh array order diff', () => {
     const graphOptions = {
@@ -1314,7 +1339,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptionsPrior, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh background diff 1', () => {
     const graphOptions = {
@@ -1351,7 +1376,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptions, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh background diff 2', () => {
     const graphOptions = {
@@ -1388,7 +1413,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptions, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('checkForGraphRefresh background diff 2', () => {
@@ -1426,7 +1451,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptions, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh all same', () => {
     const graphOptions = {
@@ -1487,7 +1512,7 @@ describe('helpers graph', ()=> {
       graphOptions, graphOptionsPrior, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
   it('checkForGraphRefresh background same no arrays', () => {
     const background      =  'gray';
@@ -1500,7 +1525,7 @@ describe('helpers graph', ()=> {
       undefined, undefined, 
       background, backgroundPrior
     );
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createSelectors convert 1', ()=>{
@@ -1540,7 +1565,7 @@ describe('helpers graph', ()=> {
       },
     };
     const result = createSelectors(input);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createSelectors convert 2 without arrays', ()=>{
@@ -1588,7 +1613,7 @@ describe('helpers graph', ()=> {
       ],
     };
     const result = createSelectors(input);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createSelectors convert 2 with array', ()=>{
@@ -1640,7 +1665,7 @@ describe('helpers graph', ()=> {
       ],
     };
     const result = createSelectors(input);
-    expect(result).toEqual(expectedResult);
+    expect(result).to.deep.equal(expectedResult);
   });
 
 });
