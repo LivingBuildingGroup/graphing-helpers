@@ -264,4 +264,8 @@ const style14 = Object.assign({},
   }
 );
 
-const stylesArray = [style1, style2, style3, style4, style5, style6, style7, style8, style9, style10, style11, style12, style13, style14];
+const palette1 = [style1, style2, style3, style4, style5, style6, style7, style8, style9, style10, style11, style12, style13, style14];
+
+module.exports = {
+  palette1,
+};

@@ -8,6 +8,6 @@ module.exports = Object.assign({},
   createGraph,
   selectors,
   {
-    styles,
+    styles
   }
 );
