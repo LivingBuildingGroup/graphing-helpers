@@ -6,6 +6,8 @@ const styles      = require('./functions/styles');
 
 module.exports = Object.assign({},
   createGraph,
-  styles,
-  selectors
+  selectors,
+  {
+    styles,
+  }
 );
