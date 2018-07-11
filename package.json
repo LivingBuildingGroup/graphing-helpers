@@ -1,0 +1,22 @@
+{
+  "name": "icon-indexer",
+  "version": "1.0.0",
+  "description": "Helper library to manage font-awesome icons",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradcgarner/icon-indexer.git"
+  },
+  "keywords": [
+    "font-awesome"
+  ],
+  "author": "Brad C. Garner <brad@bradgarner.com> (http://bradgarner.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bradcgarner/icon-indexer/issues"
+  },
+  "homepage": "https://github.com/bradcgarner/icon-indexer#readme"
+}
