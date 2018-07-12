@@ -1,13 +1,13 @@
 'use strict';
 
-const createGraph = require('./functions/create-graph');
-const selectors   = require('./functions/selectors');
-const styles      = require('./functions/styles');
+const createGraph = require('./build/functions/create-graph');
+const selectors   = require('./build/functions/selectors');
+const styles      = require('./build/functions/styles');
 
 module.exports = Object.assign({},
   createGraph,
   selectors,
   {
-    styles
+    styles: styles,
   }
 );

@@ -71,5 +71,5 @@ const createSelectors = input => {
 };
 
 module.exports = {
-  createSelectors
+  createSelectors,
 };
