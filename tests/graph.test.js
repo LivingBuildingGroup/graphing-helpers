@@ -529,6 +529,7 @@ describe('helpers graph', ()=> {
               0.01,
               0.12,
               0.08,
+              1,
             ],
             label: 'dataset 0',
           }
@@ -540,6 +541,7 @@ describe('helpers graph', ()=> {
               0.03,
               0.15,
               0.14,
+              2,
             ],
             label: 'dataset 1',
           }
@@ -710,7 +712,7 @@ describe('helpers graph', ()=> {
   it('createGraphData 1 specific labels', ()=>{
     const input = {
       keysSelected: ['rain_in', 'rain_gals', 'mins'],
-      xLabelKey: 'rain_in',
+      xLabelsArray: ['5/2','5/3'],
       dataArrays: [ // 3 datasets
         [1, 15],    // each dataset has 2 items in increment
         [5, 52],
@@ -732,7 +734,7 @@ describe('helpers graph', ()=> {
       ],
     };
     const expectedResult = {
-      labels: [1,15], // 1 per increment
+      labels: ['5/2','5/3'], // 1 per increment
       datasets: [
         {
           style1: 'value1',
@@ -1665,6 +1667,279 @@ describe('helpers graph', ()=> {
       ],
     };
     const result = createSelectors(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('createGraph',()=>{
+    /* 1) test how it is working now
+     * 2) change pass-in of stylesArray to pass-in of style object
+     *    with array as a key,
+     *    get array key to work as currently works, with others as options
+     * 3) change styles to concise factory functions; confirm working
+     * 4) styles are currently set from a single array
+     *    Create an option where user can click customize styles
+     *    This returns whatever styles are currently used,
+     *    loads them into state for editing
+     *    array is then passed back, which replaces existing array
+     *    there needs to be a trigger as to what styles to use
+     *    options:
+     *       default (current)
+     *       custom (see above)
+     *       key (each key has a named style; if found, it is used, if not found, select from default)
+     *         named styleColor, styleBackground, styleOpacity for now
+     *         in createGraphData, styles (line 346), if using 'key' will look up the style by key
+     *         styleObject[keySelected[styleColor]]
+     *         styleObject[keySelected[styleBackground]]
+     *         styleObject[keySelected[styleOpacity]]
+     *         more specifically: pass those 3 to factory function (affects mroe than 3 keys)
+     * 
+     *       monotoneGroup (type2 data only, group by prefix, each prefix gets 1 color, each item in the group gets a color from the group (light, dark, medium, etc.))
+     */
+    const input = {
+      measurements: [
+        {
+          key1: 1,
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15,
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+        {
+          key1: 25,
+          key2: 46,
+          key3: 62,
+          key5: 3.9,
+          keyX: 72,
+        },
+      ],
+      legendObject: {
+      //     label           , Y axis
+        key1: ['the first key' , 'lbs'],
+        key2: ['the second key', 'ft'],
+        key3: ['banana'        , 'cubits'],
+        key4: ['not used'      , 'nanometers'],
+        key5: ['decimals'      , 'meters'],
+      },
+      keysSelected: [
+        'key1', 'key3'
+      ],
+
+      idealXTickSpacing: 4,
+      labelX: 'minutes',
+      background: 'gray',
+      startX: 0,
+      endX: 2,
+      legendPosition: 'bottom',
+      stylesArray: [
+        { style1: 'value1' },
+        { style2: 'value2' },
+        { style3: 'value3' },
+      ],
+      graphOptionsPrior: {
+        scales: {
+          yAxes: [
+            {
+              id: 'A',
+              scaleLabel: {
+                labelString: 'lbs',
+              }
+            },
+            {
+              id: 'B',
+              scaleLabel: {
+                labelString: 'ft',
+              }
+            },
+            {
+              id: 'C',
+              scaleLabel: {
+                labelString: 'in',
+              }
+            }
+          ]
+        }
+      },
+      backgroundPrior: 'gray',
+      xLabelKey: undefined,
+      xLabelStartAt: undefined,
+    };
+    const expectedResult = {
+      background: 'gray',
+      dataArrays: [
+        [
+          1,
+          15,
+          25,
+          null,
+          null,
+        ],
+        [
+          5,
+          52,
+          62,
+          null,
+          null,
+        ],
+      ],
+      dataLabelArray: [
+        'the first key',
+        'banana',
+      ],
+      graphData: {
+        datasets: [
+          {
+            data: [
+              1,
+              15,
+              25,
+              null,
+              null,
+            ],
+            label: 'the first key',
+            style1: 'value1',
+            yAxisID: 'A',
+          },
+          {
+            data: [
+              5,
+              52,
+              62,
+              null,
+              null,
+            ],
+            label: 'banana',
+            style2: 'value2',
+            yAxisID: 'B',
+          },
+        ],
+        labels: [
+          0,
+          1,
+          2,
+          3,
+          4,
+        ],
+      },
+      graphOptions: {
+        legend: {
+          display: true,
+          fullWidth: true,
+          labels: {
+            fontColor: 'white',
+          },
+          position: 'bottom',
+          reverse: false,
+        },
+        maintainAspectRatio: true,
+        responsive: true,
+        scales: {
+          xAxes: [
+            {
+              display: true,
+              gridLines: {
+                axisColor: '#777',
+                color: '#777',
+                display: true,
+                zeroLineColor: 'white',
+              },
+              pointLabels: {
+                fontSize: 12,
+              },
+              scaleLabel: {
+                display: true,
+                fontColor: 'white',
+                labelString: 'minutes',
+              },
+              ticks: {
+                autoSkip: true,
+                display: true,
+                fontColor: 'white',
+                max: 6,
+                maxTicksLimit: 1,
+                min: 0,
+              },
+            },
+          ],
+          yAxes: [
+            {
+              display: true,
+              gridLines: {
+                axisColor: '#777',
+                color: '#777',
+                display: true,
+                zeroLineColor: 'white',
+              },
+              id: 'A',
+              pointLabels: {
+                fontSize: 12,
+              },
+              position: 'left',
+              scaleLabel: {
+                display: true,
+                fontColor: 'white',
+                labelString: 'lbs',
+              },
+              ticks: {
+                display: true,
+                fontColor: 'white',
+              },
+              type: 'linear',
+            },
+            {
+              display: true,
+              gridLines: {
+                axisColor: '#777',
+                color: '#777',
+                display: true,
+                zeroLineColor: 'white',
+              },
+              id: 'B',
+              pointLabels: {
+                fontSize: 12,
+              },
+              position: 'right',
+              scaleLabel: {
+                display: true,
+                fontColor: 'white',
+                labelString: 'cubits',
+              },
+              ticks: {
+                display: true,
+                fontColor: 'white',
+              },
+              type: 'linear',
+            },
+          ],
+        },
+        tooltips: {
+          mode: 'label',
+        },
+      },
+      keysSelected: [
+        'key1',
+        'key3',
+      ],
+      needRefresh: true,
+      ready: true,
+      yAxisArray: [
+        'lbs',
+        'cubits',
+      ],
+      yAxisIdArray: [
+        'A',
+        'B',
+      ],
+    };
+
+
+    const result = createGraph(input);
     expect(result).to.deep.equal(expectedResult);
   });
 

@@ -325,16 +325,18 @@ const editDatapoint = input => {
 const createGraphData = input => {
   // create entirely new data
   const { 
+    // the following 7 keys are parallel format
+    // i.e. arrays of same length, arr1[n] goes with arr2[n]
     keysSelected,
     dataArrays, 
     dataLabelArray, 
     yAxisArray,
     yAxisIdArray,
     stylesArray,
-    xLabelStartAt,
     xLabelsArray,
+    // this lone key is just conformed to a number
+    xLabelStartAt,
   } = input;
-
 
 
   const datasets = keysSelected.map((k,i)=>{
