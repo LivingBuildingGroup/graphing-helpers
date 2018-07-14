@@ -230,6 +230,7 @@ const calcDataLength = (dataArraysRaw, start, end) => {
 };
 
 const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => {
+  // assume 
   const oneDataset = !Array.isArray(dataArraysRaw) ? [] :
     !Array.isArray(dataArraysRaw[0]) ? [] :
       dataArraysRaw[0];
@@ -447,9 +448,12 @@ const calcTicks = (dataLength, idealSpacing) => {
     maxTicksLimitDown + 1;
 
   const lengthRoundUp = 
-    ((maxTicksLimitUp * idealSpacing) + 1) > dataLength + idealSpacing ?
-      (maxTicksLimitUp * idealSpacing) + 1 - idealSpacing :
-      (maxTicksLimitUp * idealSpacing) + 1 ;
+    // do not round up, if increments of 1
+    idealSpacing === 1 ? 
+      maxTicksLimitUp : 
+      ((maxTicksLimitUp * idealSpacing) + 1) > dataLength + idealSpacing ?
+        (maxTicksLimitUp * idealSpacing) + 1 - idealSpacing :
+        (maxTicksLimitUp * idealSpacing) + 1 ;
 
   const pointsToAdd = lengthRoundUp - dataLength;
 
@@ -799,9 +803,9 @@ const createGraph = input => {
   } = calcDataLength(dataArraysRaw,startX, endX);
 
   const {
-    // maxTicksLimitDown,
-    // lengthRoundDown,
-    // pointsToRemove,
+    maxTicksLimitDown, // testing only
+    lengthRoundDown,   // testing only
+    pointsToRemove,    // testing only
     maxTicksLimitUp,
     lengthRoundUp,
     pointsToAdd,
@@ -852,16 +856,32 @@ const createGraph = input => {
   });
 
   return{
-    dataArrays,
-    dataLabelArray,
-    graphData,   // this includes { datasets, labels }, which go directly to graph
+    // pass first 2 'graph' keys as props to graph
+    // i.e. to <Line/> or </Pie>, etc.
+    graphData,      // this includes { datasets, labels }, which go directly to graph
     graphOptions,
-    ready: true,
-    needRefresh,
-    background,   // returned for later checking
-    keysSelected, // returned for ease of returning to state
-    yAxisArray,   // returned for later checking
-    yAxisIdArray, // not needed to return, but doesn't hurt
+    // remaining keys NOT passed as props to graph
+    ready: true,    // rendering control
+    needRefresh,    // rendering control
+    background,     // regurgitated for ease of returning to statey
+    // following 5 arrays are parallel
+    keysSelected,   // regurgitated for ease of returning to state
+    yAxisArray,     // history key
+    testingKeys: {
+      yAxisIdArray,  
+      dataArraysRaw,
+      dataArrays,
+      dataLabelArray,
+      first,
+      dataLength, 
+      maxTicksLimitDown,
+      maxTicksLimitUp,
+      lengthRoundDown,
+      lengthRoundUp,
+      pointsToRemove,
+      pointsToAdd,
+      ticksXChanged,
+    }
   };
 };
 

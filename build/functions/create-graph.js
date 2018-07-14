@@ -213,6 +213,7 @@ var calcDataLength = function calcDataLength(dataArraysRaw, start, end) {
 };
 
 var conformDataLength = function conformDataLength(dataArraysRaw, first, length, pointsToAdd) {
+  // assume 
   var oneDataset = !Array.isArray(dataArraysRaw) ? [] : !Array.isArray(dataArraysRaw[0]) ? [] : dataArraysRaw[0];
   if (oneDataset.length === length) return dataArraysRaw;
   var end = first + length;
@@ -301,8 +302,8 @@ var createGraphData = function createGraphData(input) {
       yAxisArray = input.yAxisArray,
       yAxisIdArray = input.yAxisIdArray,
       stylesArray = input.stylesArray,
-      xLabelStartAt = input.xLabelStartAt,
-      xLabelsArray = input.xLabelsArray;
+      xLabelsArray = input.xLabelsArray,
+      xLabelStartAt = input.xLabelStartAt;
 
 
   var datasets = keysSelected.map(function (k, i) {
@@ -378,7 +379,9 @@ var calcTicks = function calcTicks(dataLength, idealSpacing) {
 
   var maxTicksLimitUp = pointsToRemove === 0 ? maxTicksLimitDown : maxTicksLimitDown + 1;
 
-  var lengthRoundUp = maxTicksLimitUp * idealSpacing + 1 > dataLength + idealSpacing ? maxTicksLimitUp * idealSpacing + 1 - idealSpacing : maxTicksLimitUp * idealSpacing + 1;
+  var lengthRoundUp =
+  // do not round up, if increments of 1
+  idealSpacing === 1 ? maxTicksLimitUp : maxTicksLimitUp * idealSpacing + 1 > dataLength + idealSpacing ? maxTicksLimitUp * idealSpacing + 1 - idealSpacing : maxTicksLimitUp * idealSpacing + 1;
 
   var pointsToAdd = lengthRoundUp - dataLength;
 
@@ -666,6 +669,9 @@ var createGraph = function createGraph(input) {
       dataLength = _calcDataLength.dataLength;
 
   var _calcTicks = calcTicks(dataLength, idealXTickSpacing),
+      maxTicksLimitDown = _calcTicks.maxTicksLimitDown,
+      lengthRoundDown = _calcTicks.lengthRoundDown,
+      pointsToRemove = _calcTicks.pointsToRemove,
       maxTicksLimitUp = _calcTicks.maxTicksLimitUp,
       lengthRoundUp = _calcTicks.lengthRoundUp,
       pointsToAdd = _calcTicks.pointsToAdd;
@@ -705,16 +711,32 @@ var createGraph = function createGraph(input) {
   });
 
   return {
-    dataArrays: dataArrays,
-    dataLabelArray: dataLabelArray,
+    // pass first 2 'graph' keys as props to graph
+    // i.e. to <Line/> or </Pie>, etc.
     graphData: graphData, // this includes { datasets, labels }, which go directly to graph
     graphOptions: graphOptions,
-    ready: true,
-    needRefresh: needRefresh,
-    background: background, // returned for later checking
-    keysSelected: keysSelected, // returned for ease of returning to state
-    yAxisArray: yAxisArray, // returned for later checking
-    yAxisIdArray: yAxisIdArray // not needed to return, but doesn't hurt
+    // remaining keys NOT passed as props to graph
+    ready: true, // rendering control
+    needRefresh: needRefresh, // rendering control
+    background: background, // regurgitated for ease of returning to statey
+    // following 5 arrays are parallel
+    keysSelected: keysSelected, // regurgitated for ease of returning to state
+    yAxisArray: yAxisArray, // history key
+    testingKeys: {
+      yAxisIdArray: yAxisIdArray,
+      dataArraysRaw: dataArraysRaw,
+      dataArrays: dataArrays,
+      dataLabelArray: dataLabelArray,
+      first: first,
+      dataLength: dataLength,
+      maxTicksLimitDown: maxTicksLimitDown,
+      maxTicksLimitUp: maxTicksLimitUp,
+      lengthRoundDown: lengthRoundDown,
+      lengthRoundUp: lengthRoundUp,
+      pointsToRemove: pointsToRemove,
+      pointsToAdd: pointsToAdd,
+      ticksXChanged: ticksXChanged
+    }
   };
 };
 

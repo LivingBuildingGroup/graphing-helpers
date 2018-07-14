@@ -34,7 +34,7 @@ const {
   // selectors
   createSelectors } = require('../index');
 
-describe('helpers graph', ()=> { 
+describe('graphing-helpers', ()=> { 
 
   it('parseDataArraysByKeys', () => {
     const arrayOfDataObjects = [
@@ -1696,6 +1696,7 @@ describe('helpers graph', ()=> {
      *       monotoneGroup (type2 data only, group by prefix, each prefix gets 1 color, each item in the group gets a color from the group (light, dark, medium, etc.))
      */
     const input = {
+      // measurements are ALL fetched, more than we want to graph
       measurements: [
         {
           key1: 1,
@@ -1719,6 +1720,7 @@ describe('helpers graph', ()=> {
           keyX: 72,
         },
       ],
+      // legend SHOULD have a key for all measurements
       legendObject: {
       //     label           , Y axis
         key1: ['the first key' , 'lbs'],
@@ -1727,11 +1729,11 @@ describe('helpers graph', ()=> {
         key4: ['not used'      , 'nanometers'],
         key5: ['decimals'      , 'meters'],
       },
+      // this narrows down measurements to what we want to graph
       keysSelected: [
         'key1', 'key3'
       ],
-
-      idealXTickSpacing: 4,
+      idealXTickSpacing: 1,
       labelX: 'minutes',
       background: 'gray',
       startX: 0,
@@ -1771,27 +1773,6 @@ describe('helpers graph', ()=> {
       xLabelStartAt: undefined,
     };
     const expectedResult = {
-      background: 'gray',
-      dataArrays: [
-        [
-          1,
-          15,
-          25,
-          null,
-          null,
-        ],
-        [
-          5,
-          52,
-          62,
-          null,
-          null,
-        ],
-      ],
-      dataLabelArray: [
-        'the first key',
-        'banana',
-      ],
       graphData: {
         datasets: [
           {
@@ -1799,8 +1780,6 @@ describe('helpers graph', ()=> {
               1,
               15,
               25,
-              null,
-              null,
             ],
             label: 'the first key',
             style1: 'value1',
@@ -1811,8 +1790,6 @@ describe('helpers graph', ()=> {
               5,
               52,
               62,
-              null,
-              null,
             ],
             label: 'banana',
             style2: 'value2',
@@ -1823,8 +1800,6 @@ describe('helpers graph', ()=> {
           0,
           1,
           2,
-          3,
-          4,
         ],
       },
       graphOptions: {
@@ -1861,8 +1836,8 @@ describe('helpers graph', ()=> {
                 autoSkip: true,
                 display: true,
                 fontColor: 'white',
-                max: 6,
-                maxTicksLimit: 1,
+                max: 4,  // lengthRoundUp + 1
+                maxTicksLimit: 3, // data length
                 min: 0,
               },
             },
@@ -1922,24 +1897,64 @@ describe('helpers graph', ()=> {
           mode: 'label',
         },
       },
-      keysSelected: [
+      needRefresh: true,
+      ready: true,
+      background: 'gray', // regurgitated
+      keysSelected: [ // reguritated
         'key1',
         'key3',
       ],
-      needRefresh: true,
-      ready: true,
-      yAxisArray: [
-        'lbs',
-        'cubits',
+      yAxisArray: [  // history key
+        'lbs',       // key 1
+        'cubits',    // key 3
       ],
-      yAxisIdArray: [
-        'A',
-        'B',
-      ],
+      testingKeys: {
+        yAxisIdArray: [ // testing key only
+          'A',          // key 1
+          'B',          // key 3
+        ],
+        dataArraysRaw: [  // testing key only
+          [            // key 1
+            1,
+            15,
+            25,
+          ],
+          [            // key 3
+            5,
+            52,
+            62,
+          ],
+        ],
+        dataArrays: [  // testing key only
+          [            // key 1
+            1,
+            15,
+            25,
+          ],
+          [            // key 3
+            5,
+            52,
+            62,
+          ],
+        ],
+        dataLabelArray: [ // testing key only
+          // this just looks up the key's label in legendObject
+          'the first key',// key 1
+          'banana',       // key 3
+        ],
+        first: 0,
+        dataLength: 3,
+        maxTicksLimitDown: 3,
+        maxTicksLimitUp: 3,
+        lengthRoundDown: 3,
+        lengthRoundUp: 3,
+        pointsToRemove: 0,
+        pointsToAdd: 0,
+        ticksXChanged: true,
+      }
     };
-
-
     const result = createGraph(input);
+    console.log('result', result);
     expect(result).to.deep.equal(expectedResult);
   });
 
