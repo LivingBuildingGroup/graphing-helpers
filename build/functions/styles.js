@@ -24,6 +24,47 @@ var opacityPoint = 1;
 var opacityPointHover = 1;
 var opacityPointBackgroundHover = 1;
 
+var createStyle = function createStyle(input) {
+  var general = {
+    opacityBackground: input.opacityBackground || .2,
+    opacityBackgroundHover: input.opacityBackgroundHover || .4,
+    opacityBorder: input.opacityBorder || 1,
+    opacityBorderHover: input.opacityBorderHover || 1,
+    opacityPoint: input.opacityPoint || 1,
+    opacityPointHover: input.opacityPointHover || 1,
+    opacityPointBackgroundHover: input.opacityPointBackgroundHover || 1,
+    fill: input.fill || true,
+
+    lineTension: 0.5, // over 0.5 seems bulbous, 0 is angular
+    bezierCurve: true,
+    bezierCurveTension: 0.5,
+
+    borderCapStyle: 'butt',
+    borderDash: [],
+    borderDashOffset: 0.0,
+    borderJoinStyle: 'miter',
+    borderWidth: 1,
+    pointBorderWidth: 1,
+    pointHoverRadius: 5,
+    pointHoverBorderWidth: 2,
+    pointRadius: 1,
+    pointHitRadius: 10
+  };
+
+  var color = input.colors || colors[0];
+  var colors = {
+    backgroundColor: 'rgba(' + color + ',' + opacityBackground + ')',
+    hoverBackgroundColor: 'rgba(' + color + ',' + opacityBackgroundHover + ')',
+    borderColor: 'rgba(' + color + ',' + opacityBorder + ')',
+    hoverBorderColor: 'rgba(' + color + ',' + opacityBorderHover + ')',
+    pointBorderColor: 'rgba(' + color + ',' + opacityPoint + ')',
+    pointHoverBorderColor: 'rgba(' + color + ',' + opacityPointHover + ')',
+    pointHoverBackgroundColor: 'rgba(' + color + ',' + opacityPointBackgroundHover + ')',
+    pointBackgroundColor: input.pointBackgroundColor || '#fff'
+  };
+  return Object.assign({}, general, colors);
+};
+
 var style0 = {
   fill: true,
 
@@ -223,5 +264,6 @@ var style14 = Object.assign({}, style0, {
 var palette1 = [style1, style2, style3, style4, style5, style6, style7, style8, style9, style10, style11, style12, style13, style14];
 
 module.exports = {
-  palette1: palette1
+  palette1: palette1,
+  createStyle: createStyle
 };
