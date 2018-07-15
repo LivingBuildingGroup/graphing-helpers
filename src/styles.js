@@ -27,7 +27,7 @@ const createStyle = input => {
     pointHitRadius:       10,
   };
 
-  const color = input.colors || colors[0];
+  const color = input.color || colors[0];
   const colors =  {
     backgroundColor:           `rgba(${color},${general.opacityBackground})`,
     hoverBackgroundColor:      `rgba(${color},${general.opacityBackgroundHover})`,
