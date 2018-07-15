@@ -1,5 +1,8 @@
 'use strict';
 
+var _require = require('./palettes'),
+    selectPalette = _require.selectPalette;
+
 var createStyle = function createStyle(input) {
   var general = {
     opacityBackground: input.opacityBackground || .2,
@@ -27,7 +30,10 @@ var createStyle = function createStyle(input) {
     pointHitRadius: 10
   };
 
-  var color = input.colors || colors[0];
+  var color = input.color;
+  if (!color) {
+    color = selectPalette(23)[0];
+  }
   var colors = {
     backgroundColor: 'rgba(' + color + ',' + general.opacityBackground + ')',
     hoverBackgroundColor: 'rgba(' + color + ',' + general.opacityBackgroundHover + ')',
