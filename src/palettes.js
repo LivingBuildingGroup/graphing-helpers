@@ -19,7 +19,7 @@ const { isPrimitiveNumber } = require('conjunction-junction');
  * and I don't see a need to go beyond 23 colors for graphing
  * 
  * POLYCHROMATIC RANDOM ACCESS
- * named23 returns an object with semantic keys for the colors in palette23.
+ * namedColors returns an object with semantic keys for the colors in palette23.
  */
 const general14 = () => ([
   '236,  83, 158', //  0 orange-red
@@ -39,7 +39,7 @@ const general14 = () => ([
   '  0, 153,  51', // 14 not happy with this yet
 ]);
 
-const bright7 = option => {
+const createBright7 = option => {
   // default returns object to use to mutate 7 palettes
   if(option === 'array'){
     return [
@@ -53,30 +53,35 @@ const bright7 = option => {
     ];
   } else {
     return {
-      bark8:     '254, 128,  0',
-      fern8:     '  0, 254,  0',
-      corn8:     '254, 254,  0',
-      peach8:    '254,  0,   0',
-      wine8:     '169,  0,  81',
-      eggplant8: '254,  0, 254',
-      sky8:      '  0,  0, 254',
+      bark8:     '254, 128,   0',
+      fern8:     '  0, 254,   0',
+      corn8:     '254, 254,   0',
+      peach8:    '254,   0,   0',
+      wine8:     '169,   0,  81',
+      eggplant8: '254,   0, 254',
+      sky8:      '  0,   0, 254',
     };
   }
 };
 
 const addBright = (arr, key, pos) => {
   // this MUTATES arr ! (seems the most efficient solution in this limited scope and size)
-  const bright7 = bright7();
+  const bright7 = createBright7();
   if(pos < 0){
     arr.unshift(bright7[key]);
   } else if (pos < arr.length) {
     arr[pos] = bright7[key];
   } else {
-    bright7.push(bright7[key]);
+    arr.push(bright7[key]);
   }
 };
 
-const bark8 = pos => {
+const addBrights = arr => {
+  const bright7 = createBright7('array');
+  return [...bright7, ...arr];
+};
+
+const createBark8 = pos => {
   const arr = [
     '246, 189, 111',
     '227, 163,  79',
@@ -93,7 +98,7 @@ const bark8 = pos => {
   return arr;
 };
 
-const fern8 = pos => {
+const createFern8 = pos => {
   const arr = [
     '128, 248, 109',
     ' 99,  24,  79',
@@ -110,7 +115,7 @@ const fern8 = pos => {
   return arr;
 };
 
-const corn8 = pos => {
+const createCorn8 = pos => {
   const arr = [
     '227, 243,  92',
     '220, 233,  49',
@@ -127,7 +132,7 @@ const corn8 = pos => {
   return arr;
 };
 
-const peach8 = pos => {
+const createPeach8 = pos => {
   const arr = [
     '245, 167, 143',
     '234, 138, 110',
@@ -144,7 +149,7 @@ const peach8 = pos => {
   return arr;
 };
 
-const wine8 = pos => {
+const createWine8 = pos => {
   const arr = [
     '243, 158, 162',
     '227, 124, 131',
@@ -153,7 +158,7 @@ const wine8 = pos => {
     '150,  46,  62',
     '132,  28,  45',
     '118,  15,  34',
-    '93,    6,  22',
+    ' 93,   6,  22',
   ]; 
   if(isPrimitiveNumber(pos)){
     addBright(arr, 'wine8', pos);
@@ -161,7 +166,7 @@ const wine8 = pos => {
   return arr;
 };
 
-const eggplant8 = pos => {
+const createEggplant8 = pos => {
   const arr = [
     '227, 146, 247',
     '206, 114, 225',
@@ -178,7 +183,7 @@ const eggplant8 = pos => {
   return arr;
 };
 
-const sky8 = pos => {
+const createSky8 = pos => {
   const arr = [
     '189, 209, 245',
     '155, 180, 223',
@@ -195,16 +200,144 @@ const sky8 = pos => {
   return arr;
 };
 
-const palette23 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
+const createPalette11 = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
 
-  return [
+  const arr = [
+    bark8[1],
+    fern8[2],
+    corn8[3],
+    peach8[4],
+    wine8[7],
+    sky8[7],
+    fern8[6],
+    sky8[1],
+    peach8[0],
+    eggplant8[6],
+    eggplant8[0],
+  ];
+
+  if(option === 'bright'){
+    return addBrights(arr);
+  }
+  return arr;
+};
+
+const createPalette13 = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
+
+  const arr = [
+    bark8[1],
+    fern8[2],
+    corn8[3],
+    peach8[4],
+    wine8[7],
+    sky8[7],
+    fern8[6],
+    sky8[1],
+    peach8[0],
+    eggplant8[6],
+    eggplant8[0],
+    bark8[3],
+    sky8[4],
+  ];
+  if(option === 'bright'){
+    return addBrights(arr);
+  }
+  return arr;
+};
+
+const createPalette16 = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
+
+  const arr = [
+    bark8[1],
+    fern8[2],
+    corn8[3],
+    peach8[4],
+    wine8[7],
+    sky8[7],
+    fern8[6],
+    sky8[1],
+    peach8[0],
+    eggplant8[6],
+    eggplant8[0],
+    bark8[3],
+    sky8[4],
+    peach8[2],
+    corn8[0],
+    bark8[7],
+  ];
+  if(option === 'bright'){
+    return addBrights(arr);
+  }
+  return arr;
+};
+
+const createPalette19 = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
+
+  const arr = [
+    bark8[1],
+    fern8[2],
+    corn8[3],
+    peach8[4],
+    wine8[7],
+    sky8[7],
+    fern8[6],
+    sky8[1],
+    peach8[0],
+    eggplant8[6],
+    eggplant8[0],
+    bark8[3],
+    sky8[4],
+    peach8[2],
+    corn8[0],
+    bark8[7],
+    eggplant8[3],
+    fern8[0],
+    wine8[4],
+  ];
+  if(option === 'bright'){
+    return addBrights(arr);
+  }
+  return arr;
+};
+
+const createPalette23 = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
+
+  const arr = [
     bark8[1],
     fern8[2],
     corn8[3],
@@ -229,145 +362,38 @@ const palette23 = () => {
     wine8[1],
     peach8[6],
   ];
+  if(option === 'bright'){
+    return addBrights(arr);
+  }
+  return arr;
 };
 
-const palette19 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
-
-  return [
-    bark8[1],
-    fern8[2],
-    corn8[3],
-    peach8[4],
-    wine8[7],
-    sky8[7],
-    fern8[6],
-    sky8[1],
-    peach8[0],
-    eggplant8[6],
-    eggplant8[0],
-    bark8[3],
-    sky8[4],
-    peach8[2],
-    corn8[0],
-    bark8[7],
-    eggplant8[3],
-    fern8[0],
-    wine8[4],
-  ];
-};
-
-const palette16 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
-
-  return [
-    bark8[1],
-    fern8[2],
-    corn8[3],
-    peach8[4],
-    wine8[7],
-    sky8[7],
-    fern8[6],
-    sky8[1],
-    peach8[0],
-    eggplant8[6],
-    eggplant8[0],
-    bark8[3],
-    sky8[4],
-    peach8[2],
-    corn8[0],
-    bark8[7],
-  ];
-};
-
-const palette13 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
-
-  return [
-    bark8[1],
-    fern8[2],
-    corn8[3],
-    peach8[4],
-    wine8[7],
-    sky8[7],
-    fern8[6],
-    sky8[1],
-    peach8[0],
-    eggplant8[6],
-    eggplant8[0],
-    bark8[3],
-    sky8[4],
-  ];
-};
-
-const palette11 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
-
-  return [
-    bark8[1],
-    fern8[2],
-    corn8[3],
-    peach8[4],
-    wine8[7],
-    sky8[7],
-    fern8[6],
-    sky8[1],
-    peach8[0],
-    eggplant8[6],
-    eggplant8[0],
-  ];
-};
-
-const selectPalette = num => {
+const selectPalette = (num, option) => {
   if(!isPrimitiveNumber(num)){
-    return palette23();
+    return createPalette23(option);
   } else if (num <= 11) {
-    return palette11();
+    return createPalette11(option);
   } else if (num <= 13) {
-    return palette13();
+    return createPalette13(option);
   } else if (num <= 16) {
-    return palette16();
+    return createPalette16(option);
   } else if (num <= 19) {
-    return palette19();
+    return createPalette19(option);
   } else {
-    return palette23();
+    return createPalette23(option);
   }
 };
 
-const named23 = () => {
-  const bark8     = bark8();
-  const fern8     = fern8();
-  const corn8     = corn8();
-  const peach8    = peach8();
-  const wine8     = wine8();
-  const eggplant8 = eggplant8();
-  const sky8      = sky8();
+const createNamed = option => {
+  const bark8     = createBark8();
+  const fern8     = createFern8();
+  const corn8     = createCorn8();
+  const peach8    = createPeach8();
+  const wine8     = createWine8();
+  const eggplant8 = createEggplant8();
+  const sky8      = createSky8();
 
-  return {
+  const namedColors = {
     mocha:      bark8[1],
     cinnamon:   bark8[3],
     chocolate:  bark8[7],
@@ -392,24 +418,38 @@ const named23 = () => {
     dusk:       sky8[4],
     navy:       sky8[7],
   };
+
+  if(option === 'bright'){
+    const bright7 = createBright7();
+    namedColors.brown  = bright7.bark8;
+    namedColors.green  = bright7.fern8;
+    namedColors.yellow = bright7.corn8;
+    namedColors.red    = bright7.peach8;
+    namedColors.violet = bright7.wine8;
+    namedColors.purple = bright7.eggplant8;
+    namedColors.blue   = bright7.sky8;
+  }
+
+  return namedColors;
 };
 
 module.exports = {
   general14,
-  bright7,
+  createBright7,
   addBright,
-  bark8,
-  fern8,
-  corn8,
-  peach8,
-  wine8,
-  eggplant8,
-  sky8,
-  palette23,
-  palette19,
-  palette16,
-  palette13,
-  palette11,
+  addBrights,
+  createBark8,
+  createFern8,
+  createCorn8,
+  createPeach8,
+  createWine8,
+  createEggplant8,
+  createSky8,
+  createPalette11,
+  createPalette13,
+  createPalette16,
+  createPalette19,
+  createPalette23,
   selectPalette,
-  named23,
+  createNamed,
 };

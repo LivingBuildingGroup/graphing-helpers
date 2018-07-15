@@ -34,7 +34,7 @@ const {
   // selectors
   createSelectors } = require('../index');
 
-describe('graphing-helpers', ()=> { 
+describe('graphs', ()=> { 
 
   it('parseDataArraysByKeys', () => {
     const arrayOfDataObjects = [
