@@ -1,16 +1,19 @@
 'use strict';
 
-const { selectPalette } = require('./palettes');
+const { 
+  selectPalette,
+  createNamed }           = require('./palettes');
+const { isObjectLiteral } = require('conjunction-junction');
 
 const createStyle = input => {
   const defaultGeneral = {
     fill:                   true,
-    opacityBackground:      .1, 
+    opacityBackground:      0.1, 
     // 0.05: faint on white, barely visible over gray, 
     // 0.1: faint over white and gray (good for all colors over white)
     // 0.2: prominent but translucent over white and gray (good for dark colors over gray)
     // 1 is solid, 0.2:, 
-    opacityBackgroundHover: .4,
+    opacityBackgroundHover: 0.4,
     opacityBorder:          1,
     opacityBorderHover:     1,
     opacityPoint:           1,
@@ -53,7 +56,8 @@ const createStyle = input => {
     pointBorderColor:          `rgba(${color},${general.opacityPoint})`,
     pointHoverBorderColor:     `rgba(${color},${general.opacityPointHover})`,
     pointHoverBackgroundColor: `rgba(${color},${general.opacityPointBackgroundHover})`,
-    pointBackgroundColor:      input.pointBackgroundColor || '#fff',
+    pointBackgroundColor:      input.pointBackgroundColor ? 
+      `rgba(${input.pointBackgroundColor},1)` : '#fff',
   };
   return Object.assign({},
     general,
@@ -61,6 +65,33 @@ const createStyle = input => {
   );
 };
 
+const createStylesArray = (keysSelected, styleKey, namedColors, fallbackArray) => {
+  if(!Array.isArray(keysSelected)) return [];
+  const sk = styleKey;
+  const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
+  const fa = fallbackArray ? fallbackArray : selectPalette(30);
+  const stylesArray = 
+    !isObjectLiteral(sk) ? 
+      keysSelected.map((k,i)=>createStyle({color:fa[i]})) :
+      keysSelected.map((k,i)=>{
+        const style = !sk[k] ?
+          { color: fa[i] } :
+          sk[k].color && sk[k].style ?
+            Object.assign({},
+              sk[k].style,
+              {color: nc[sk[k].color],} 
+            ):
+            sk[k].color ?
+              { color: nc[sk[k].color] } :
+              sk[k].style ?
+                sk[k].style :
+                { color: fa[i-1] } ;
+        return createStyle(style);
+      });
+  return stylesArray;
+};
+
 module.exports = {
   createStyle,
+  createStylesArray,
 };
