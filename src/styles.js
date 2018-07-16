@@ -3,31 +3,39 @@
 const { selectPalette } = require('./palettes');
 
 const createStyle = input => {
-  const general = {
-    opacityBackground:      input.opacityBackground || .2,
-    opacityBackgroundHover: input.opacityBackgroundHover || .4,
-    opacityBorder:          input.opacityBorder || 1,
-    opacityBorderHover:     input.opacityBorderHover || 1,
-    opacityPoint:           input.opacityPoint || 1,
-    opacityPointHover:      input.opacityPointHover || 1,
-    opacityPointBackgroundHover: input.opacityPointBackgroundHover || 1,
-    fill:                   input.fill || true,
+  const defaultGeneral = {
+    opacityBackground:      .2,
+    opacityBackgroundHover: .4,
+    opacityBorder:          1,
+    opacityBorderHover:     1,
+    opacityPoint:           1,
+    opacityPointHover:      1,
+    opacityPointBackgroundHover: 1,
+    fill:                   true,
   
-    lineTension:        0.5, // over 0.5 seems bulbous, 0 is angular
-    bezierCurve:        true,
-    bezierCurveTension: 0.5,
+    lineTension:            0.5, // over 0.5 seems bulbous, 0 is angular
+    bezierCurve:            true,
+    bezierCurveTension:     0.5,
 
-    borderCapStyle:        'butt',
-    borderDash:            [],
-    borderDashOffset:      0.0,
-    borderJoinStyle:       'miter',
-    borderWidth:           1,  
-    pointBorderWidth:      1,
-    pointHoverRadius:      5,
-    pointHoverBorderWidth: 2,
-    pointRadius:           1,
-    pointHitRadius:       10,
+    borderCapStyle:         'butt',
+    borderDash:             [],
+    borderDashOffset:       0.0,
+    borderJoinStyle:        'miter',
+    borderWidth:            1,  
+    pointBorderWidth:       1,
+    pointHoverRadius:       5,
+    pointHoverBorderWidth:  2,
+    pointRadius:            1,
+    pointHitRadius:         10,
   };
+  const general = {};
+  for (let key in defaultGeneral){
+    if(typeof input[key] === typeof defaultGeneral[key]){
+      general[key] = input[key];
+    } else {
+      general[key] = defaultGeneral[key];
+    }
+  }
 
   let color = input.color;
   if(!color) {
