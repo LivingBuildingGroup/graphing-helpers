@@ -7,6 +7,7 @@ const createSelectors = input => {
     measurements,
     units,
     labels,
+    abbrevs,
     arrayOfKeys,
     arrayOfDataGroups,
 
@@ -24,8 +25,9 @@ const createSelectors = input => {
           if(units[key]){
             selectors.push(prefixedKey);
             legendObject[prefixedKey] = [
-              `${group} ${labels[key]}`, // 0 = label, do not change
-              units[key]   // 1 = units, do not change
+              `${group} ${abbrevs[key]}`, 
+              `${group} ${labels[key]}`, 
+              units[key],
             ];
           }
           keysAll.push(prefixedKey); // superset of keys with units and without
@@ -39,8 +41,9 @@ const createSelectors = input => {
         if(units[key]){
           selectors.push(prefixedKey);
           legendObject[prefixedKey] = [
-            `${prefix} ${labels[key]}`, // 0 = label, do not change
-            units[key]   // 1 = units, do not change
+            `${prefix} ${abbrevs[key]}`, 
+            `${prefix} ${labels[key]}`, 
+            units[key]
           ];
         }
         keysAll.push(prefixedKey); // superset of keys with units and without
@@ -54,8 +57,9 @@ const createSelectors = input => {
         if(units[key]){
           selectors.push(key);
           legendObject[key] = [
-            labels[key], // 0 = label, do not change
-            units[key]   // 1 = units, do not change
+            abbrevs[key],
+            labels[key],
+            units[key]  
           ];
         }
         keysAll.push(key);  // superset of keys with units and without

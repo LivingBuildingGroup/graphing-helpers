@@ -79,13 +79,16 @@ const createStylesArray = (keysSelected, styleKey, namedColors, fallbackArray) =
           sk[k].color && sk[k].style ?
             Object.assign({},
               sk[k].style,
-              {color: nc[sk[k].color],} 
+              { color: nc[sk[k].color] } 
             ):
             sk[k].color ?
               { color: nc[sk[k].color] } :
               sk[k].style ?
-                sk[k].style :
-                { color: fa[i-1] } ;
+                Object.assign({},
+                  sk[k].style,
+                  { color: fa[i] }
+                ) :
+                { color: fa[i] } ;
         return createStyle(style);
       });
   return stylesArray;

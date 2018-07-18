@@ -484,19 +484,20 @@ describe('styles', ()=> {
     const style3 = Object.assign({},
       general,
       {
-        // VVVVVVVVVV color is undefined in key, so mapped from palette23()[2] ... corn8[3]
-        backgroundColor:           'rgba(186, 173,  26,0.1)',// opacityBackground}),
-        hoverBackgroundColor:      'rgba(186, 173,  26,0.4)',// opacityBackgroundHover})',
-        borderColor:               'rgba(186, 173,  26,1)',// opacityBorder})',
-        hoverBorderColor:          'rgba(186, 173,  26,1)',// opacityBorderHover})',
-        pointBorderColor:          'rgba(186, 173,  26,1)',// opacityPoint})',
-        pointHoverBorderColor:     'rgba(186, 173,  26,1)',// opacityPointHover})',
-        pointHoverBackgroundColor: 'rgba(186, 173,  26,1)',// opacityPointBackgroundHover})',
+        // VVVVVVVVVV color is invalid, so mapped from palette23()[0] ... bark8[1]
+        backgroundColor:           'rgba(227, 163,  79,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba(227, 163,  79,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(227, 163,  79,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(227, 163,  79,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(227, 163,  79,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(227, 163,  79,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(227, 163,  79,1)',// opacityPointBackgroundHover})',
       }
     );
     const style4 = Object.assign({},
       general,
       {
+        borderDash: [10,10], // <<<<< passed in
         // VVVVVVVVVV color is undefined in key, so mapped from palette23()[3] ... peach8[4]
         backgroundColor:           'rgba(203,  71,  43,0.1)',// opacityBackground}),
         hoverBackgroundColor:      'rgba(203,  71,  43,0.4)',// opacityBackgroundHover})',

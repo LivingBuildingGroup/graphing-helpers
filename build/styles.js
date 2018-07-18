@@ -73,7 +73,7 @@ var createStylesArray = function createStylesArray(keysSelected, styleKey, named
   var stylesArray = !isObjectLiteral(sk) ? keysSelected.map(function (k, i) {
     return createStyle({ color: fa[i] });
   }) : keysSelected.map(function (k, i) {
-    var style = !sk[k] ? { color: fa[i] } : sk[k].color && sk[k].style ? Object.assign({}, sk[k].style, { color: nc[sk[k].color] }) : sk[k].color ? { color: nc[sk[k].color] } : sk[k].style ? sk[k].style : { color: fa[i - 1] };
+    var style = !sk[k] ? { color: fa[i] } : sk[k].color && sk[k].style ? Object.assign({}, sk[k].style, { color: nc[sk[k].color] }) : sk[k].color ? { color: nc[sk[k].color] } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[i] }) : { color: fa[i] };
     return createStyle(style);
   });
   return stylesArray;

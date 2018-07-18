@@ -5,6 +5,7 @@ var createSelectors = function createSelectors(input) {
       measurements = input.measurements,
       units = input.units,
       labels = input.labels,
+      abbrevs = input.abbrevs,
       arrayOfKeys = input.arrayOfKeys,
       arrayOfDataGroups = input.arrayOfDataGroups;
 
@@ -20,9 +21,7 @@ var createSelectors = function createSelectors(input) {
           var prefixedKey = group + '__' + key;
           if (units[key]) {
             selectors.push(prefixedKey);
-            legendObject[prefixedKey] = [group + ' ' + labels[key], // 0 = label, do not change
-            units[key] // 1 = units, do not change
-            ];
+            legendObject[prefixedKey] = [group + ' ' + abbrevs[key], group + ' ' + labels[key], units[key]];
           }
           keysAll.push(prefixedKey); // superset of keys with units and without
         });
@@ -34,9 +33,7 @@ var createSelectors = function createSelectors(input) {
         var key = unPrefix[1];
         if (units[key]) {
           selectors.push(prefixedKey);
-          legendObject[prefixedKey] = [prefix + ' ' + labels[key], // 0 = label, do not change
-          units[key] // 1 = units, do not change
-          ];
+          legendObject[prefixedKey] = [prefix + ' ' + abbrevs[key], prefix + ' ' + labels[key], units[key]];
         }
         keysAll.push(prefixedKey); // superset of keys with units and without
       }
@@ -48,9 +45,7 @@ var createSelectors = function createSelectors(input) {
       for (var _key in measurements[0]) {
         if (units[_key]) {
           selectors.push(_key);
-          legendObject[_key] = [labels[_key], // 0 = label, do not change
-          units[_key] // 1 = units, do not change
-          ];
+          legendObject[_key] = [abbrevs[_key], labels[_key], units[_key]];
         }
         keysAll.push(_key); // superset of keys with units and without
       }

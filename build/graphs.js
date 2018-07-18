@@ -10,6 +10,10 @@ var _require = require('conjunction-junction'),
 
 var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
+var indexAbbrev = 0;
+var indexLabel = 1;
+var indexUnit = 2;
+
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
 var parseDataArraysByKeys = function parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys) {
@@ -25,7 +29,7 @@ var parseDataArraysByKeys = function parseDataArraysByKeys(arrayOfDataObjects, a
 
 var parseLabelsByKeys = function parseLabelsByKeys(legendObject, arrayOfKeys) {
   var dataLabelArray = arrayOfKeys.map(function (key) {
-    var label = typeof legendObject[key] === 'string' ? legendObject[key] : !Array.isArray(legendObject[key]) ? key : typeof legendObject[key][0] === 'string' ? legendObject[key][0] : key;
+    var label = typeof legendObject[key] === 'string' ? legendObject[key] : !Array.isArray(legendObject[key]) ? key : typeof legendObject[key][indexLabel] === 'string' ? legendObject[key][indexLabel] : key;
     return label;
   });
   return dataLabelArray;
@@ -35,7 +39,7 @@ var parseYAxisByKeys = function parseYAxisByKeys(legendObject, arrayOfKeys) {
   var axesUsed = [];
   var yAxisIdArray = [];
   var yAxisArray = arrayOfKeys.map(function (key, i) {
-    var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][1] === 'string' ? legendObject[key][1] : 'units';
+    var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][indexUnit] === 'string' ? legendObject[key][indexUnit] : 'units';
     var axisIndex = axesUsed.findIndex(function (a) {
       return a === yAxisLabel;
     });

@@ -86,11 +86,11 @@ describe('graphs', ()=> {
       'key1', 'key3'
     ];
     const legendObject = { // with no Y-axis units
-      key1: ['the first key' ,'meter'],
-      key2: ['the second key','yard' ],
-      key3: ['banana'        ,'stick'],
-      key4: ['not used'      ,'meter'],
-      key5: ['decimals'      ,'meter'],
+      key1: ['1st K', 'the first key' ,'meter'],
+      key2: ['2nd K', 'the second key','yard' ],
+      key3: ['Ban'  , 'banana'        ,'stick'],
+      key4: ['Huh?' , 'not used'      ,'meter'],
+      key5: ['EU'   , 'decimals'      ,'meter'],
     };
     const expectedResult = [
       'the first key', 'banana',
@@ -126,11 +126,11 @@ describe('graphs', ()=> {
       'key1', 'key3', 'key5',
     ];
     const legendObject = { // with no Y-axis units
-      key1: ['the first key' ,'meter'],
-      key2: ['the second key','yard' ],
-      key3: ['banana'        ,'stick'],
-      key4: ['not used'      ,'meter'],
-      key5: ['decimals'      ,'meter'],
+      key1: ['1st K', 'the first key' ,'meter'],
+      key2: ['2nd K', 'the second key','yard' ],
+      key3: ['Ban'  , 'banana'        ,'stick'],
+      key4: ['Huh?' , 'not used'      ,'meter'],
+      key5: ['EU'   , 'decimals'      ,'meter'],
     };
     const expectedResult = {
       yAxisArray: [
@@ -166,11 +166,11 @@ describe('graphs', ()=> {
     ];
     const legendObject = {
       //     label           , Y axis
-      key1: ['the first key' , 'lbs'],
-      key2: ['the second key', 'ft'],
-      key3: ['banana'        , 'cubits'],
-      key4: ['not used'      , 'nanometers'],
-      key5: ['decimals'      , 'meters'],
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
     };
     const expectedResult = {
       dataArraysRaw: [
@@ -237,11 +237,11 @@ describe('graphs', ()=> {
     ];
     const legendObject = {
       //     label           , Y axis
-      key1: ['the first key' , 'lbs'],
-      key2: ['the second key', 'ft'],
-      key3: ['banana'        , 'cubits'],
-      key4: ['not used'      , 'nanometers'],
-      key5: ['decimals'      , 'meters'],
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
     };
     const expectedResult = {
       dataArraysRaw: [
@@ -1546,11 +1546,16 @@ describe('graphs', ()=> {
       unit1: 'gallons of stuff',
       unit2: 'lbs is weight',
     };
+    const abbrevs = {
+      unit1: 'GALS',
+      unit2: 'POUNDS',
+    };
     const input = {
       measurementsConvert,
       measurements,
       units,
       labels,
+      abbrevs,
     };
     const expectedResult = {
       selectors: [
@@ -1562,8 +1567,8 @@ describe('graphs', ()=> {
         'unit2',
       ],
       legendObject: {
-        unit1: ['gallons of stuff', 'gals'],
-        unit2: ['lbs is weight'   , 'lbs' ],
+        unit1: ['GALS'   ,'gallons of stuff', 'gals'],
+        unit2: ['POUNDS' ,'lbs is weight'   , 'lbs' ],
       },
     };
     const result = createSelectors(input);
@@ -1588,11 +1593,16 @@ describe('graphs', ()=> {
       unit1: 'gallons of stuff',
       unit2: 'lbs is weight',
     };
+    const abbrevs = {
+      unit1: 'GALS',
+      unit2: 'POUNDS',
+    };
     const input = {
       measurementsConvert,
       measurements,
       units,
       labels,
+      abbrevs,
     };
     const expectedResult = {
       selectors: [
@@ -1602,10 +1612,10 @@ describe('graphs', ()=> {
         'test2__unit2',
       ],
       legendObject: {
-        test1__unit1: ['test1 gallons of stuff', 'gals'],
-        test1__unit2: ['test1 lbs is weight'   , 'lbs' ],
-        test2__unit1: ['test2 gallons of stuff', 'gals'],
-        test2__unit2: ['test2 lbs is weight'   , 'lbs' ],
+        test1__unit1: ['test1 GALS'  ,'test1 gallons of stuff', 'gals'],
+        test1__unit2: ['test1 POUNDS','test1 lbs is weight'   , 'lbs' ],
+        test2__unit1: ['test2 GALS'  ,'test2 gallons of stuff', 'gals'],
+        test2__unit2: ['test2 POUNDS','test2 lbs is weight'   , 'lbs' ],
       },
       keysAll: [
         'test1__unit1',
@@ -1636,6 +1646,10 @@ describe('graphs', ()=> {
       unit1: 'gallons of stuff',
       unit2: 'lbs is weight',
     };
+    const abbrevs = {
+      unit1: 'GALS',
+      unit2: 'POUNDS',
+    };
     const arrayOfKeys = ['unit1','unit2'];
     const arrayOfDataGroups = ['test1','test2'];
     const input = {
@@ -1643,6 +1657,7 @@ describe('graphs', ()=> {
       measurements,
       units,
       labels,
+      abbrevs,
       arrayOfKeys,
       arrayOfDataGroups,
     };
@@ -1654,10 +1669,10 @@ describe('graphs', ()=> {
         'test2__unit2',
       ],
       legendObject: {
-        test1__unit1: ['test1 gallons of stuff', 'gals'],
-        test1__unit2: ['test1 lbs is weight'   , 'lbs' ],
-        test2__unit1: ['test2 gallons of stuff', 'gals'],
-        test2__unit2: ['test2 lbs is weight'   , 'lbs' ],
+        test1__unit1: ['test1 GALS'  ,'test1 gallons of stuff', 'gals'],
+        test1__unit2: ['test1 POUNDS','test1 lbs is weight'   , 'lbs' ],
+        test2__unit1: ['test2 GALS'  ,'test2 gallons of stuff', 'gals'],
+        test2__unit2: ['test2 POUNDS','test2 lbs is weight'   , 'lbs' ],
       },
       keysAll: [
         'test1__unit1',
@@ -1723,11 +1738,11 @@ describe('graphs', ()=> {
       // legend SHOULD have a key for all measurements
       legendObject: {
       //     label           , Y axis
-        key1: ['the first key' , 'lbs'],
-        key2: ['the second key', 'ft'],
-        key3: ['banana'        , 'cubits'],
-        key4: ['not used'      , 'nanometers'],
-        key5: ['decimals'      , 'meters'],
+        key1: ['1stK', 'the first key' , 'lbs'       ],
+        key2: ['2ndK', 'the second key', 'ft'        ],
+        key3: ['Bana', 'banana'        , 'cubits'    ],
+        key4: ['NoUs', 'not used'      , 'nanometers'],
+        key5: ['Decs', 'decimals'      , 'meters'    ],
       },
       // this narrows down measurements to what we want to graph
       keysSelected: [

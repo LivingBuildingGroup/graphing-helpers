@@ -7,6 +7,10 @@ const { isPrimitiveNumber,
 
 const alpha = ['A','B','C','D','E','F','G','H'];
 
+const indexAbbrev = 0;
+const indexLabel  = 1;
+const indexUnit   = 2;
+
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
 const parseDataArraysByKeys = (arrayOfDataObjects, arrayOfKeys) => {
@@ -25,8 +29,8 @@ const parseLabelsByKeys = (legendObject, arrayOfKeys) => {
         legendObject[key] : 
         !Array.isArray(legendObject[key]) ? 
           key :
-          typeof legendObject[key][0] === 'string' ?
-            legendObject[key][0] :
+          typeof legendObject[key][indexLabel] === 'string' ?
+            legendObject[key][indexLabel] :
             key;
     return label;
   });
@@ -42,8 +46,8 @@ const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
         'units' : 
         !Array.isArray(legendObject[key]) ? 
           'units' :
-          typeof legendObject[key][1] === 'string' ?
-            legendObject[key][1] :
+          typeof legendObject[key][indexUnit] === 'string' ?
+            legendObject[key][indexUnit] :
             'units' ;
     const axisIndex = axesUsed.findIndex(a=>a===yAxisLabel);
     if(axisIndex<0){
