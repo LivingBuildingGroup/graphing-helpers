@@ -836,7 +836,7 @@ const createGraph = input => {
   
   const ticksXChanged = idealXTickSpacing ? true : false ;
 
-  const {needRefresh} = checkForGraphRefresh(
+  const {needRefresh, message} = checkForGraphRefresh(
     graphOptions, graphOptionsPrior,
     background, backgroundPrior,
     ticksXChanged
@@ -872,6 +872,7 @@ const createGraph = input => {
     keysSelected,   // regurgitated for ease of returning to state
     yAxisArray,     // history key
     testingKeys: {
+      refreshMessage: message,
       yAxisIdArray,  
       dataArraysRaw,
       dataArrays,

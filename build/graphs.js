@@ -697,7 +697,8 @@ var createGraph = function createGraph(input) {
   var ticksXChanged = idealXTickSpacing ? true : false;
 
   var _checkForGraphRefresh = checkForGraphRefresh(graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged),
-      needRefresh = _checkForGraphRefresh.needRefresh;
+      needRefresh = _checkForGraphRefresh.needRefresh,
+      message = _checkForGraphRefresh.message;
 
   var xLabelsArray = xLabelKey ? parseDataArraysByKeys(measurements, [xLabelKey])[0] : null;
   console.log('xLabelKey', xLabelKey);
@@ -727,6 +728,7 @@ var createGraph = function createGraph(input) {
     keysSelected: keysSelected, // regurgitated for ease of returning to state
     yAxisArray: yAxisArray, // history key
     testingKeys: {
+      refreshMessage: message,
       yAxisIdArray: yAxisIdArray,
       dataArraysRaw: dataArraysRaw,
       dataArrays: dataArrays,
