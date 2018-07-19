@@ -651,6 +651,7 @@ var createGraph = function createGraph(input) {
       legendObject = input.legendObject,
       keysSelected = input.keysSelected,
       idealXTickSpacing = input.idealXTickSpacing,
+      idealXTickSpacingPrior = input.idealXTickSpacingPrior,
       labelX = input.labelX,
       background = input.background,
       startX = input.startX,
@@ -694,7 +695,7 @@ var createGraph = function createGraph(input) {
 
   var graphOptions = createGraphOptions(optionsInput);
 
-  var ticksXChanged = idealXTickSpacing ? true : false;
+  var ticksXChanged = idealXTickSpacing !== idealXTickSpacingPrior ? true : false;
 
   var _checkForGraphRefresh = checkForGraphRefresh(graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged),
       needRefresh = _checkForGraphRefresh.needRefresh,
@@ -727,6 +728,7 @@ var createGraph = function createGraph(input) {
     // following 5 arrays are parallel
     keysSelected: keysSelected, // regurgitated for ease of returning to state
     yAxisArray: yAxisArray, // history key
+    idealXTickSpacingPrior: idealXTickSpacing, // history key
     testingKeys: {
       refreshMessage: message,
       yAxisIdArray: yAxisIdArray,

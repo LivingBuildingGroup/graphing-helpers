@@ -777,6 +777,7 @@ const createGraph = input => {
     legendObject,
     keysSelected,
     idealXTickSpacing,
+    idealXTickSpacingPrior,
     labelX,
     background,
     startX,
@@ -834,7 +835,7 @@ const createGraph = input => {
   
   const graphOptions = createGraphOptions(optionsInput);
   
-  const ticksXChanged = idealXTickSpacing ? true : false ;
+  const ticksXChanged = idealXTickSpacing !== idealXTickSpacingPrior ? true : false ;
 
   const {needRefresh, message} = checkForGraphRefresh(
     graphOptions, graphOptionsPrior,
@@ -871,6 +872,7 @@ const createGraph = input => {
     // following 5 arrays are parallel
     keysSelected,   // regurgitated for ease of returning to state
     yAxisArray,     // history key
+    idealXTickSpacingPrior: idealXTickSpacing, // history key
     testingKeys: {
       refreshMessage: message,
       yAxisIdArray,  
