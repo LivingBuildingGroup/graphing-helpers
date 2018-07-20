@@ -340,7 +340,7 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
   var win = input.win,
       marginVertical = input.marginVertical,
       marginHorizontal = input.marginHorizontal,
-      roomForStyleSelectors = input.roomForStyleSelectors;
+      reduceCanvasHeightBy = input.reduceCanvasHeightBy;
   // win is window; make sure it is passed in
 
   if (!win) return { canvasHeight: 0, canvasWidth: 0 };
@@ -348,7 +348,7 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
     return { w: 0, h: 0 };
   }
   var wRaw = win.innerWidth;
-  var hRaw = win.innerHeight - roomForStyleSelectors;
+  var hRaw = win.innerHeight - reduceCanvasHeightBy;
   var marginV = isPrimitiveNumber(marginVertical) ? marginVertical : 0;
   var marginH = isPrimitiveNumber(marginHorizontal) ? marginHorizontal : 0;
   var wAvailable = wRaw - marginV;
@@ -480,7 +480,7 @@ var createYAxis = function createYAxis(options) {
       background = options.background;
 
   var zeroLineColor = background === 'white' ? 'black' : 'white';
-  var gridLinesColor = background === 'white' ? '#444' : '#777';
+  var gridLinesColor = background === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
   var scaleAndTickColor = background === 'white' ? 'rgb(0, 0, 77)' : 'white';
   var gridLines = Object.assign({}, defaultYAxis.gridLines, {
     zeroLineColor: zeroLineColor,

@@ -32,7 +32,7 @@ const {
   checkForGraphRefresh,
   createGraph,
   // selectors
-  createSelectors } = require('../index');
+  createLayerSelectors } = require('../index');
 
 describe('graphs', ()=> { 
 
@@ -816,8 +816,8 @@ describe('graphs', ()=> {
       gridLines: {
         display: true,
         zeroLineColor: 'black', // calculated
-        color: '#444', // calculated
-        axisColor: '#444', // calculated
+        color: 'rgba(68,68,68,0.5)', // calculated
+        axisColor: 'rgba(68,68,68,0.5)', // calculated
       },
       pointLabels :{
         fontSize: 12,
@@ -852,8 +852,8 @@ describe('graphs', ()=> {
       gridLines: {
         display: true,
         zeroLineColor: 'white', // calculated
-        color: '#777', // calculated
-        axisColor: '#777', // calculated
+        color: 'rgba(119,119,119,0.5)', // calculated
+        axisColor: 'rgba(119,119,119,0.5)', // calculated
       },
       pointLabels :{
         fontSize: 12,
@@ -923,8 +923,8 @@ describe('graphs', ()=> {
         gridLines: {
           display: true,
           zeroLineColor: 'black', // calculated
-          color: '#444', // calculated
-          axisColor: '#444', // calculated
+          color: 'rgba(68,68,68,0.5)', // calculated
+          axisColor: 'rgba(68,68,68,0.5)', // calculated
         },
         pointLabels :{
           fontSize: 12,
@@ -947,8 +947,8 @@ describe('graphs', ()=> {
         gridLines: {
           display: true,
           zeroLineColor: 'black', // calculated
-          color: '#444', // calculated
-          axisColor: '#444', // calculated
+          color: 'rgba(68,68,68,0.5)', // calculated
+          axisColor: 'rgba(68,68,68,0.5)', // calculated
         },
         pointLabels :{
           fontSize: 12,
@@ -991,8 +991,8 @@ describe('graphs', ()=> {
         gridLines: {
           display: true,
           zeroLineColor: 'white', // calculated
-          color: '#777', // calculated
-          axisColor: '#777', // calculated
+          color: 'rgba(119,119,119,0.5)', // calculated
+          axisColor: 'rgba(119,119,119,0.5)', // calculated
         },
         pointLabels :{
           fontSize: 12,
@@ -1015,8 +1015,8 @@ describe('graphs', ()=> {
         gridLines: {
           display: true,
           zeroLineColor: 'white', // calculated
-          color: '#777', // calculated
-          axisColor: '#777', // calculated
+          color: 'rgba(119,119,119,0.5)', // calculated
+          axisColor: 'rgba(119,119,119,0.5)', // calculated
         },
         pointLabels :{
           fontSize: 12,
@@ -1086,8 +1086,8 @@ describe('graphs', ()=> {
             gridLines: {
               display: true,
               zeroLineColor: 'black', // calculated
-              color: '#444', // calculated
-              axisColor: '#444', // calculated
+              color: 'rgba(68,68,68,0.5)', // calculated
+              axisColor: 'rgba(68,68,68,0.5)', // calculated
             },
             pointLabels :{
               fontSize: 12,
@@ -1116,8 +1116,8 @@ describe('graphs', ()=> {
             gridLines: {
               display: true,
               zeroLineColor: 'black', // calculated
-              color: '#444', // calculated
-              axisColor: '#444', // calculated
+              color: 'rgba(68,68,68,0.5)', // calculated
+              axisColor: 'rgba(68,68,68,0.5)', // calculated
             },
             pointLabels :{
               fontSize: 12,
@@ -1140,8 +1140,8 @@ describe('graphs', ()=> {
             gridLines: {
               display: true,
               zeroLineColor: 'black', // calculated
-              color: '#444', // calculated
-              axisColor: '#444', // calculated
+              color: 'rgba(68,68,68,0.5)', // calculated
+              axisColor: 'rgba(68,68,68,0.5)', // calculated
             },
             pointLabels :{
               fontSize: 12,
@@ -1530,7 +1530,7 @@ describe('graphs', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('createSelectors convert 1', ()=>{
+  it('createLayerSelectors convert 1', ()=>{
     const measurementsConvert = 1;
     const measurements = [
       {
@@ -1558,11 +1558,11 @@ describe('graphs', ()=> {
       abbrevs,
     };
     const expectedResult = {
-      selectors: [
+      layerSelectors: [
         'unit1',
         'unit2',
       ],
-      keysAll: [
+      layersAll: [
         'unit1',
         'unit2',
       ],
@@ -1571,11 +1571,11 @@ describe('graphs', ()=> {
         unit2: ['POUNDS' ,'lbs is weight'   , 'lbs' ],
       },
     };
-    const result = createSelectors(input);
+    const result = createLayerSelectors(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('createSelectors convert 2 without arrays', ()=>{
+  it('createLayerSelectors convert 2 without arrays', ()=>{
     const measurementsConvert = 2;
     const measurements = [
       {
@@ -1605,7 +1605,7 @@ describe('graphs', ()=> {
       abbrevs,
     };
     const expectedResult = {
-      selectors: [
+      layerSelectors: [
         'test1__unit1',
         'test1__unit2',
         'test2__unit1',
@@ -1617,18 +1617,18 @@ describe('graphs', ()=> {
         test2__unit1: ['test2 GALS'  ,'test2 gallons of stuff', 'gals'],
         test2__unit2: ['test2 POUNDS','test2 lbs is weight'   , 'lbs' ],
       },
-      keysAll: [
+      layersAll: [
         'test1__unit1',
         'test1__unit2',
         'test2__unit1',
         'test2__unit2',
       ],
     };
-    const result = createSelectors(input);
+    const result = createLayerSelectors(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('createSelectors convert 2 with array', ()=>{
+  it('createLayerSelectors convert 2 with array', ()=>{
     const measurementsConvert = 2;
     const measurements = [
       {
@@ -1662,7 +1662,7 @@ describe('graphs', ()=> {
       arrayOfDataGroups,
     };
     const expectedResult = {
-      selectors: [
+      layerSelectors: [
         'test1__unit1',
         'test2__unit1',
         'test1__unit2',
@@ -1674,14 +1674,14 @@ describe('graphs', ()=> {
         test2__unit1: ['test2 GALS'  ,'test2 gallons of stuff', 'gals'],
         test2__unit2: ['test2 POUNDS','test2 lbs is weight'   , 'lbs' ],
       },
-      keysAll: [
+      layersAll: [
         'test1__unit1',
         'test2__unit1',
         'test1__unit2',
         'test2__unit2',
       ],
     };
-    const result = createSelectors(input);
+    const result = createLayerSelectors(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
@@ -1834,8 +1834,8 @@ describe('graphs', ()=> {
             {
               display: true,
               gridLines: {
-                axisColor: '#777',
-                color: '#777',
+                axisColor: 'rgba(119,119,119,0.5)',
+                color: 'rgba(119,119,119,0.5)',
                 display: true,
                 zeroLineColor: 'white',
               },
@@ -1861,8 +1861,8 @@ describe('graphs', ()=> {
             {
               display: true,
               gridLines: {
-                axisColor: '#777',
-                color: '#777',
+                axisColor: 'rgba(119,119,119,0.5)',
+                color: 'rgba(119,119,119,0.5)',
                 display: true,
                 zeroLineColor: 'white',
               },
@@ -1885,8 +1885,8 @@ describe('graphs', ()=> {
             {
               display: true,
               gridLines: {
-                axisColor: '#777',
-                color: '#777',
+                axisColor: 'rgba(119,119,119,0.5)',
+                color: 'rgba(119,119,119,0.5)',
                 display: true,
                 zeroLineColor: 'white',
               },
@@ -1914,6 +1914,7 @@ describe('graphs', ()=> {
       },
       needRefresh: true,
       ready: true,
+      idealXTickSpacingPrior: 1, // regurgitated from last time for later comparison
       background: 'gray', // regurgitated
       keysSelected: [ // reguritated
         'key1',
@@ -1964,6 +1965,7 @@ describe('graphs', ()=> {
         lengthRoundDown: 3,
         lengthRoundUp: 3,
         pointsToRemove: 0,
+        refreshMessage: 'X-axis tick count changed',
         pointsToAdd: 0,
         ticksXChanged: true,
       }

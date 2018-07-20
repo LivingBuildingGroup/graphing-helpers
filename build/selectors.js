@@ -1,6 +1,6 @@
 'use strict';
 
-var createSelectors = function createSelectors(input) {
+var createLayerSelectors = function createLayerSelectors(input) {
   var measurementsConvert = input.measurementsConvert,
       measurements = input.measurements,
       units = input.units,
@@ -10,8 +10,8 @@ var createSelectors = function createSelectors(input) {
       arrayOfDataGroups = input.arrayOfDataGroups;
 
 
-  var selectors = [];
-  var keysAll = [];
+  var layerSelectors = [];
+  var layersAll = [];
   var legendObject = {};
 
   if (measurementsConvert === 2) {
@@ -20,10 +20,10 @@ var createSelectors = function createSelectors(input) {
         arrayOfDataGroups.forEach(function (group) {
           var prefixedKey = group + '__' + key;
           if (units[key]) {
-            selectors.push(prefixedKey);
+            layerSelectors.push(prefixedKey);
             legendObject[prefixedKey] = [group + ' ' + abbrevs[key], group + ' ' + labels[key], units[key]];
           }
-          keysAll.push(prefixedKey); // superset of keys with units and without
+          layersAll.push(prefixedKey); // superset of keys with units and without
         });
       });
     } else if (measurements[0]) {
@@ -32,10 +32,10 @@ var createSelectors = function createSelectors(input) {
         var prefix = unPrefix[0];
         var key = unPrefix[1];
         if (units[key]) {
-          selectors.push(prefixedKey);
+          layerSelectors.push(prefixedKey);
           legendObject[prefixedKey] = [prefix + ' ' + abbrevs[key], prefix + ' ' + labels[key], units[key]];
         }
-        keysAll.push(prefixedKey); // superset of keys with units and without
+        layersAll.push(prefixedKey); // superset of keys with units and without
       }
     }
   } else if (measurementsConvert === 0) {
@@ -44,21 +44,21 @@ var createSelectors = function createSelectors(input) {
     if (measurements[0]) {
       for (var _key in measurements[0]) {
         if (units[_key]) {
-          selectors.push(_key);
+          layerSelectors.push(_key);
           legendObject[_key] = [abbrevs[_key], labels[_key], units[_key]];
         }
-        keysAll.push(_key); // superset of keys with units and without
+        layersAll.push(_key); // superset of keys with units and without
       }
     }
   }
 
   return {
-    selectors: selectors,
-    keysAll: keysAll,
+    layerSelectors: layerSelectors,
+    layersAll: layersAll,
     legendObject: legendObject
   };
 };
 
 module.exports = {
-  createSelectors: createSelectors
+  createLayerSelectors: createLayerSelectors
 };
