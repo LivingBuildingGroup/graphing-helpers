@@ -339,7 +339,8 @@ var createGraphData = function createGraphData(input) {
 var calcCanvasDimensions = function calcCanvasDimensions(input) {
   var win = input.win,
       marginVertical = input.marginVertical,
-      marginHorizontal = input.marginHorizontal;
+      marginHorizontal = input.marginHorizontal,
+      roomForStyleSelectors = input.roomForStyleSelectors;
   // win is window; make sure it is passed in
 
   if (!win) return { canvasHeight: 0, canvasWidth: 0 };
@@ -347,7 +348,7 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
     return { w: 0, h: 0 };
   }
   var wRaw = win.innerWidth;
-  var hRaw = win.innerHeight;
+  var hRaw = win.innerHeight - roomForStyleSelectors;
   var marginV = isPrimitiveNumber(marginVertical) ? marginVertical : 0;
   var marginH = isPrimitiveNumber(marginHorizontal) ? marginHorizontal : 0;
   var wAvailable = wRaw - marginV;
@@ -431,7 +432,7 @@ var createXAxis = function createXAxis(options) {
       maxTicksLimit = options.maxTicksLimit;
 
   var zeroLineColor = background === 'white' ? 'black' : 'white';
-  var gridLinesColor = background === 'white' ? '#444' : '#777';
+  var gridLinesColor = background === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
   var scaleAndTickColor = background === 'white' ? 'rgb(0, 0, 77)' : 'white';
   var gridLines = Object.assign({}, defaultXAxis.gridLines, {
     zeroLineColor: zeroLineColor,

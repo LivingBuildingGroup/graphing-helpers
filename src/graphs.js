@@ -385,6 +385,7 @@ const calcCanvasDimensions = input => {
     win,
     marginVertical,
     marginHorizontal,
+    roomForStyleSelectors,
   } = input;
   // win is window; make sure it is passed in
   if(!win) return {canvasHeight: 0 ,canvasWidth: 0};
@@ -392,7 +393,7 @@ const calcCanvasDimensions = input => {
     return {w: 0 ,h: 0};
   }
   const wRaw = win.innerWidth;
-  const hRaw = win.innerHeight;
+  const hRaw = win.innerHeight - roomForStyleSelectors;
   const marginV = isPrimitiveNumber(marginVertical) ? marginVertical : 0 ;
   const marginH = isPrimitiveNumber(marginHorizontal) ? marginHorizontal : 0 ;
   const wAvailable = wRaw - marginV;
@@ -503,8 +504,8 @@ const createXAxis = options => {
       'white';
   const gridLinesColor =
     background === 'white' ?
-      '#444':
-      '#777';
+      'rgba(68,68,68,0.5)':
+      'rgba(119,119,119,0.5)';
   const scaleAndTickColor =
     background === 'white' ?
       'rgb(0, 0, 77)':
