@@ -173,7 +173,7 @@ describe('graphs', ()=> {
       key5: ['M'    , 'decimals'      , 'meters'    ],
     };
     const expectedResult = {
-      dataArraysRaw: [
+      dataType0Raw: [
         [1, 15], // test1 key1
         [5, 52], // test1 key3
       ],
@@ -244,7 +244,7 @@ describe('graphs', ()=> {
       key5: ['M'    , 'decimals'      , 'meters'    ],
     };
     const expectedResult = {
-      dataArraysRaw: [
+      dataType0Raw: [
         [1,   15], // test1 key1
         [5,   52], // test1 key3
         [11, 151], // test7 key1
@@ -355,7 +355,7 @@ describe('graphs', ()=> {
   });
 
   it('calcDataLength', ()=>{
-    const dataArraysRaw = [
+    const dataType0Raw = [
       [1, 15, 'a', 4, 5, 'b', 7, 8],
       [5, 52, 'c', 3, 2, 'd', 9, 0],
     ];
@@ -366,12 +366,12 @@ describe('graphs', ()=> {
       last: 5,
       dataLength: 4,
     };
-    const result = calcDataLength(dataArraysRaw, start, end);
+    const result = calcDataLength(dataType0Raw, start, end);
     expect(result).to.deep.equal(expectedResult);
   });
 
   it('conformDataLength trim either end', ()=>{
-    const dataArraysRaw = [
+    const dataType0Raw = [
       [1, 15, 'a', 4, 5, 'b', 7, 8],
       [5, 52, 'c', 3, 2, 'd', 9, 0],
     ];
@@ -383,7 +383,7 @@ describe('graphs', ()=> {
     ];
     const pointsToAdd = undefined;
     const result = conformDataLength(
-      dataArraysRaw, 
+      dataType0Raw, 
       start, 
       length,
       pointsToAdd
@@ -392,7 +392,7 @@ describe('graphs', ()=> {
   });
 
   it('conformDataLength trim and extend', ()=>{
-    const dataArraysRaw = [
+    const dataType0Raw = [
       [1, 15, 'a', 4, 5, 'b', 7, 8],
       [5, 52, 'c', 3, 2, 'd', 9, 0],
     ];
@@ -404,7 +404,7 @@ describe('graphs', ()=> {
     ];
     const pointsToAdd = 3;
     const result = conformDataLength(
-      dataArraysRaw, 
+      dataType0Raw, 
       start, 
       length,
       pointsToAdd
@@ -662,7 +662,7 @@ describe('graphs', ()=> {
   it('createGraphData 1', ()=>{
     const input = {
       layersSelected: ['rain_in', 'rain_gals', 'mins'],
-      dataArrays: [ // 3 datasets
+      dataType0Processed: [ // 3 datasets
         [1, 15],    // each dataset has 2 items in increment
         [5, 52],
         [3, 77],
@@ -713,7 +713,7 @@ describe('graphs', ()=> {
     const input = {
       layersSelected: ['rain_in', 'rain_gals', 'mins'],
       xLabelsArray: ['5/2','5/3'],
-      dataArrays: [ // 3 datasets
+      dataType0Processed: [ // 3 datasets
         [1, 15],    // each dataset has 2 items in increment
         [5, 52],
         [3, 77],
@@ -1712,7 +1712,7 @@ describe('graphs', ()=> {
      */
     const input = {
       // data are ALL fetched, more than we want to graph
-      data: [
+      dataType1Processed: [
         {
           key1: 1,
           key2: 3,
@@ -1929,7 +1929,7 @@ describe('graphs', ()=> {
           'A',          // key 1
           'B',          // key 3
         ],
-        dataArraysRaw: [  // testing key only
+        dataType0Raw: [  // testing key only
           [            // key 1
             1,
             15,
@@ -1941,7 +1941,7 @@ describe('graphs', ()=> {
             62,
           ],
         ],
-        dataArrays: [  // testing key only
+        dataType0Processed: [  // testing key only
           [            // key 1
             1,
             15,

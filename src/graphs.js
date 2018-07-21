@@ -16,10 +16,10 @@ const indexUnit   = 2;
 const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
   if(!Array.isArray(dataObjectsArray)) return [[]];
   if(!Array.isArray(layersArray)) return [[]];
-  const dataArrays = layersArray.map(key=>{
+  const dataType0Processed = layersArray.map(key=>{
     return dataObjectsArray.map(k=>k[key]);
   });
-  return dataArrays;
+  return dataType0Processed;
 };
 
 const parseLabelsByKeys = (legendObject, layersArray) => {
@@ -64,28 +64,29 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
   };
 };
 
-const parseDataType1To0 = (dataObjectsArray, legendObject, layersArray) => {
+const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
+  console.log('dataType1Processed',dataType1Processed, 'legendObject',legendObject, 'layersArray',layersArray)
   if(
-    !Array.isArray(dataObjectsArray) ||
+    !Array.isArray(dataType1Processed) ||
     !Array.isArray(layersArray) ||
     !isObjectLiteral(legendObject)
   ) {
     return {
-      dataArraysRaw: [[]],
-      dataLabelArray:  [],
-      yAxisArray:  [],
-      yAxisIdArray:[],
+      dataType0Raw:  [[]],
+      dataLabelArray:[],
+      yAxisArray:    [],
+      yAxisIdArray:  [],
     };
   }
 
-  const dataArraysRaw = parseDataArraysByKeys(dataObjectsArray, layersArray);
+  const dataType0Raw = parseDataArraysByKeys(dataType1Processed, layersArray);
   const dataLabelArray = parseLabelsByKeys(legendObject, layersArray);
   const {
     yAxisArray,
     yAxisIdArray,
   } = parseYAxisByKeys(legendObject, layersArray);
   return {
-    dataArraysRaw,
+    dataType0Raw,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
@@ -101,17 +102,17 @@ const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
     !isObjectLiteral(legendObject)
   ) {
     return {
-      dataArraysRaw: [[]],
+      dataType0Raw: [[]],
       dataLabelArray:  [],
       yAxisArray:  [],
       yAxisIdArray:[],
     };
   }
 
-  let dataArraysRaw = [];
+  let dataType0Raw = [];
   arraysOfDataObjects.forEach(group=>{
     const subgroup = parseDataArraysByKeys(group, layersArrayRaw);
-    dataArraysRaw = [...dataArraysRaw, ...subgroup];
+    dataType0Raw = [...dataType0Raw, ...subgroup];
   });
 
   const rawLabels = parseLabelsByKeys(legendObject, layersArrayRaw);
@@ -129,7 +130,7 @@ const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
     yAxisIdArray,
   } = parseYAxisByKeys(legendObject, layersArrayRaw);
   return {
-    dataArraysRaw,
+    dataType0Raw,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
@@ -207,10 +208,10 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
   };
 };
 
-const calcDataLength = (dataArraysRaw, start, end) => {
-  const oneDataset = !Array.isArray(dataArraysRaw) ? null :
-    !Array.isArray(dataArraysRaw[0]) ? null :
-      dataArraysRaw[0];
+const calcDataLength = (dataType0Raw, start, end) => {
+  const oneDataset = !Array.isArray(dataType0Raw) ? null :
+    !Array.isArray(dataType0Raw[0]) ? null :
+      dataType0Raw[0];
   if(!oneDataset) return {
     first: 0,
     last: 0,
@@ -233,12 +234,12 @@ const calcDataLength = (dataArraysRaw, start, end) => {
   };
 };
 
-const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => {
+const conformDataLength = (dataType0Raw, first, length, pointsToAdd) => {
   // assume 
-  const oneDataset = !Array.isArray(dataArraysRaw) ? [] :
-    !Array.isArray(dataArraysRaw[0]) ? [] :
-      dataArraysRaw[0];
-  if(oneDataset.length === length) return dataArraysRaw;
+  const oneDataset = !Array.isArray(dataType0Raw) ? [] :
+    !Array.isArray(dataType0Raw[0]) ? [] :
+      dataType0Raw[0];
+  if(oneDataset.length === length) return dataType0Raw;
   const end = first + length;
   const extension = [];
   if(pointsToAdd){
@@ -246,14 +247,14 @@ const conformDataLength = (dataArraysRaw, first, length, pointsToAdd) => {
       extension.push(null);
     }
   }
-  const dataArrays = dataArraysRaw.map(a=>{
+  const dataType0Processed = dataType0Raw.map(a=>{
     const newArray = a.slice(first, end);
     if(pointsToAdd){
       newArray.push(...extension);
     }
     return newArray;
   });
-  return dataArrays;
+  return dataType0Processed;
 };
 
 const addDataset = input => {
@@ -333,7 +334,7 @@ const createGraphData = input => {
     // the following 7 keys are parallel format
     // i.e. arrays of same length, arr1[n] goes with arr2[n]
     layersSelected,
-    dataArrays, 
+    dataType0Processed, 
     dataLabelArray, 
     yAxisArray,
     yAxisIdArray,
@@ -355,7 +356,7 @@ const createGraphData = input => {
       {
         label: dataLabelArray[i],
         yAxisID,
-        data: dataArrays[i],
+        data: dataType0Processed[i],
       }
     );
   });
@@ -365,11 +366,11 @@ const createGraphData = input => {
   const labels = 
     Array.isArray(xLabelsArray) ?
       xLabelsArray : 
-      !Array.isArray(dataArrays) ?
+      !Array.isArray(dataType0Processed) ?
         [] :
-        !Array.isArray(dataArrays[0]) ?
+        !Array.isArray(dataType0Processed[0]) ?
           [] :
-          dataArrays[0].map((x,i)=>i+startAt);
+          dataType0Processed[0].map((x,i)=>i+startAt);
 
   return {
     labels,
@@ -774,7 +775,7 @@ const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background, backg
 const createGraph = input => {
 
   const {
-    data,
+    dataType1Processed,
     legendObject,
     layersSelected,
     idealXTickSpacing,
@@ -792,21 +793,20 @@ const createGraph = input => {
   } = input;
 
   const {
-    dataArraysRaw,
+    dataType0Raw,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
   } = parseDataType1To0(
-    data,
+    dataType1Processed,
     legendObject,
     layersSelected
   );
-  
   const {
     first,
     // last,
     dataLength,
-  } = calcDataLength(dataArraysRaw,startX, endX);
+  } = calcDataLength(dataType0Raw,startX, endX);
 
   const {
     maxTicksLimitDown, // testing only
@@ -817,8 +817,8 @@ const createGraph = input => {
     pointsToAdd,
   } = calcTicks(dataLength, idealXTickSpacing);
 
-  const dataArrays = conformDataLength(
-    dataArraysRaw, 
+  const dataType0Processed = conformDataLength(
+    dataType0Raw, 
     first, 
     lengthRoundUp, 
     pointsToAdd
@@ -845,14 +845,14 @@ const createGraph = input => {
   );
 
   const xLabelsArray = xLabelKey ?
-    parseDataArraysByKeys(data, [xLabelKey])[0] :
+    parseDataArraysByKeys(dataType1Processed, [xLabelKey])[0] :
     null ;
   // console.log('xLabelKey',xLabelKey);
   // console.log('xLabelsArray',xLabelsArray);
 
   const graphData = createGraphData({
     layersSelected,
-    dataArrays,
+    dataType0Processed,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
@@ -877,8 +877,8 @@ const createGraph = input => {
     testingKeys: {
       refreshMessage: message,
       yAxisIdArray,  
-      dataArraysRaw,
-      dataArrays,
+      dataType0Raw,
+      dataType0Processed,
       dataLabelArray,
       first,
       dataLength, 
