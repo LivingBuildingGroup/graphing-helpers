@@ -37,7 +37,7 @@ const {
 describe('graphs', ()=> { 
 
   it('parseDataArraysByKeys', () => {
-    const arrayOfDataObjects = [
+    const dataObjectsArray = [
       {
         key1: 1,
         key2: 3,
@@ -53,19 +53,19 @@ describe('graphs', ()=> {
         keyX: 71,
       },
     ];
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3'
     ];
     const expectedResult = [
       [1, 15],
       [5, 52],
     ];
-    const result = parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys);
+    const result = parseDataArraysByKeys(dataObjectsArray, layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseLabelsByKeys no Y-axis keys', () => {
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3'
     ];
     const legendObject = { // with no Y-axis units
@@ -78,11 +78,11 @@ describe('graphs', ()=> {
     const expectedResult = [
       'the first key', 'banana',
     ];
-    const result = parseLabelsByKeys(legendObject, arrayOfKeys);
+    const result = parseLabelsByKeys(legendObject, layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
   it('parseLabelsByKeys with Y-axis keys', () => {
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3'
     ];
     const legendObject = { // with no Y-axis units
@@ -95,12 +95,12 @@ describe('graphs', ()=> {
     const expectedResult = [
       'the first key', 'banana',
     ];
-    const result = parseLabelsByKeys(legendObject, arrayOfKeys);
+    const result = parseLabelsByKeys(legendObject, layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseYAxisByKeys with no keys', () => {
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3'
     ];
     const legendObject = { // with no Y-axis units
@@ -118,11 +118,11 @@ describe('graphs', ()=> {
         'A', 'A'
       ],
     };
-    const result = parseYAxisByKeys(legendObject, arrayOfKeys);
+    const result = parseYAxisByKeys(legendObject, layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
   it('parseYAxisByKeys w/ keys', () => {
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3', 'key5',
     ];
     const legendObject = { // with no Y-axis units
@@ -140,12 +140,12 @@ describe('graphs', ()=> {
         'A', 'B', 'A'
       ],
     };
-    const result = parseYAxisByKeys(legendObject, arrayOfKeys);
+    const result = parseYAxisByKeys(legendObject, layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
 
   it('parseDataType1To0', () => {
-    const arrayOfDataObjects = [
+    const dataObjectsArray = [
       {
         key1: 1,
         key2: 3,
@@ -161,7 +161,7 @@ describe('graphs', ()=> {
         keyX: 71,
       },
     ];
-    const arrayOfKeys = [
+    const layersArray = [
       'key1', 'key3'
     ];
     const legendObject = {
@@ -188,9 +188,9 @@ describe('graphs', ()=> {
       ],
     };
     const result = parseDataType1To0(
-      arrayOfDataObjects, 
+      dataObjectsArray, 
       legendObject, 
-      arrayOfKeys);
+      layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
 
@@ -232,7 +232,7 @@ describe('graphs', ()=> {
     const arrayOfDataGroups = [
       'test1', 'test7'
     ];
-    const rawArrayOfKeys = [
+    const layersArrayRaw = [
       'key1', 'key3'
     ];
     const legendObject = {
@@ -260,7 +260,7 @@ describe('graphs', ()=> {
       yAxisIdArray: [
         'A', 'B',
       ],
-      arrayOfKeys: [
+      layersArray: [
         'test1key1', 'test1key3',
         'test7key1', 'test7key3',
       ],
@@ -269,7 +269,7 @@ describe('graphs', ()=> {
       arraysOfDataObjects, 
       arrayOfDataGroups,
       legendObject, 
-      rawArrayOfKeys);
+      layersArrayRaw);
     expect(result).to.deep.equal(expectedResult);
   });
 
@@ -313,7 +313,7 @@ describe('graphs', ()=> {
       'test1', 'test7'
     ];
     const expectedResult = {
-      arrayOfDataObjects: [
+      dataObjectsArray: [
         {
           test1__key1: 1,
           test1__key2: 3,
@@ -661,7 +661,7 @@ describe('graphs', ()=> {
 
   it('createGraphData 1', ()=>{
     const input = {
-      keysSelected: ['rain_in', 'rain_gals', 'mins'],
+      layersSelected: ['rain_in', 'rain_gals', 'mins'],
       dataArrays: [ // 3 datasets
         [1, 15],    // each dataset has 2 items in increment
         [5, 52],
@@ -711,7 +711,7 @@ describe('graphs', ()=> {
 
   it('createGraphData 1 specific labels', ()=>{
     const input = {
-      keysSelected: ['rain_in', 'rain_gals', 'mins'],
+      layersSelected: ['rain_in', 'rain_gals', 'mins'],
       xLabelsArray: ['5/2','5/3'],
       dataArrays: [ // 3 datasets
         [1, 15],    // each dataset has 2 items in increment
@@ -1531,8 +1531,8 @@ describe('graphs', ()=> {
   });
 
   it('createLayerSelectors convert 1', ()=>{
-    const measurementsConvert = 1;
-    const measurements = [
+    const dataConvert = 1;
+    const data = [
       {
         unit1: 3,
         unit2: 5,
@@ -1551,8 +1551,8 @@ describe('graphs', ()=> {
       unit2: 'POUNDS',
     };
     const input = {
-      measurementsConvert,
-      measurements,
+      dataConvert,
+      data,
       units,
       labels,
       abbrevs,
@@ -1576,8 +1576,8 @@ describe('graphs', ()=> {
   });
 
   it('createLayerSelectors convert 2 without arrays', ()=>{
-    const measurementsConvert = 2;
-    const measurements = [
+    const dataConvert = 2;
+    const data = [
       {
         test1__unit1: 3,
         test1__unit2: 5,
@@ -1598,8 +1598,8 @@ describe('graphs', ()=> {
       unit2: 'POUNDS',
     };
     const input = {
-      measurementsConvert,
-      measurements,
+      dataConvert,
+      data,
       units,
       labels,
       abbrevs,
@@ -1629,8 +1629,8 @@ describe('graphs', ()=> {
   });
 
   it('createLayerSelectors convert 2 with array', ()=>{
-    const measurementsConvert = 2;
-    const measurements = [
+    const dataConvert = 2;
+    const data = [
       {
         test1__unit1: 3,
         test1__unit2: 5,
@@ -1650,15 +1650,15 @@ describe('graphs', ()=> {
       unit1: 'GALS',
       unit2: 'POUNDS',
     };
-    const arrayOfKeys = ['unit1','unit2'];
+    const layersArray = ['unit1','unit2'];
     const arrayOfDataGroups = ['test1','test2'];
     const input = {
-      measurementsConvert,
-      measurements,
+      dataConvert,
+      data,
       units,
       labels,
       abbrevs,
-      arrayOfKeys,
+      layersArray,
       arrayOfDataGroups,
     };
     const expectedResult = {
@@ -1711,8 +1711,8 @@ describe('graphs', ()=> {
      *       monotoneGroup (type2 data only, group by prefix, each prefix gets 1 color, each item in the group gets a color from the group (light, dark, medium, etc.))
      */
     const input = {
-      // measurements are ALL fetched, more than we want to graph
-      measurements: [
+      // data are ALL fetched, more than we want to graph
+      data: [
         {
           key1: 1,
           key2: 3,
@@ -1735,7 +1735,7 @@ describe('graphs', ()=> {
           keyX: 72,
         },
       ],
-      // legend SHOULD have a key for all measurements
+      // legend SHOULD have a key for all data
       legendObject: {
       //     label           , Y axis
         key1: ['1stK', 'the first key' , 'lbs'       ],
@@ -1744,8 +1744,8 @@ describe('graphs', ()=> {
         key4: ['NoUs', 'not used'      , 'nanometers'],
         key5: ['Decs', 'decimals'      , 'meters'    ],
       },
-      // this narrows down measurements to what we want to graph
-      keysSelected: [
+      // this narrows down data to what we want to graph
+      layersSelected: [
         'key1', 'key3'
       ],
       idealXTickSpacing: 1,
@@ -1916,7 +1916,7 @@ describe('graphs', ()=> {
       ready: true,
       idealXTickSpacingPrior: 1, // regurgitated from last time for later comparison
       background: 'gray', // regurgitated
-      keysSelected: [ // reguritated
+      layersSelected: [ // reguritated
         'key1',
         'key3',
       ],

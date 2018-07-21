@@ -65,15 +65,15 @@ const createStyle = input => {
   );
 };
 
-const createStylesArray = (keysSelected, styleKey, namedColors, fallbackArray) => {
-  if(!Array.isArray(keysSelected)) return [];
+const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray) => {
+  if(!Array.isArray(layersSelected)) return [];
   const sk = styleKey;
   const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
   const fa = fallbackArray ? fallbackArray : selectPalette(30);
   const stylesArray = 
     !isObjectLiteral(sk) ? 
-      keysSelected.map((k,i)=>createStyle({color:fa[i]})) :
-      keysSelected.map((k,i)=>{
+      layersSelected.map((k,i)=>createStyle({color:fa[i]})) :
+      layersSelected.map((k,i)=>{
         const style = !sk[k] ?
           { color: fa[i] } :
           sk[k].color && sk[k].style ?

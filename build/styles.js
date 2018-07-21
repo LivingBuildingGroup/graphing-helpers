@@ -65,14 +65,14 @@ var createStyle = function createStyle(input) {
   return Object.assign({}, general, colors);
 };
 
-var createStylesArray = function createStylesArray(keysSelected, styleKey, namedColors, fallbackArray) {
-  if (!Array.isArray(keysSelected)) return [];
+var createStylesArray = function createStylesArray(layersSelected, styleKey, namedColors, fallbackArray) {
+  if (!Array.isArray(layersSelected)) return [];
   var sk = styleKey;
   var nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright');
   var fa = fallbackArray ? fallbackArray : selectPalette(30);
-  var stylesArray = !isObjectLiteral(sk) ? keysSelected.map(function (k, i) {
+  var stylesArray = !isObjectLiteral(sk) ? layersSelected.map(function (k, i) {
     return createStyle({ color: fa[i] });
-  }) : keysSelected.map(function (k, i) {
+  }) : layersSelected.map(function (k, i) {
     var style = !sk[k] ? { color: fa[i] } : sk[k].color && sk[k].style ? Object.assign({}, sk[k].style, { color: nc[sk[k].color] }) : sk[k].color ? { color: nc[sk[k].color] } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[i] }) : { color: fa[i] };
     return createStyle(style);
   });

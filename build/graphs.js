@@ -16,29 +16,29 @@ var indexUnit = 2;
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-var parseDataArraysByKeys = function parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys) {
-  if (!Array.isArray(arrayOfDataObjects)) return [[]];
-  if (!Array.isArray(arrayOfKeys)) return [[]];
-  var dataArrays = arrayOfKeys.map(function (key) {
-    return arrayOfDataObjects.map(function (k) {
+var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, layersArray) {
+  if (!Array.isArray(dataObjectsArray)) return [[]];
+  if (!Array.isArray(layersArray)) return [[]];
+  var dataArrays = layersArray.map(function (key) {
+    return dataObjectsArray.map(function (k) {
       return k[key];
     });
   });
   return dataArrays;
 };
 
-var parseLabelsByKeys = function parseLabelsByKeys(legendObject, arrayOfKeys) {
-  var dataLabelArray = arrayOfKeys.map(function (key) {
+var parseLabelsByKeys = function parseLabelsByKeys(legendObject, layersArray) {
+  var dataLabelArray = layersArray.map(function (key) {
     var label = typeof legendObject[key] === 'string' ? legendObject[key] : !Array.isArray(legendObject[key]) ? key : typeof legendObject[key][indexLabel] === 'string' ? legendObject[key][indexLabel] : key;
     return label;
   });
   return dataLabelArray;
 };
 
-var parseYAxisByKeys = function parseYAxisByKeys(legendObject, arrayOfKeys) {
+var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersArray) {
   var axesUsed = [];
   var yAxisIdArray = [];
-  var yAxisArray = arrayOfKeys.map(function (key, i) {
+  var yAxisArray = layersArray.map(function (key, i) {
     var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][indexUnit] === 'string' ? legendObject[key][indexUnit] : 'units';
     var axisIndex = axesUsed.findIndex(function (a) {
       return a === yAxisLabel;
@@ -57,8 +57,8 @@ var parseYAxisByKeys = function parseYAxisByKeys(legendObject, arrayOfKeys) {
   };
 };
 
-var parseDataType1To0 = function parseDataType1To0(arrayOfDataObjects, legendObject, arrayOfKeys) {
-  if (!Array.isArray(arrayOfDataObjects) || !Array.isArray(arrayOfKeys) || !isObjectLiteral(legendObject)) {
+var parseDataType1To0 = function parseDataType1To0(dataObjectsArray, legendObject, layersArray) {
+  if (!Array.isArray(dataObjectsArray) || !Array.isArray(layersArray) || !isObjectLiteral(legendObject)) {
     return {
       dataArraysRaw: [[]],
       dataLabelArray: [],
@@ -67,10 +67,10 @@ var parseDataType1To0 = function parseDataType1To0(arrayOfDataObjects, legendObj
     };
   }
 
-  var dataArraysRaw = parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys);
-  var dataLabelArray = parseLabelsByKeys(legendObject, arrayOfKeys);
+  var dataArraysRaw = parseDataArraysByKeys(dataObjectsArray, layersArray);
+  var dataLabelArray = parseLabelsByKeys(legendObject, layersArray);
 
-  var _parseYAxisByKeys = parseYAxisByKeys(legendObject, arrayOfKeys),
+  var _parseYAxisByKeys = parseYAxisByKeys(legendObject, layersArray),
       yAxisArray = _parseYAxisByKeys.yAxisArray,
       yAxisIdArray = _parseYAxisByKeys.yAxisIdArray;
 
@@ -82,8 +82,8 @@ var parseDataType1To0 = function parseDataType1To0(arrayOfDataObjects, legendObj
   };
 };
 
-var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) {
-  if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arraysOfDataObjects[0]) || !Array.isArray(rawArrayOfKeys) || !Array.isArray(arrayOfDataGroups) || !isObjectLiteral(legendObject)) {
+var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) {
+  if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arraysOfDataObjects[0]) || !Array.isArray(layersArrayRaw) || !Array.isArray(arrayOfDataGroups) || !isObjectLiteral(legendObject)) {
     return {
       dataArraysRaw: [[]],
       dataLabelArray: [],
@@ -94,25 +94,25 @@ var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfD
 
   var dataArraysRaw = [];
   arraysOfDataObjects.forEach(function (group) {
-    var subgroup = parseDataArraysByKeys(group, rawArrayOfKeys);
+    var subgroup = parseDataArraysByKeys(group, layersArrayRaw);
     dataArraysRaw = [].concat(_toConsumableArray(dataArraysRaw), _toConsumableArray(subgroup));
   });
 
-  var rawLabels = parseLabelsByKeys(legendObject, rawArrayOfKeys);
+  var rawLabels = parseLabelsByKeys(legendObject, layersArrayRaw);
   var dataLabelArray = [];
-  var arrayOfKeys = [];
+  var layersArray = [];
   arrayOfDataGroups.forEach(function (group) {
     var prefixedLabels = rawLabels.map(function (l) {
       return group + ' ' + l;
     });
-    var prefixedKeys = rawArrayOfKeys.map(function (k) {
+    var prefixedKeys = layersArrayRaw.map(function (k) {
       return '' + group + k;
     });
     dataLabelArray = [].concat(_toConsumableArray(dataLabelArray), _toConsumableArray(prefixedLabels));
-    arrayOfKeys = [].concat(_toConsumableArray(arrayOfKeys), _toConsumableArray(prefixedKeys));
+    layersArray = [].concat(_toConsumableArray(layersArray), _toConsumableArray(prefixedKeys));
   });
 
-  var _parseYAxisByKeys2 = parseYAxisByKeys(legendObject, rawArrayOfKeys),
+  var _parseYAxisByKeys2 = parseYAxisByKeys(legendObject, layersArrayRaw),
       yAxisArray = _parseYAxisByKeys2.yAxisArray,
       yAxisIdArray = _parseYAxisByKeys2.yAxisIdArray;
 
@@ -121,14 +121,14 @@ var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfD
     dataLabelArray: dataLabelArray,
     yAxisArray: yAxisArray,
     yAxisIdArray: yAxisIdArray,
-    arrayOfKeys: arrayOfKeys
+    layersArray: layersArray
   };
 };
 
-var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) {
+var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) {
   if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arrayOfDataGroups)) {
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray: [],
       message: 'invalid data types'
     };
@@ -136,7 +136,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
 
   if (arrayOfDataGroups.length !== arraysOfDataObjects.length) {
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray: [],
       message: 'we found ' + arrayOfDataGroups.length + ' labels and ' + arraysOfDataObjects.length + ' arrays.'
     };
@@ -158,7 +158,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
 
   if (arrErr) {
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray: [],
       message: 'expected a subarray, but found none'
     };
@@ -167,7 +167,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
   var longestArray = arraysOfDataObjects[indexOfLongestArray];
 
   // validated, all arrays are present, and 1 label per array
-  var arrayOfDataObjects = longestArray.map(function (x) {
+  var dataObjectsArray = longestArray.map(function (x) {
     return {};
   });
 
@@ -178,14 +178,14 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
       for (var key in innerObject) {
         // the double underscore is intentional
         // we might want to un-prefix later
-        arrayOfDataObjects[pt][prefix + '__' + key] = innerObject[key];
+        dataObjectsArray[pt][prefix + '__' + key] = innerObject[key];
       }
     });
   });
 
   // const dataLabelArray = [];
   return {
-    arrayOfDataObjects: arrayOfDataObjects,
+    dataObjectsArray: dataObjectsArray,
     // dataLabelArray,
     indexOfLongestArray: indexOfLongestArray,
     longestArrayLength: longestArrayLength
@@ -300,7 +300,7 @@ var editDatapoint = function editDatapoint(input) {
 
 var createGraphData = function createGraphData(input) {
   // create entirely new data
-  var keysSelected = input.keysSelected,
+  var layersSelected = input.layersSelected,
       dataArrays = input.dataArrays,
       dataLabelArray = input.dataLabelArray,
       yAxisArray = input.yAxisArray,
@@ -310,7 +310,7 @@ var createGraphData = function createGraphData(input) {
       xLabelStartAt = input.xLabelStartAt;
 
 
-  var datasets = keysSelected.map(function (k, i) {
+  var datasets = layersSelected.map(function (k, i) {
     var units = yAxisArray[i];
     var unitsIndex = yAxisArray.findIndex(function (u) {
       return u === units;
@@ -648,9 +648,9 @@ var checkForGraphRefresh = function checkForGraphRefresh(graphOptions, graphOpti
 // @@@@@@@@@@@@@ FULL GRAPH @@@@@@@@@@@
 
 var createGraph = function createGraph(input) {
-  var measurements = input.measurements,
+  var data = input.data,
       legendObject = input.legendObject,
-      keysSelected = input.keysSelected,
+      layersSelected = input.layersSelected,
       idealXTickSpacing = input.idealXTickSpacing,
       idealXTickSpacingPrior = input.idealXTickSpacingPrior,
       labelX = input.labelX,
@@ -664,7 +664,7 @@ var createGraph = function createGraph(input) {
       xLabelKey = input.xLabelKey,
       xLabelStartAt = input.xLabelStartAt;
 
-  var _parseDataType1To = parseDataType1To0(measurements, legendObject, keysSelected),
+  var _parseDataType1To = parseDataType1To0(data, legendObject, layersSelected),
       dataArraysRaw = _parseDataType1To.dataArraysRaw,
       dataLabelArray = _parseDataType1To.dataLabelArray,
       yAxisArray = _parseDataType1To.yAxisArray,
@@ -702,12 +702,12 @@ var createGraph = function createGraph(input) {
       needRefresh = _checkForGraphRefresh.needRefresh,
       message = _checkForGraphRefresh.message;
 
-  var xLabelsArray = xLabelKey ? parseDataArraysByKeys(measurements, [xLabelKey])[0] : null;
-  console.log('xLabelKey', xLabelKey);
-  console.log('xLabelsArray', xLabelsArray);
+  var xLabelsArray = xLabelKey ? parseDataArraysByKeys(data, [xLabelKey])[0] : null;
+  // console.log('xLabelKey',xLabelKey);
+  // console.log('xLabelsArray',xLabelsArray);
 
   var graphData = createGraphData({
-    keysSelected: keysSelected,
+    layersSelected: layersSelected,
     dataArrays: dataArrays,
     dataLabelArray: dataLabelArray,
     yAxisArray: yAxisArray,
@@ -727,7 +727,7 @@ var createGraph = function createGraph(input) {
     needRefresh: needRefresh, // rendering control
     background: background, // regurgitated for ease of returning to statey
     // following 5 arrays are parallel
-    keysSelected: keysSelected, // regurgitated for ease of returning to state
+    layersSelected: layersSelected, // regurgitated for ease of returning to state
     yAxisArray: yAxisArray, // history key
     idealXTickSpacingPrior: idealXTickSpacing, // history key
     testingKeys: {

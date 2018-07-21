@@ -3,12 +3,12 @@
 const createLayerSelectors = input => {
 
   const {
-    measurementsConvert, // 1 or 2 or 0
-    measurements,
+    dataConvert, // 1 or 2 or 0
+    data,
     units,
     labels,
     abbrevs,
-    arrayOfKeys,
+    layersArray,
     arrayOfDataGroups,
   } = input;
 
@@ -16,9 +16,9 @@ const createLayerSelectors = input => {
   const layersAll = [];
   const legendObject = {};
  
-  if(measurementsConvert === 2){
-    if(Array.isArray(arrayOfKeys) && Array.isArray(arrayOfDataGroups)){
-      arrayOfKeys.forEach(key =>{
+  if(dataConvert === 2){
+    if(Array.isArray(layersArray) && Array.isArray(arrayOfDataGroups)){
+      layersArray.forEach(key =>{
         arrayOfDataGroups.forEach(group=>{
           const prefixedKey = `${group}__${key}`;
           if(units[key]){
@@ -32,8 +32,8 @@ const createLayerSelectors = input => {
           layersAll.push(prefixedKey); // superset of keys with units and without
         });
       });
-    } else if(measurements[0]){
-      for(let prefixedKey in measurements[0]){
+    } else if(data[0]){
+      for(let prefixedKey in data[0]){
         const unPrefix = prefixedKey.split('__');
         const prefix   = unPrefix[0];
         const key      = unPrefix[1];
@@ -48,11 +48,11 @@ const createLayerSelectors = input => {
         layersAll.push(prefixedKey); // superset of keys with units and without
       }
     }
-  } else if(measurementsConvert === 0 ){
+  } else if(dataConvert === 0 ){
     console.log('WE HAVE NOT WRITTEN THIS YET!');
   } else {
-    if(measurements[0]){
-      for(let key in measurements[0]){
+    if(data[0]){
+      for(let key in data[0]){
         if(units[key]){
           layerSelectors.push(key);
           legendObject[key] = [

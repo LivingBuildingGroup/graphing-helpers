@@ -354,7 +354,7 @@ describe('styles', ()=> {
 
       pointBackgroundColor:      '#fff',
     };
-    const keysSelected = ['lbs','gals'];
+    const layersSelected = ['lbs','gals'];
     const styleKey = {
       lbs: {
         color: 'red',
@@ -390,7 +390,7 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(keysSelected, styleKey);
+    const result = createStylesArray(layersSelected, styleKey);
     expect(result).to.deep.equal(expectedResult);
 
   });
@@ -431,7 +431,7 @@ describe('styles', ()=> {
 
       pointBackgroundColor:      '#fff',
     };
-    const keysSelected = ['lbs','gals','grams','kilos'];
+    const layersSelected = ['lbs','gals','grams','kilos'];
     const namedColors = {
       color1: '254,   0,   0',
       color2: '  0, 254,   0',
@@ -509,7 +509,7 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2, style3, style4];
-    const result = createStylesArray(keysSelected, styleKey, namedColors);
+    const result = createStylesArray(layersSelected, styleKey, namedColors);
     expect(result).to.deep.equal(expectedResult);
   });
   it('createStylesArray no style key, no named colors, use fallback', () => {
@@ -549,7 +549,7 @@ describe('styles', ()=> {
 
       pointBackgroundColor:      '#fff',
     };
-    const keysSelected = ['lbs','gals'];
+    const layersSelected = ['lbs','gals'];
     const namedColors  = 'not an object';
     const styleKey     = 'not an object';
     const fallbackArray = ['254,   0,   0','  0, 254,   0'];
@@ -580,7 +580,7 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(keysSelected, styleKey, namedColors, fallbackArray);
+    const result = createStylesArray(layersSelected, styleKey, namedColors, fallbackArray);
     expect(result).to.deep.equal(expectedResult);
   });
   it('createStylesArray no style key, no named colors, NO fallback', () => {
@@ -620,7 +620,7 @@ describe('styles', ()=> {
 
       pointBackgroundColor:      '#fff',
     };
-    const keysSelected = ['lbs','gals'];
+    const layersSelected = ['lbs','gals'];
     const style1 = Object.assign({},
       general,
       {
@@ -648,12 +648,12 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(keysSelected);
+    const result = createStylesArray(layersSelected);
     expect(result).to.deep.equal(expectedResult);
   });
   it('createStylesArray no input', () => {
-    const keysSelected = 'not an array';
-    const result = createStylesArray(keysSelected);
+    const layersSelected = 'not an array';
+    const result = createStylesArray(layersSelected);
     expect(result).to.deep.equal([]);
   });
 

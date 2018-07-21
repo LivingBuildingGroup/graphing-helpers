@@ -1,12 +1,12 @@
 'use strict';
 
 var createLayerSelectors = function createLayerSelectors(input) {
-  var measurementsConvert = input.measurementsConvert,
-      measurements = input.measurements,
+  var dataConvert = input.dataConvert,
+      data = input.data,
       units = input.units,
       labels = input.labels,
       abbrevs = input.abbrevs,
-      arrayOfKeys = input.arrayOfKeys,
+      layersArray = input.layersArray,
       arrayOfDataGroups = input.arrayOfDataGroups;
 
 
@@ -14,9 +14,9 @@ var createLayerSelectors = function createLayerSelectors(input) {
   var layersAll = [];
   var legendObject = {};
 
-  if (measurementsConvert === 2) {
-    if (Array.isArray(arrayOfKeys) && Array.isArray(arrayOfDataGroups)) {
-      arrayOfKeys.forEach(function (key) {
+  if (dataConvert === 2) {
+    if (Array.isArray(layersArray) && Array.isArray(arrayOfDataGroups)) {
+      layersArray.forEach(function (key) {
         arrayOfDataGroups.forEach(function (group) {
           var prefixedKey = group + '__' + key;
           if (units[key]) {
@@ -26,8 +26,8 @@ var createLayerSelectors = function createLayerSelectors(input) {
           layersAll.push(prefixedKey); // superset of keys with units and without
         });
       });
-    } else if (measurements[0]) {
-      for (var prefixedKey in measurements[0]) {
+    } else if (data[0]) {
+      for (var prefixedKey in data[0]) {
         var unPrefix = prefixedKey.split('__');
         var prefix = unPrefix[0];
         var key = unPrefix[1];
@@ -38,11 +38,11 @@ var createLayerSelectors = function createLayerSelectors(input) {
         layersAll.push(prefixedKey); // superset of keys with units and without
       }
     }
-  } else if (measurementsConvert === 0) {
+  } else if (dataConvert === 0) {
     console.log('WE HAVE NOT WRITTEN THIS YET!');
   } else {
-    if (measurements[0]) {
-      for (var _key in measurements[0]) {
+    if (data[0]) {
+      for (var _key in data[0]) {
         if (units[_key]) {
           layerSelectors.push(_key);
           legendObject[_key] = [abbrevs[_key], labels[_key], units[_key]];

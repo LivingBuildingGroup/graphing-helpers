@@ -13,17 +13,17 @@ const indexUnit   = 2;
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-const parseDataArraysByKeys = (arrayOfDataObjects, arrayOfKeys) => {
-  if(!Array.isArray(arrayOfDataObjects)) return [[]];
-  if(!Array.isArray(arrayOfKeys)) return [[]];
-  const dataArrays = arrayOfKeys.map(key=>{
-    return arrayOfDataObjects.map(k=>k[key]);
+const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
+  if(!Array.isArray(dataObjectsArray)) return [[]];
+  if(!Array.isArray(layersArray)) return [[]];
+  const dataArrays = layersArray.map(key=>{
+    return dataObjectsArray.map(k=>k[key]);
   });
   return dataArrays;
 };
 
-const parseLabelsByKeys = (legendObject, arrayOfKeys) => {
-  const dataLabelArray = arrayOfKeys.map(key=>{
+const parseLabelsByKeys = (legendObject, layersArray) => {
+  const dataLabelArray = layersArray.map(key=>{
     const label = 
       typeof legendObject[key] === 'string' ?
         legendObject[key] : 
@@ -37,10 +37,10 @@ const parseLabelsByKeys = (legendObject, arrayOfKeys) => {
   return dataLabelArray;
 };
 
-const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
+const parseYAxisByKeys = (legendObject, layersArray) => {
   const axesUsed = [];
   const yAxisIdArray = [];
-  const yAxisArray = arrayOfKeys.map((key,i)=>{
+  const yAxisArray = layersArray.map((key,i)=>{
     const yAxisLabel = 
       typeof legendObject[key] === 'string' ?
         'units' : 
@@ -64,10 +64,10 @@ const parseYAxisByKeys = (legendObject, arrayOfKeys) => {
   };
 };
 
-const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys) => {
+const parseDataType1To0 = (dataObjectsArray, legendObject, layersArray) => {
   if(
-    !Array.isArray(arrayOfDataObjects) ||
-    !Array.isArray(arrayOfKeys) ||
+    !Array.isArray(dataObjectsArray) ||
+    !Array.isArray(layersArray) ||
     !isObjectLiteral(legendObject)
   ) {
     return {
@@ -78,12 +78,12 @@ const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys) => {
     };
   }
 
-  const dataArraysRaw = parseDataArraysByKeys(arrayOfDataObjects, arrayOfKeys);
-  const dataLabelArray = parseLabelsByKeys(legendObject, arrayOfKeys);
+  const dataArraysRaw = parseDataArraysByKeys(dataObjectsArray, layersArray);
+  const dataLabelArray = parseLabelsByKeys(legendObject, layersArray);
   const {
     yAxisArray,
     yAxisIdArray,
-  } = parseYAxisByKeys(legendObject, arrayOfKeys);
+  } = parseYAxisByKeys(legendObject, layersArray);
   return {
     dataArraysRaw,
     dataLabelArray,
@@ -92,11 +92,11 @@ const parseDataType1To0 = (arrayOfDataObjects, legendObject, arrayOfKeys) => {
   };
 };
 
-const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
+const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arraysOfDataObjects[0]) ||
-    !Array.isArray(rawArrayOfKeys) ||
+    !Array.isArray(layersArrayRaw) ||
     !Array.isArray(arrayOfDataGroups) ||
     !isObjectLiteral(legendObject)
   ) {
@@ -110,40 +110,40 @@ const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
 
   let dataArraysRaw = [];
   arraysOfDataObjects.forEach(group=>{
-    const subgroup = parseDataArraysByKeys(group, rawArrayOfKeys);
+    const subgroup = parseDataArraysByKeys(group, layersArrayRaw);
     dataArraysRaw = [...dataArraysRaw, ...subgroup];
   });
 
-  const rawLabels = parseLabelsByKeys(legendObject, rawArrayOfKeys);
+  const rawLabels = parseLabelsByKeys(legendObject, layersArrayRaw);
   let dataLabelArray = [];
-  let arrayOfKeys = [];
+  let layersArray = [];
   arrayOfDataGroups.forEach(group=>{
     const prefixedLabels = rawLabels.map(l=>`${group} ${l}`);
-    const prefixedKeys   = rawArrayOfKeys.map(k=>`${group}${k}`);
+    const prefixedKeys   = layersArrayRaw.map(k=>`${group}${k}`);
     dataLabelArray  = [...dataLabelArray , ...prefixedLabels];
-    arrayOfKeys = [...arrayOfKeys, ...prefixedKeys];
+    layersArray = [...layersArray, ...prefixedKeys];
   });
 
   const {
     yAxisArray,
     yAxisIdArray,
-  } = parseYAxisByKeys(legendObject, rawArrayOfKeys);
+  } = parseYAxisByKeys(legendObject, layersArrayRaw);
   return {
     dataArraysRaw,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
-    arrayOfKeys,
+    layersArray,
   };
 };
 
-const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, rawArrayOfKeys) => {
+const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arrayOfDataGroups)
   ) {
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray:  [],
       message: 'invalid data types',
     };
@@ -151,7 +151,7 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
 
   if(arrayOfDataGroups.length !== arraysOfDataObjects.length){
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray:  [],
       message: `we found ${arrayOfDataGroups.length} labels and ${arraysOfDataObjects.length} arrays.`,
     };
@@ -173,7 +173,7 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
 
   if(arrErr){
     return {
-      arrayOfDataObjects: [],
+      dataObjectsArray: [],
       dataLabelArray:  [],
       message: 'expected a subarray, but found none',
     };
@@ -182,7 +182,7 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
   const longestArray = arraysOfDataObjects[indexOfLongestArray];
 
   // validated, all arrays are present, and 1 label per array
-  const arrayOfDataObjects = longestArray.map(x=>{
+  const dataObjectsArray = longestArray.map(x=>{
     return {};
   });
 
@@ -193,14 +193,14 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
       for(let key in innerObject){
         // the double underscore is intentional
         // we might want to un-prefix later
-        arrayOfDataObjects[pt][`${prefix}__${key}`] = innerObject[key];
+        dataObjectsArray[pt][`${prefix}__${key}`] = innerObject[key];
       }
     });
   });
 
   // const dataLabelArray = [];
   return {
-    arrayOfDataObjects,
+    dataObjectsArray,
     // dataLabelArray,
     indexOfLongestArray,
     longestArrayLength,
@@ -332,7 +332,7 @@ const createGraphData = input => {
   const { 
     // the following 7 keys are parallel format
     // i.e. arrays of same length, arr1[n] goes with arr2[n]
-    keysSelected,
+    layersSelected,
     dataArrays, 
     dataLabelArray, 
     yAxisArray,
@@ -344,7 +344,7 @@ const createGraphData = input => {
   } = input;
 
 
-  const datasets = keysSelected.map((k,i)=>{
+  const datasets = layersSelected.map((k,i)=>{
     const units = yAxisArray[i] ;
     const unitsIndex = yAxisArray.findIndex(u=>u === units);
     const yAxisID = unitsIndex < 0 ?
@@ -774,9 +774,9 @@ const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background, backg
 const createGraph = input => {
 
   const {
-    measurements,
+    data,
     legendObject,
-    keysSelected,
+    layersSelected,
     idealXTickSpacing,
     idealXTickSpacingPrior,
     labelX,
@@ -797,9 +797,9 @@ const createGraph = input => {
     yAxisArray,
     yAxisIdArray,
   } = parseDataType1To0(
-    measurements,
+    data,
     legendObject,
-    keysSelected
+    layersSelected
   );
   
   const {
@@ -845,13 +845,13 @@ const createGraph = input => {
   );
 
   const xLabelsArray = xLabelKey ?
-    parseDataArraysByKeys(measurements, [xLabelKey])[0] :
+    parseDataArraysByKeys(data, [xLabelKey])[0] :
     null ;
-  console.log('xLabelKey',xLabelKey);
-  console.log('xLabelsArray',xLabelsArray);
+  // console.log('xLabelKey',xLabelKey);
+  // console.log('xLabelsArray',xLabelsArray);
 
   const graphData = createGraphData({
-    keysSelected,
+    layersSelected,
     dataArrays,
     dataLabelArray,
     yAxisArray,
@@ -871,7 +871,7 @@ const createGraph = input => {
     needRefresh,    // rendering control
     background,     // regurgitated for ease of returning to statey
     // following 5 arrays are parallel
-    keysSelected,   // regurgitated for ease of returning to state
+    layersSelected,   // regurgitated for ease of returning to state
     yAxisArray,     // history key
     idealXTickSpacingPrior: idealXTickSpacing, // history key
     testingKeys: {
