@@ -65,12 +65,12 @@ const createStyle = input => {
   );
 };
 
-const createRGBArray = (layersSelected, styleKey, namedColors, fallbackArray) => {
+const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray) => {
   if(!Array.isArray(layersSelected)) return [];
   const sk = styleKey;
   const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
   const fa = fallbackArray ? fallbackArray : selectPalette(30);
-  const rgbArray = 
+  const stylesArray = 
     !isObjectLiteral(sk) ? 
       layersSelected.map((k,i)=>createStyle({color:fa[i]})) :
       layersSelected.map((k,i)=>{
@@ -79,10 +79,10 @@ const createRGBArray = (layersSelected, styleKey, namedColors, fallbackArray) =>
           sk[k].color && sk[k].style ?
             Object.assign({},
               sk[k].style,
-              { color: nc[sk[k].color] } 
+              { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } 
             ):
             sk[k].color ?
-              { color: nc[sk[k].color] } :
+              { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } :
               sk[k].style ?
                 Object.assign({},
                   sk[k].style,
@@ -91,10 +91,10 @@ const createRGBArray = (layersSelected, styleKey, namedColors, fallbackArray) =>
                 { color: fa[i] } ;
         return createStyle(style);
       });
-  return rgbArray;
+  return stylesArray;
 };
 
 module.exports = {
   createStyle,
-  createRGBArray,
+  createStylesArray,
 };

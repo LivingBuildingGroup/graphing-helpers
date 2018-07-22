@@ -5,7 +5,7 @@ const expect = chai.expect;
 
 const { 
   createStyle,
-  createRGBArray, } = require('../index');
+  createStylesArray, } = require('../index');
 
 describe('styles', ()=> { 
 
@@ -317,7 +317,7 @@ describe('styles', ()=> {
 
   });
 
-  it('createRGBArray 1 specific key, 1 default key, no named colors, no fallback', () => {
+  it('createStylesArray 1 specific key, 1 default key, no named colors, no fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -390,11 +390,11 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createRGBArray(layersSelected, styleKey);
+    const result = createStylesArray(layersSelected, styleKey);
     expect(result).to.deep.equal(expectedResult);
 
   });
-  it('createRGBArray 4 specific keys, named colors, no fallback', () => {
+  it('createStylesArray 4 specific keys, named colors, no fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -446,7 +446,7 @@ describe('styles', ()=> {
         style: {borderDash: [10,10]},
       },
       grams: {
-        color: 'color3',
+        color: '252, 231,   3',
       },
       kilos: {
         style: {borderDash: [10,10]},
@@ -484,14 +484,14 @@ describe('styles', ()=> {
     const style3 = Object.assign({},
       general,
       {
-        // VVVVVVVVVV color is invalid, so mapped from palette23()[0] ... bark8[1]
-        backgroundColor:           'rgba(227, 163,  79,0.1)',// opacityBackground}),
-        hoverBackgroundColor:      'rgba(227, 163,  79,0.4)',// opacityBackgroundHover})',
-        borderColor:               'rgba(227, 163,  79,1)',// opacityBorder})',
-        hoverBorderColor:          'rgba(227, 163,  79,1)',// opacityBorderHover})',
-        pointBorderColor:          'rgba(227, 163,  79,1)',// opacityPoint})',
-        pointHoverBorderColor:     'rgba(227, 163,  79,1)',// opacityPointHover})',
-        pointHoverBackgroundColor: 'rgba(227, 163,  79,1)',// opacityPointBackgroundHover})',
+        // VVVVVVVVVV named color is invalid, but a color is passed in, so use that color
+        backgroundColor:           'rgba(252, 231,   3,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba(252, 231,   3,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(252, 231,   3,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(252, 231,   3,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(252, 231,   3,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(252, 231,   3,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(252, 231,   3,1)',// opacityPointBackgroundHover})',
       }
     );
     const style4 = Object.assign({},
@@ -509,10 +509,10 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2, style3, style4];
-    const result = createRGBArray(layersSelected, styleKey, namedColors);
+    const result = createStylesArray(layersSelected, styleKey, namedColors);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createRGBArray no style key, no named colors, use fallback', () => {
+  it('createStylesArray no style key, no named colors, use fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -580,10 +580,10 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createRGBArray(layersSelected, styleKey, namedColors, fallbackArray);
+    const result = createStylesArray(layersSelected, styleKey, namedColors, fallbackArray);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createRGBArray no style key, no named colors, NO fallback', () => {
+  it('createStylesArray no style key, no named colors, NO fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -648,12 +648,12 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createRGBArray(layersSelected);
+    const result = createStylesArray(layersSelected);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createRGBArray no input', () => {
+  it('createStylesArray no input', () => {
     const layersSelected = 'not an array';
-    const result = createRGBArray(layersSelected);
+    const result = createStylesArray(layersSelected);
     expect(result).to.deep.equal([]);
   });
 
