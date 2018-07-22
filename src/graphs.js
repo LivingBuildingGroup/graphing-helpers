@@ -683,8 +683,8 @@ const defaultOptions = {
 
 const createGraphOptions = options => {
   const {
-    labelsY, 
-    labelX, 
+    yLabel, 
+    xLabel, 
     background, 
     minX, 
     maxX, 
@@ -693,12 +693,12 @@ const createGraphOptions = options => {
   } = options;
 
   const yAxesOptions = {
-    labels: labelsY,
+    labels: yLabel,
     background,
   };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
   const xAxisOptions = {
-    label: labelX,
+    label: xLabel,
     background,
     min: minX,
     max: maxX,
@@ -778,12 +778,12 @@ const createGraph = input => {
     dataType1Processed,
     legendObject,
     layersSelected,
-    idealXTickSpacing,
-    idealXTickSpacingPrior,
-    labelX,
+    xIdealTickSpacing,
+    xIdealTickSpacingPrior,
+    xLabel,
     background,
-    startX,
-    endX, 
+    xStart,
+    xEnd, 
     legendPosition,
     stylesArray,
     graphOptionsPrior,
@@ -806,7 +806,7 @@ const createGraph = input => {
     first,
     // last,
     dataLength,
-  } = calcDataLength(dataType0Raw,startX, endX);
+  } = calcDataLength(dataType0Raw,xStart, xEnd);
 
   const {
     maxTicksLimitDown, // testing only
@@ -815,7 +815,7 @@ const createGraph = input => {
     maxTicksLimitUp,
     lengthRoundUp,
     pointsToAdd,
-  } = calcTicks(dataLength, idealXTickSpacing);
+  } = calcTicks(dataLength, xIdealTickSpacing);
 
   const dataType0Processed = conformDataLength(
     dataType0Raw, 
@@ -825,8 +825,8 @@ const createGraph = input => {
   );
   
   const optionsInput = {
-    labelsY: yAxisArray,
-    labelX, 
+    yLabel: yAxisArray,
+    xLabel, 
     background,
     minX: first,
     maxX: lengthRoundUp + 1, 
@@ -836,7 +836,7 @@ const createGraph = input => {
   
   const graphOptions = createGraphOptions(optionsInput);
   
-  const ticksXChanged = idealXTickSpacing !== idealXTickSpacingPrior ? true : false ;
+  const ticksXChanged = xIdealTickSpacing !== xIdealTickSpacingPrior ? true : false ;
 
   const {needRefresh, message} = checkForGraphRefresh(
     graphOptions, graphOptionsPrior,
@@ -873,7 +873,7 @@ const createGraph = input => {
     // following 5 arrays are parallel
     layersSelected,   // regurgitated for ease of returning to state
     yAxisArray,     // history key
-    idealXTickSpacingPrior: idealXTickSpacing, // history key
+    xIdealTickSpacingPrior: xIdealTickSpacing, // history key
     testingKeys: {
       refreshMessage: message,
       yAxisIdArray,  

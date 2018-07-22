@@ -1058,8 +1058,8 @@ describe('graphs', ()=> {
     const options = {
       background: 'white',     // overall background
       legendPosition: 'top',   // where to put legend
-      labelsY: ['one', 'two'], // one label for each Y axis
-      labelX: 'x-axis',        // one label for X axis (can have multiple, but currently I only have 1)
+      yLabel: ['one', 'two'], // one label for each Y axis
+      xLabel: 'x-axis',        // one label for X axis (can have multiple, but currently I only have 1)
       minX: 5,                 // start data here, data starts at 0, so 5 would truncate 4 from front
       maxX: 40,                // end data here, e.g. if data goes through 100, we only show 5-40 in this case
       maxTicksLimitX: 20,      // not working 100% of time, if we have 40 ticks, this should show 1 tick every 2 points; this works until the screen gets wider, then the ticks seem to double
@@ -1748,11 +1748,11 @@ describe('graphs', ()=> {
       layersSelected: [
         'key1', 'key3'
       ],
-      idealXTickSpacing: 1,
-      labelX: 'minutes',
+      xIdealTickSpacing: 1,
+      xLabel: 'minutes',
       background: 'gray',
-      startX: 0,
-      endX: 2,
+      xStart: 0,
+      xEnd: 2,
       legendPosition: 'bottom',
       stylesArray: [
         { style1: 'value1' },
@@ -1914,7 +1914,7 @@ describe('graphs', ()=> {
       },
       needRefresh: true,
       ready: true,
-      idealXTickSpacingPrior: 1, // regurgitated from last time for later comparison
+      xIdealTickSpacingPrior: 1, // regurgitated from last time for later comparison
       background: 'gray', // regurgitated
       layersSelected: [ // reguritated
         'key1',

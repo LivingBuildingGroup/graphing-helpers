@@ -575,8 +575,8 @@ var defaultOptions = {
 };
 
 var createGraphOptions = function createGraphOptions(options) {
-  var labelsY = options.labelsY,
-      labelX = options.labelX,
+  var yLabel = options.yLabel,
+      xLabel = options.xLabel,
       background = options.background,
       minX = options.minX,
       maxX = options.maxX,
@@ -585,12 +585,12 @@ var createGraphOptions = function createGraphOptions(options) {
 
 
   var yAxesOptions = {
-    labels: labelsY,
+    labels: yLabel,
     background: background
   };
   var arrayOfYOptions = createYAxesOptions(yAxesOptions);
   var xAxisOptions = {
-    label: labelX,
+    label: xLabel,
     background: background,
     min: minX,
     max: maxX,
@@ -652,12 +652,12 @@ var createGraph = function createGraph(input) {
   var dataType1Processed = input.dataType1Processed,
       legendObject = input.legendObject,
       layersSelected = input.layersSelected,
-      idealXTickSpacing = input.idealXTickSpacing,
-      idealXTickSpacingPrior = input.idealXTickSpacingPrior,
-      labelX = input.labelX,
+      xIdealTickSpacing = input.xIdealTickSpacing,
+      xIdealTickSpacingPrior = input.xIdealTickSpacingPrior,
+      xLabel = input.xLabel,
       background = input.background,
-      startX = input.startX,
-      endX = input.endX,
+      xStart = input.xStart,
+      xEnd = input.xEnd,
       legendPosition = input.legendPosition,
       stylesArray = input.stylesArray,
       graphOptionsPrior = input.graphOptionsPrior,
@@ -671,11 +671,11 @@ var createGraph = function createGraph(input) {
       yAxisArray = _parseDataType1To.yAxisArray,
       yAxisIdArray = _parseDataType1To.yAxisIdArray;
 
-  var _calcDataLength = calcDataLength(dataType0Raw, startX, endX),
+  var _calcDataLength = calcDataLength(dataType0Raw, xStart, xEnd),
       first = _calcDataLength.first,
       dataLength = _calcDataLength.dataLength;
 
-  var _calcTicks = calcTicks(dataLength, idealXTickSpacing),
+  var _calcTicks = calcTicks(dataLength, xIdealTickSpacing),
       maxTicksLimitDown = _calcTicks.maxTicksLimitDown,
       lengthRoundDown = _calcTicks.lengthRoundDown,
       pointsToRemove = _calcTicks.pointsToRemove,
@@ -686,8 +686,8 @@ var createGraph = function createGraph(input) {
   var dataType0Processed = conformDataLength(dataType0Raw, first, lengthRoundUp, pointsToAdd);
 
   var optionsInput = {
-    labelsY: yAxisArray,
-    labelX: labelX,
+    yLabel: yAxisArray,
+    xLabel: xLabel,
     background: background,
     minX: first,
     maxX: lengthRoundUp + 1,
@@ -697,7 +697,7 @@ var createGraph = function createGraph(input) {
 
   var graphOptions = createGraphOptions(optionsInput);
 
-  var ticksXChanged = idealXTickSpacing !== idealXTickSpacingPrior ? true : false;
+  var ticksXChanged = xIdealTickSpacing !== xIdealTickSpacingPrior ? true : false;
 
   var _checkForGraphRefresh = checkForGraphRefresh(graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged),
       needRefresh = _checkForGraphRefresh.needRefresh,
@@ -730,7 +730,7 @@ var createGraph = function createGraph(input) {
     // following 5 arrays are parallel
     layersSelected: layersSelected, // regurgitated for ease of returning to state
     yAxisArray: yAxisArray, // history key
-    idealXTickSpacingPrior: idealXTickSpacing, // history key
+    xIdealTickSpacingPrior: xIdealTickSpacing, // history key
     testingKeys: {
       refreshMessage: message,
       yAxisIdArray: yAxisIdArray,
