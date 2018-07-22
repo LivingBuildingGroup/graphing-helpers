@@ -58,7 +58,6 @@ var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersArray) {
 };
 
 var parseDataType1To0 = function parseDataType1To0(dataType1Processed, legendObject, layersArray) {
-  console.log('dataType1Processed', dataType1Processed, 'legendObject', legendObject, 'layersArray', layersArray);
   if (!Array.isArray(dataType1Processed) || !Array.isArray(layersArray) || !isObjectLiteral(legendObject)) {
     return {
       dataType0Raw: [[]],
@@ -306,7 +305,7 @@ var createGraphData = function createGraphData(input) {
       dataLabelArray = input.dataLabelArray,
       yAxisArray = input.yAxisArray,
       yAxisIdArray = input.yAxisIdArray,
-      stylesArray = input.stylesArray,
+      rgbArray = input.rgbArray,
       xLabelsArray = input.xLabelsArray,
       xLabelStartAt = input.xLabelStartAt;
 
@@ -317,7 +316,7 @@ var createGraphData = function createGraphData(input) {
       return u === units;
     });
     var yAxisID = unitsIndex < 0 ? yAxisIdArray[0] : yAxisIdArray[unitsIndex];
-    return Object.assign({}, stylesArray[i], {
+    return Object.assign({}, rgbArray[i], {
       label: dataLabelArray[i],
       yAxisID: yAxisID,
       data: dataType0Processed[i]
@@ -659,7 +658,7 @@ var createGraph = function createGraph(input) {
       xStart = input.xStart,
       xEnd = input.xEnd,
       legendPosition = input.legendPosition,
-      stylesArray = input.stylesArray,
+      rgbArray = input.rgbArray,
       graphOptionsPrior = input.graphOptionsPrior,
       cssBackgroundPrior = input.cssBackgroundPrior,
       xLabelKey = input.xLabelKey,
@@ -713,7 +712,7 @@ var createGraph = function createGraph(input) {
     dataLabelArray: dataLabelArray,
     yAxisArray: yAxisArray,
     yAxisIdArray: yAxisIdArray,
-    stylesArray: stylesArray,
+    rgbArray: rgbArray,
     xLabelStartAt: xLabelStartAt,
     xLabelsArray: xLabelsArray
   });

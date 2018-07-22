@@ -65,7 +65,6 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
 };
 
 const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
-  console.log('dataType1Processed',dataType1Processed, 'legendObject',legendObject, 'layersArray',layersArray)
   if(
     !Array.isArray(dataType1Processed) ||
     !Array.isArray(layersArray) ||
@@ -338,7 +337,7 @@ const createGraphData = input => {
     dataLabelArray, 
     yAxisArray,
     yAxisIdArray,
-    stylesArray,
+    rgbArray,
     xLabelsArray,
     // this lone key is just conformed to a number
     xLabelStartAt,
@@ -352,7 +351,7 @@ const createGraphData = input => {
       yAxisIdArray[0] :
       yAxisIdArray[unitsIndex];
     return Object.assign({},
-      stylesArray[i],
+      rgbArray[i],
       {
         label: dataLabelArray[i],
         yAxisID,
@@ -785,7 +784,7 @@ const createGraph = input => {
     xStart,
     xEnd, 
     legendPosition,
-    stylesArray,
+    rgbArray,
     graphOptionsPrior,
     cssBackgroundPrior,
     xLabelKey,
@@ -856,7 +855,7 @@ const createGraph = input => {
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
-    stylesArray,
+    rgbArray,
     xLabelStartAt,
     xLabelsArray,
   });

@@ -200,6 +200,38 @@ const createSky8 = pos => {
   return arr;
 };
 
+const createMonoChrome = option => {
+  if(option ==='green'){
+    return createFern8(-1);
+  } else if(option ==='yellow'){
+    return createCorn8(-1);
+  } else if(option ==='orange'){
+    return createBark8(-1);
+  } else if(option ==='red'){
+    return createPeach8(-1);
+  } else if(option ==='purple'){
+    return createWine8(-1);
+  } else if(option ==='violet'){
+    return createEggplant8(-1);
+  } else if(option ==='blue'){
+    return createSky8(-1);
+  } else {
+    return createPeach8(-1); // just a default...
+  }
+};
+
+const listBright = () => {
+  return [
+    'green',
+    'yellow',
+    'orange',
+    'red',
+    'purple',
+    'violet',
+    'blue',
+  ];
+};
+
 const createPalette11 = option => {
   const bark8     = createBark8();
   const fern8     = createFern8();
@@ -445,6 +477,8 @@ module.exports = {
   createWine8,
   createEggplant8,
   createSky8,
+  createMonoChrome,
+  listBright,
   createPalette11,
   createPalette13,
   createPalette16,

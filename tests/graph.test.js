@@ -676,7 +676,7 @@ describe('graphs', ()=> {
       yAxisIdArray: [
         'A', 'B', 'A',
       ],
-      stylesArray: [
+      rgbArray: [
         { style1: 'value1' },
         { style2: 'value2' },
         { style3: 'value3' },
@@ -727,7 +727,7 @@ describe('graphs', ()=> {
       yAxisIdArray: [
         'A', 'B', 'A',
       ],
-      stylesArray: [
+      rgbArray: [
         { style1: 'value1' },
         { style2: 'value2' },
         { style3: 'value3' },
@@ -1731,7 +1731,7 @@ describe('graphs', ()=> {
       xStart: 0,
       xEnd: 2,
       legendPosition: 'bottom',
-      stylesArray: [
+      rgbArray: [
         { style1: 'value1' },
         { style2: 'value2' },
         { style3: 'value3' },

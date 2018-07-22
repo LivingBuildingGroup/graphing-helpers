@@ -5,7 +5,7 @@ const expect = chai.expect;
 
 const { 
   createStyle,
-  createStylesArray, } = require('../index');
+  createRGBArray, } = require('../index');
 
 describe('styles', ()=> { 
 
@@ -317,7 +317,7 @@ describe('styles', ()=> {
 
   });
 
-  it('createStylesArray 1 specific key, 1 default key, no named colors, no fallback', () => {
+  it('createRGBArray 1 specific key, 1 default key, no named colors, no fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -390,11 +390,11 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(layersSelected, styleKey);
+    const result = createRGBArray(layersSelected, styleKey);
     expect(result).to.deep.equal(expectedResult);
 
   });
-  it('createStylesArray 4 specific keys, named colors, no fallback', () => {
+  it('createRGBArray 4 specific keys, named colors, no fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -509,10 +509,10 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2, style3, style4];
-    const result = createStylesArray(layersSelected, styleKey, namedColors);
+    const result = createRGBArray(layersSelected, styleKey, namedColors);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createStylesArray no style key, no named colors, use fallback', () => {
+  it('createRGBArray no style key, no named colors, use fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -580,10 +580,10 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(layersSelected, styleKey, namedColors, fallbackArray);
+    const result = createRGBArray(layersSelected, styleKey, namedColors, fallbackArray);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createStylesArray no style key, no named colors, NO fallback', () => {
+  it('createRGBArray no style key, no named colors, NO fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -648,12 +648,12 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2];
-    const result = createStylesArray(layersSelected);
+    const result = createRGBArray(layersSelected);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('createStylesArray no input', () => {
+  it('createRGBArray no input', () => {
     const layersSelected = 'not an array';
-    const result = createStylesArray(layersSelected);
+    const result = createRGBArray(layersSelected);
     expect(result).to.deep.equal([]);
   });
 
