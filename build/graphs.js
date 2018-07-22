@@ -427,14 +427,14 @@ var defaultXAxis = {
 
 var createXAxis = function createXAxis(options) {
   var label = options.label,
-      background = options.background,
+      cssBackground = options.cssBackground,
       min = options.min,
       max = options.max,
       maxTicksLimit = options.maxTicksLimit;
 
-  var zeroLineColor = background === 'white' ? 'black' : 'white';
-  var gridLinesColor = background === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
-  var scaleAndTickColor = background === 'white' ? 'rgb(0, 0, 77)' : 'white';
+  var zeroLineColor = cssBackground === 'white' ? 'black' : 'white';
+  var gridLinesColor = cssBackground === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
+  var scaleAndTickColor = cssBackground === 'white' ? 'rgb(0, 0, 77)' : 'white';
   var gridLines = Object.assign({}, defaultXAxis.gridLines, {
     zeroLineColor: zeroLineColor,
     color: gridLinesColor,
@@ -478,11 +478,11 @@ var createYAxis = function createYAxis(options) {
   var label = options.label,
       id = options.id,
       position = options.position,
-      background = options.background;
+      cssBackground = options.cssBackground;
 
-  var zeroLineColor = background === 'white' ? 'black' : 'white';
-  var gridLinesColor = background === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
-  var scaleAndTickColor = background === 'white' ? 'rgb(0, 0, 77)' : 'white';
+  var zeroLineColor = cssBackground === 'white' ? 'black' : 'white';
+  var gridLinesColor = cssBackground === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
+  var scaleAndTickColor = cssBackground === 'white' ? 'rgb(0, 0, 77)' : 'white';
   var gridLines = Object.assign({}, defaultYAxis.gridLines, {
     zeroLineColor: zeroLineColor,
     color: gridLinesColor,
@@ -507,7 +507,7 @@ var createYAxis = function createYAxis(options) {
 
 var createYAxesOptions = function createYAxesOptions(options) {
   var labels = options.labels,
-      background = options.background;
+      cssBackground = options.cssBackground;
 
   var labelsUsed = [];
   var subOptions = [];
@@ -525,7 +525,7 @@ var createYAxesOptions = function createYAxesOptions(options) {
         label: l,
         id: id,
         position: position,
-        background: background
+        cssBackground: cssBackground
       });
     }
   });
@@ -552,9 +552,9 @@ var defaultLegend = {
 
 var createLegend = function createLegend(options) {
   var position = options.position,
-      background = options.background;
+      cssBackground = options.cssBackground;
 
-  var legendFontColor = background === 'white' ? 'black' : 'white';
+  var legendFontColor = cssBackground === 'white' ? 'black' : 'white';
   var labels = Object.assign({}, defaultLegend.labels, {
     fontColor: legendFontColor
   });
@@ -577,7 +577,7 @@ var defaultOptions = {
 var createGraphOptions = function createGraphOptions(options) {
   var yLabel = options.yLabel,
       xLabel = options.xLabel,
-      background = options.background,
+      cssBackground = options.cssBackground,
       minX = options.minX,
       maxX = options.maxX,
       maxTicksLimitX = options.maxTicksLimitX,
@@ -586,18 +586,18 @@ var createGraphOptions = function createGraphOptions(options) {
 
   var yAxesOptions = {
     labels: yLabel,
-    background: background
+    cssBackground: cssBackground
   };
   var arrayOfYOptions = createYAxesOptions(yAxesOptions);
   var xAxisOptions = {
     label: xLabel,
-    background: background,
+    cssBackground: cssBackground,
     min: minX,
     max: maxX,
     maxTicksLimit: maxTicksLimitX
   };
   var legendOptions = {
-    background: background,
+    cssBackground: cssBackground,
     position: legendPosition
   };
   return Object.assign({}, defaultOptions, {
@@ -611,9 +611,9 @@ var createGraphOptions = function createGraphOptions(options) {
 
 // @@@@@@@@@@@@@ REFRESH @@@@@@@@@@@
 
-var checkForGraphRefresh = function checkForGraphRefresh(graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged) {
+var checkForGraphRefresh = function checkForGraphRefresh(graphOptions, graphOptionsPrior, cssBackground, cssBackgroundPrior, ticksXChanged) {
   var message = 'ok';
-  var needRefresh = background !== backgroundPrior;
+  var needRefresh = cssBackground !== cssBackgroundPrior;
   if (needRefresh) return { needRefresh: needRefresh, message: 'background changed' };
 
   if (ticksXChanged) {
@@ -655,13 +655,13 @@ var createGraph = function createGraph(input) {
       xIdealTickSpacing = input.xIdealTickSpacing,
       xIdealTickSpacingPrior = input.xIdealTickSpacingPrior,
       xLabel = input.xLabel,
-      background = input.background,
+      cssBackground = input.cssBackground,
       xStart = input.xStart,
       xEnd = input.xEnd,
       legendPosition = input.legendPosition,
       stylesArray = input.stylesArray,
       graphOptionsPrior = input.graphOptionsPrior,
-      backgroundPrior = input.backgroundPrior,
+      cssBackgroundPrior = input.cssBackgroundPrior,
       xLabelKey = input.xLabelKey,
       xLabelStartAt = input.xLabelStartAt;
 
@@ -688,7 +688,7 @@ var createGraph = function createGraph(input) {
   var optionsInput = {
     yLabel: yAxisArray,
     xLabel: xLabel,
-    background: background,
+    cssBackground: cssBackground,
     minX: first,
     maxX: lengthRoundUp + 1,
     maxTicksLimitX: maxTicksLimitUp,
@@ -699,7 +699,7 @@ var createGraph = function createGraph(input) {
 
   var ticksXChanged = xIdealTickSpacing !== xIdealTickSpacingPrior ? true : false;
 
-  var _checkForGraphRefresh = checkForGraphRefresh(graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged),
+  var _checkForGraphRefresh = checkForGraphRefresh(graphOptions, graphOptionsPrior, cssBackground, cssBackgroundPrior, ticksXChanged),
       needRefresh = _checkForGraphRefresh.needRefresh,
       message = _checkForGraphRefresh.message;
 
@@ -726,7 +726,7 @@ var createGraph = function createGraph(input) {
     // remaining keys NOT passed as props to graph
     ready: true, // rendering control
     needRefresh: needRefresh, // rendering control
-    background: background, // regurgitated for ease of returning to statey
+    cssBackground: cssBackground, // regurgitated for ease of returning to statey
     // following 5 arrays are parallel
     layersSelected: layersSelected, // regurgitated for ease of returning to state
     yAxisArray: yAxisArray, // history key

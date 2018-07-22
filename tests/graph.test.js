@@ -806,7 +806,7 @@ describe('graphs', ()=> {
   it('createXAxis over white', ()=>{
     const options = {
       label: 'x-axis',
-      background: 'white',
+      cssBackground: 'white',
       min: 5,
       max: 40,
       maxTicksLimit: 20,
@@ -842,7 +842,7 @@ describe('graphs', ()=> {
   it('createXAxis over gray with defaults', ()=>{
     const options = {
       label: 'x-axis over gray',
-      // background: 'white',
+      // cssBackground: 'white',
       // min: 5,
       // max: 40,
       // maxTicksLimit: 20,
@@ -879,20 +879,20 @@ describe('graphs', ()=> {
   it('createYAxesOptions', ()=>{
     const options = {
       labels: ['one', 'two'],
-      background: 'white',
+      cssBackground: 'white',
     };
     const expectedResult = [
       {
         label: 'one',
         id: 'A',
         position: 'left',
-        background: 'white',
+        cssBackground: 'white',
       },
       {
         label: 'two',
         id: 'B',
         position: 'right',
-        background: 'white',
+        cssBackground: 'white',
       }
     ];
     const result = createYAxesOptions(options);
@@ -905,13 +905,13 @@ describe('graphs', ()=> {
         label: 'one',
         id: 'A',
         position: 'left',
-        background: 'white',
+        cssBackground: 'white',
       },
       {
         label: 'two',
         id: 'B',
         position: 'right',
-        background: 'white',
+        cssBackground: 'white',
       }
     ];
     const expectedResult = [
@@ -973,13 +973,13 @@ describe('graphs', ()=> {
         label: 'one',
         id: 'A',
         position: 'left',
-        // background: 'white',
+        // cssBackground: 'white',
       },
       {
         label: 'two',
         id: 'B',
         position: 'right',
-        // background: 'white',
+        // cssBackground: 'white',
       }
     ];
     const expectedResult = [
@@ -1039,7 +1039,7 @@ describe('graphs', ()=> {
   it('createLegend over white', ()=>{
     const options = {
       position: 'top',
-      background: 'white',
+      cssBackground: 'white',
     };
     const expectedResult = {
       display: true,
@@ -1056,7 +1056,7 @@ describe('graphs', ()=> {
 
   it('createGraphOptions over white', ()=>{
     const options = {
-      background: 'white',     // overall background
+      cssBackground: 'white',     // overall cssBackground
       legendPosition: 'top',   // where to put legend
       yLabel: ['one', 'two'], // one label for each Y axis
       xLabel: 'x-axis',        // one label for X axis (can have multiple, but currently I only have 1)
@@ -1215,15 +1215,15 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'white';
-    const backgroundPrior =  'white';
+    const cssBackground      =  'white';
+    const cssBackgroundPrior =  'white';
     const expectedResult = {
       needRefresh: true,
       message: 'prior Y axes length: 2, new length: 3'
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptionsPrior, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
@@ -1270,15 +1270,15 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'white';
-    const backgroundPrior =  'white';
+    const cssBackground      =  'white';
+    const cssBackgroundPrior =  'white';
     const expectedResult = {
       needRefresh: true,
       message: 'prior Y axes length: 3, new length: 2'
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptionsPrior, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
@@ -1331,19 +1331,19 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'white';
-    const backgroundPrior =  'white';
+    const cssBackground      =  'white';
+    const cssBackgroundPrior =  'white';
     const expectedResult = {
       needRefresh: true,
       message: 'id mismatch at index 1 (old: C, new: B)',
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptionsPrior, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
-  it('checkForGraphRefresh background diff 1', () => {
+  it('checkForGraphRefresh cssBackground diff 1', () => {
     const graphOptions = {
       scales: {
         yAxes: [
@@ -1368,19 +1368,19 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'white';
-    const backgroundPrior =  undefined;
+    const cssBackground      =  'white';
+    const cssBackgroundPrior =  undefined;
     const expectedResult = {
       needRefresh: true,
       message: 'background changed',
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptions, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
-  it('checkForGraphRefresh background diff 2', () => {
+  it('checkForGraphRefresh cssBackground diff 2', () => {
     const graphOptions = {
       scales: {
         yAxes: [
@@ -1405,20 +1405,20 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  undefined;
-    const backgroundPrior =  'white';
+    const cssBackground      =  undefined;
+    const cssBackgroundPrior =  'white';
     const expectedResult = {
       needRefresh: true,
       message: 'background changed',
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptions, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('checkForGraphRefresh background diff 2', () => {
+  it('checkForGraphRefresh cssBackground diff 2', () => {
     const graphOptions = {
       scales: {
         yAxes: [
@@ -1443,15 +1443,15 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'gray';
-    const backgroundPrior =  'white';
+    const cssBackground      =  'gray';
+    const cssBackgroundPrior =  'white';
     const expectedResult = {
       needRefresh: true,
       message: 'background changed',
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptions, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
@@ -1504,28 +1504,28 @@ describe('graphs', ()=> {
         ]
       }
     };
-    const background      =  'gray';
-    const backgroundPrior =  'gray';
+    const cssBackground      =  'gray';
+    const cssBackgroundPrior =  'gray';
     const expectedResult = {
       needRefresh: false,
       message: 'ok',
     };
     const result = checkForGraphRefresh(
       graphOptions, graphOptionsPrior, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
-  it('checkForGraphRefresh background same no arrays', () => {
-    const background      =  'gray';
-    const backgroundPrior =  'gray';
+  it('checkForGraphRefresh cssBackground same no arrays', () => {
+    const cssBackground      =  'gray';
+    const cssBackgroundPrior =  'gray';
     const expectedResult = {
       needRefresh: false,
       message: 'ok',
     };
     const result = checkForGraphRefresh(
       undefined, undefined, 
-      background, backgroundPrior
+      cssBackground, cssBackgroundPrior
     );
     expect(result).to.deep.equal(expectedResult);
   });
@@ -1686,30 +1686,7 @@ describe('graphs', ()=> {
   });
 
   it('createGraph',()=>{
-    /* 1) test how it is working now
-     * 2) change pass-in of stylesArray to pass-in of style object
-     *    with array as a key,
-     *    get array key to work as currently works, with others as options
-     * 3) change styles to concise factory functions; confirm working
-     * 4) styles are currently set from a single array
-     *    Create an option where user can click customize styles
-     *    This returns whatever styles are currently used,
-     *    loads them into state for editing
-     *    array is then passed back, which replaces existing array
-     *    there needs to be a trigger as to what styles to use
-     *    options:
-     *       default (current)
-     *       custom (see above)
-     *       key (each key has a named style; if found, it is used, if not found, select from default)
-     *         named styleColor, styleBackground, styleOpacity for now
-     *         in createGraphData, styles (line 346), if using 'key' will look up the style by key
-     *         styleObject[keySelected[styleColor]]
-     *         styleObject[keySelected[styleBackground]]
-     *         styleObject[keySelected[styleOpacity]]
-     *         more specifically: pass those 3 to factory function (affects mroe than 3 keys)
-     * 
-     *       monotoneGroup (type2 data only, group by prefix, each prefix gets 1 color, each item in the group gets a color from the group (light, dark, medium, etc.))
-     */
+
     const input = {
       // data are ALL fetched, more than we want to graph
       dataType1Processed: [
@@ -1750,7 +1727,7 @@ describe('graphs', ()=> {
       ],
       xIdealTickSpacing: 1,
       xLabel: 'minutes',
-      background: 'gray',
+      cssBackground: 'gray',
       xStart: 0,
       xEnd: 2,
       legendPosition: 'bottom',
@@ -1783,7 +1760,7 @@ describe('graphs', ()=> {
           ]
         }
       },
-      backgroundPrior: 'gray',
+      cssBackgroundPrior: 'gray',
       xLabelKey: undefined,
       xLabelStartAt: undefined,
     };
@@ -1915,7 +1892,7 @@ describe('graphs', ()=> {
       needRefresh: true,
       ready: true,
       xIdealTickSpacingPrior: 1, // regurgitated from last time for later comparison
-      background: 'gray', // regurgitated
+      cssBackground: 'gray', // regurgitated
       layersSelected: [ // reguritated
         'key1',
         'key3',

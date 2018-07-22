@@ -498,17 +498,17 @@ const defaultXAxis = {
 };
 
 const createXAxis = options => {
-  const { label, background, min, max, maxTicksLimit } = options;
+  const { label, cssBackground, min, max, maxTicksLimit } = options;
   const zeroLineColor = 
-    background === 'white' ?
+    cssBackground === 'white' ?
       'black':
       'white';
   const gridLinesColor =
-    background === 'white' ?
+    cssBackground === 'white' ?
       'rgba(68,68,68,0.5)':
       'rgba(119,119,119,0.5)';
   const scaleAndTickColor =
-    background === 'white' ?
+    cssBackground === 'white' ?
       'rgb(0, 0, 77)':
       'white';
   const gridLines = Object.assign({},
@@ -563,17 +563,17 @@ const defaultYAxis = {
 };
 
 const createYAxis = options => {
-  const { label, id, position, background } = options;
+  const { label, id, position, cssBackground } = options;
   const zeroLineColor = 
-    background === 'white' ?
+    cssBackground === 'white' ?
       'black':
       'white';
   const gridLinesColor =
-    background === 'white' ?
+    cssBackground === 'white' ?
       'rgba(68,68,68,0.5)':
       'rgba(119,119,119,0.5)';
   const scaleAndTickColor =
-    background === 'white' ?
+    cssBackground === 'white' ?
       'rgb(0, 0, 77)':
       'white';
   const gridLines = Object.assign({},
@@ -611,7 +611,7 @@ const createYAxis = options => {
 };
 
 const createYAxesOptions = options => {
-  const { labels, background } = options;
+  const { labels, cssBackground } = options;
   let labelsUsed = [];
   const subOptions = [];
   labels.forEach(l=>{
@@ -625,7 +625,7 @@ const createYAxesOptions = options => {
         label: l,
         id,
         position,
-        background,
+        cssBackground,
       });
     }
   });
@@ -651,9 +651,9 @@ const defaultLegend = {
 };
 
 const createLegend = options => {
-  const { position, background } = options;
+  const { position, cssBackground } = options;
   const legendFontColor = 
-    background === 'white' ?
+    cssBackground === 'white' ?
       'black':
       'white';
   const labels = Object.assign({},
@@ -685,7 +685,7 @@ const createGraphOptions = options => {
   const {
     yLabel, 
     xLabel, 
-    background, 
+    cssBackground, 
     minX, 
     maxX, 
     maxTicksLimitX,
@@ -694,18 +694,18 @@ const createGraphOptions = options => {
 
   const yAxesOptions = {
     labels: yLabel,
-    background,
+    cssBackground,
   };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
   const xAxisOptions = {
     label: xLabel,
-    background,
+    cssBackground,
     min: minX,
     max: maxX,
     maxTicksLimit: maxTicksLimitX,
   };
   const legendOptions = {
-    background,
+    cssBackground,
     position: legendPosition,
   };
   return Object.assign({},
@@ -722,9 +722,9 @@ const createGraphOptions = options => {
 
 // @@@@@@@@@@@@@ REFRESH @@@@@@@@@@@
 
-const checkForGraphRefresh = (graphOptions, graphOptionsPrior, background, backgroundPrior, ticksXChanged) => {
+const checkForGraphRefresh = (graphOptions, graphOptionsPrior, cssBackground, cssBackgroundPrior, ticksXChanged) => {
   let message = 'ok';
-  let needRefresh = background !== backgroundPrior ;
+  let needRefresh = cssBackground !== cssBackgroundPrior ;
   if(needRefresh) return {needRefresh, message: 'background changed'};
 
   if(ticksXChanged) {
@@ -781,13 +781,13 @@ const createGraph = input => {
     xIdealTickSpacing,
     xIdealTickSpacingPrior,
     xLabel,
-    background,
+    cssBackground,
     xStart,
     xEnd, 
     legendPosition,
     stylesArray,
     graphOptionsPrior,
-    backgroundPrior,
+    cssBackgroundPrior,
     xLabelKey,
     xLabelStartAt,
   } = input;
@@ -827,7 +827,7 @@ const createGraph = input => {
   const optionsInput = {
     yLabel: yAxisArray,
     xLabel, 
-    background,
+    cssBackground,
     minX: first,
     maxX: lengthRoundUp + 1, 
     maxTicksLimitX: maxTicksLimitUp,
@@ -840,7 +840,7 @@ const createGraph = input => {
 
   const {needRefresh, message} = checkForGraphRefresh(
     graphOptions, graphOptionsPrior,
-    background, backgroundPrior,
+    cssBackground, cssBackgroundPrior,
     ticksXChanged
   );
 
@@ -869,7 +869,7 @@ const createGraph = input => {
     // remaining keys NOT passed as props to graph
     ready: true,    // rendering control
     needRefresh,    // rendering control
-    background,     // regurgitated for ease of returning to statey
+    cssBackground,     // regurgitated for ease of returning to statey
     // following 5 arrays are parallel
     layersSelected,   // regurgitated for ease of returning to state
     yAxisArray,     // history key
