@@ -337,7 +337,7 @@ const createGraphData = input => {
     dataLabelArray, 
     yAxisArray,
     yAxisIdArray,
-    rgbArray,
+    stylesArray,
     xLabelsArray,
     // this lone key is just conformed to a number
     xLabelStartAt,
@@ -351,7 +351,7 @@ const createGraphData = input => {
       yAxisIdArray[0] :
       yAxisIdArray[unitsIndex];
     return Object.assign({},
-      rgbArray[i],
+      stylesArray[i],
       {
         label: dataLabelArray[i],
         yAxisID,
@@ -784,7 +784,7 @@ const createGraph = input => {
     xStart,
     xEnd, 
     legendPosition,
-    rgbArray,
+    stylesArray,
     graphOptionsPrior,
     cssBackgroundPrior,
     xLabelKey,
@@ -855,7 +855,7 @@ const createGraph = input => {
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
-    rgbArray,
+    stylesArray,
     xLabelStartAt,
     xLabelsArray,
   });

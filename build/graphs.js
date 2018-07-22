@@ -305,7 +305,7 @@ var createGraphData = function createGraphData(input) {
       dataLabelArray = input.dataLabelArray,
       yAxisArray = input.yAxisArray,
       yAxisIdArray = input.yAxisIdArray,
-      rgbArray = input.rgbArray,
+      stylesArray = input.stylesArray,
       xLabelsArray = input.xLabelsArray,
       xLabelStartAt = input.xLabelStartAt;
 
@@ -316,7 +316,7 @@ var createGraphData = function createGraphData(input) {
       return u === units;
     });
     var yAxisID = unitsIndex < 0 ? yAxisIdArray[0] : yAxisIdArray[unitsIndex];
-    return Object.assign({}, rgbArray[i], {
+    return Object.assign({}, stylesArray[i], {
       label: dataLabelArray[i],
       yAxisID: yAxisID,
       data: dataType0Processed[i]
@@ -658,7 +658,7 @@ var createGraph = function createGraph(input) {
       xStart = input.xStart,
       xEnd = input.xEnd,
       legendPosition = input.legendPosition,
-      rgbArray = input.rgbArray,
+      stylesArray = input.stylesArray,
       graphOptionsPrior = input.graphOptionsPrior,
       cssBackgroundPrior = input.cssBackgroundPrior,
       xLabelKey = input.xLabelKey,
@@ -712,7 +712,7 @@ var createGraph = function createGraph(input) {
     dataLabelArray: dataLabelArray,
     yAxisArray: yAxisArray,
     yAxisIdArray: yAxisIdArray,
-    rgbArray: rgbArray,
+    stylesArray: stylesArray,
     xLabelStartAt: xLabelStartAt,
     xLabelsArray: xLabelsArray
   });
