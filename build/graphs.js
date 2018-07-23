@@ -510,24 +510,26 @@ var createYAxesOptions = function createYAxesOptions(options) {
 
   var labelsUsed = [];
   var subOptions = [];
-  labels.forEach(function (l) {
-    var usedIndex = labelsUsed.findIndex(function (u) {
-      return u === l;
-    });
-    var id = void 0,
-        position = void 0;
-    if (usedIndex < 0) {
-      labelsUsed.push(l);
-      id = alpha[labelsUsed.length - 1];
-      position = labelsUsed.length % 2 === 0 ? 'right' : 'left';
-      subOptions.push({
-        label: l,
-        id: id,
-        position: position,
-        cssBackground: cssBackground
+  if (Array.isArray(labels)) {
+    labels.forEach(function (l) {
+      var usedIndex = labelsUsed.findIndex(function (u) {
+        return u === l;
       });
-    }
-  });
+      var id = void 0,
+          position = void 0;
+      if (usedIndex < 0) {
+        labelsUsed.push(l);
+        id = alpha[labelsUsed.length - 1];
+        position = labelsUsed.length % 2 === 0 ? 'right' : 'left';
+        subOptions.push({
+          label: l,
+          id: id,
+          position: position,
+          cssBackground: cssBackground
+        });
+      }
+    });
+  }
   return subOptions;
 };
 
@@ -584,7 +586,7 @@ var createGraphOptions = function createGraphOptions(options) {
 
 
   var yAxesOptions = {
-    labels: yLabel,
+    labels: Array.isArray(yLabel) ? yLabel : [],
     cssBackground: cssBackground
   };
   var arrayOfYOptions = createYAxesOptions(yAxesOptions);

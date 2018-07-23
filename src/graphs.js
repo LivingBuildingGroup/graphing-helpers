@@ -613,21 +613,23 @@ const createYAxesOptions = options => {
   const { labels, cssBackground } = options;
   let labelsUsed = [];
   const subOptions = [];
-  labels.forEach(l=>{
-    const usedIndex = labelsUsed.findIndex(u=>u===l);
-    let id, position;
-    if(usedIndex < 0){
-      labelsUsed.push(l);
-      id = alpha[labelsUsed.length-1];
-      position = labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
-      subOptions.push({
-        label: l,
-        id,
-        position,
-        cssBackground,
-      });
-    }
-  });
+  if(Array.isArray(labels)){
+    labels.forEach(l=>{
+      const usedIndex = labelsUsed.findIndex(u=>u===l);
+      let id, position;
+      if(usedIndex < 0){
+        labelsUsed.push(l);
+        id = alpha[labelsUsed.length-1];
+        position = labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
+        subOptions.push({
+          label: l,
+          id,
+          position,
+          cssBackground,
+        });
+      }
+    });
+  }
   return subOptions;
 };
 
@@ -692,7 +694,7 @@ const createGraphOptions = options => {
   } = options;
 
   const yAxesOptions = {
-    labels: yLabel,
+    labels: Array.isArray(yLabel) ? yLabel : [] ,
     cssBackground,
   };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
