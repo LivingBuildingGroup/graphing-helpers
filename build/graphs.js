@@ -174,11 +174,12 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
   // return new object with all keys prefixed
   arraysOfDataObjects.forEach(function (group, i) {
     var prefix = arrayOfDataGroups[i];
+    var prefixDivider = '__';
     group.forEach(function (innerObject, pt) {
       for (var key in innerObject) {
         // the double underscore is intentional
         // we might want to un-prefix later
-        dataObjectsArray[pt][prefix + '__' + key] = innerObject[key];
+        dataObjectsArray[pt]['' + prefix + prefixDivider + key] = innerObject[key];
       }
     });
   });

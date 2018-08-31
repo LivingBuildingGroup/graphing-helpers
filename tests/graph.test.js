@@ -1664,8 +1664,8 @@ describe('graphs', ()=> {
     const expectedResult = {
       layerSelectors: [
         'test1__unit1',
-        'test2__unit1',
         'test1__unit2',
+        'test2__unit1',
         'test2__unit2',
       ],
       legendObject: {
@@ -1676,8 +1676,8 @@ describe('graphs', ()=> {
       },
       layersAll: [
         'test1__unit1',
-        'test2__unit1',
         'test1__unit2',
+        'test2__unit1',
         'test2__unit2',
       ],
     };

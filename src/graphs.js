@@ -186,14 +186,15 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
     return {};
   });
 
-    // return new object with all keys prefixed
+  // return new object with all keys prefixed
   arraysOfDataObjects.forEach((group,i)=>{
     const prefix = arrayOfDataGroups[i];
+    const prefixDivider = '__';
     group.forEach((innerObject,pt)=>{
       for(let key in innerObject){
         // the double underscore is intentional
         // we might want to un-prefix later
-        dataObjectsArray[pt][`${prefix}__${key}`] = innerObject[key];
+        dataObjectsArray[pt][`${prefix}${prefixDivider}${key}`] = innerObject[key];
       }
     });
   });

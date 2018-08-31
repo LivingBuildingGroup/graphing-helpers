@@ -9,7 +9,8 @@ const createLayerSelectors = input => {
     labels,
     abbrevs,
     layersArray,
-    arrayOfDataGroups,
+    dataGroupsArray,
+    groupsSub,
   } = input;
 
   const layerSelectors = [];
@@ -17,35 +18,79 @@ const createLayerSelectors = input => {
   const legendObject = {};
  
   if(dataConvert === 2){
-    if(Array.isArray(layersArray) && Array.isArray(arrayOfDataGroups)){
+    // NOT CURRENTLY USING THIS OPTION IN GRAPHWRAPPER!!!
+    // I DO NOT REMEMBER WHAT dataGroupsArray IS FOR
+    if(Array.isArray(layersArray) && Array.isArray(dataGroupsArray)){
       layersArray.forEach(key =>{
-        arrayOfDataGroups.forEach(group=>{
-          const prefixedKey = `${group}__${key}`;
-          if(units[key]){
-            layerSelectors.push(prefixedKey);
-            legendObject[prefixedKey] = [
-              `${group} ${abbrevs[key]}`, 
-              `${group} ${labels[key]}`, 
-              units[key],
-            ];
+        dataGroupsArray.forEach(group=>{
+          if(Array.isArray(groupsSub)){
+            groupsSub.forEach(subGroup=>{
+              const prefixedKey = `${group}__${subGroup}__${key}`;
+              if(units[key]){
+                layerSelectors.push(prefixedKey);
+                legendObject[prefixedKey] = [
+                  `${group} ${abbrevs[key]}`, 
+                  `${group} ${labels[key]}`, 
+                  units[key],
+                ];
+              }
+              layersAll.push(prefixedKey); // superset of keys with units and without
+            });
+          } else {
+            const prefixedKey = `${group}__${key}`;
+            if(units[key]){
+              layerSelectors.push(prefixedKey);
+              legendObject[prefixedKey] = [
+                `${group} ${abbrevs[key]}`, 
+                `${group} ${labels[key]}`, 
+                units[key],
+              ];
+            }
+            layersAll.push(prefixedKey); // superset of keys with units and without
           }
-          layersAll.push(prefixedKey); // superset of keys with units and without
         });
       });
     } else if(data[0]){
+      // THIS IS THE OPTION CURRENTLY IN USE IN GRAPHWRAPPER
       for(let prefixedKey in data[0]){
-        const unPrefix = prefixedKey.split('__');
-        const prefix   = unPrefix[0];
-        const key      = unPrefix[1];
-        if(units[key]){
-          layerSelectors.push(prefixedKey);
-          legendObject[prefixedKey] = [
-            `${prefix} ${abbrevs[key]}`, 
-            `${prefix} ${labels[key]}`, 
-            units[key]
-          ];
+        if(Array.isArray(groupsSub)){
+          const unPrefix = prefixedKey.split('__');
+          let key, prefix, subGroup;
+          if(unPrefix.length === 1){
+            key      = unPrefix[0];
+          } else if(unPrefix.length === 2){
+            prefix   = unPrefix[0];
+            key      = unPrefix[1];
+          } else if(unPrefix.length === 3){
+            prefix   = unPrefix[0];
+            subGroup = unPrefix[1];
+            key      = unPrefix[2];
+          }
+          const prefixWithSpace   = prefix   ? `${prefix} `   : '' ;
+          const subGroupWithSpace = subGroup ? `${subGroup} ` : '' ;
+          if(units[key]){
+            layerSelectors.push(prefixedKey);
+            legendObject[prefixedKey] = [
+              `${prefixWithSpace}${subGroupWithSpace}${abbrevs[key]}`, 
+              `${prefixWithSpace}${subGroupWithSpace}${labels[key]}`, 
+              units[key]
+            ];
+          }
+          layersAll.push(prefixedKey); // superset of keys with units and without
+        } else {
+          const unPrefix = prefixedKey.split('__');
+          const prefix   = unPrefix[0];
+          const key      = unPrefix[1];
+          if(units[key]){
+            layerSelectors.push(prefixedKey);
+            legendObject[prefixedKey] = [
+              `${prefix} ${abbrevs[key]}`, 
+              `${prefix} ${labels[key]}`, 
+              units[key]
+            ];
+          }
+          layersAll.push(prefixedKey); // superset of keys with units and without
         }
-        layersAll.push(prefixedKey); // superset of keys with units and without
       }
     }
   } else if(dataConvert === 0 ){
