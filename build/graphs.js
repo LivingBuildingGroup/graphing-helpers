@@ -125,7 +125,7 @@ var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfD
   };
 };
 
-var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) {
+var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfDataGroups, keysSkip) {
   if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arrayOfDataGroups)) {
     return {
       dataObjectsArray: [],
@@ -171,6 +171,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
     return {};
   });
 
+  var keysToSkip = Array.isArray(keysSkip) ? keysSkip : [];
   // return new object with all keys prefixed
   arraysOfDataObjects.forEach(function (group, i) {
     var prefix = arrayOfDataGroups[i];
@@ -179,7 +180,11 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
       for (var key in innerObject) {
         // the double underscore is intentional
         // we might want to un-prefix later
-        dataObjectsArray[pt]['' + prefix + prefixDivider + key] = innerObject[key];
+        if (keysToSkip.includes(key)) {
+          dataObjectsArray[pt][key] = innerObject[key];
+        } else {
+          dataObjectsArray[pt]['' + prefix + prefixDivider + key] = innerObject[key];
+        }
       }
     });
   });
