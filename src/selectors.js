@@ -1,123 +1,125 @@
 'use strict';
 
-const createLayerSelectors = input => {
-
-  const {
-    dataConvert, // 1 or 2 or 0
-    data,
-    units,
-    labels,
-    abbrevs,
-    layersArray,
-    dataGroupsArray,
-    groupsSub,
-  } = input;
-
-  const layerSelectors = [];
-  const layersAll = [];
-  const legendObject = {};
- 
-  if(dataConvert === 2){
-    // NOT CURRENTLY USING THIS OPTION IN GRAPHWRAPPER!!!
-    // I DO NOT REMEMBER WHAT dataGroupsArray IS FOR
-    if(Array.isArray(layersArray) && Array.isArray(dataGroupsArray)){
-      layersArray.forEach(key =>{
-        dataGroupsArray.forEach(group=>{
-          if(Array.isArray(groupsSub)){
-            groupsSub.forEach(subGroup=>{
-              const prefixedKey = `${group}__${subGroup}__${key}`;
-              if(units[key]){
-                layerSelectors.push(prefixedKey);
-                legendObject[prefixedKey] = [
-                  `${group} ${abbrevs[key]}`, 
-                  `${group} ${labels[key]}`, 
-                  units[key],
-                ];
-              }
-              layersAll.push(prefixedKey); // superset of keys with units and without
-            });
-          } else {
-            const prefixedKey = `${group}__${key}`;
-            if(units[key]){
-              layerSelectors.push(prefixedKey);
-              legendObject[prefixedKey] = [
-                `${group} ${abbrevs[key]}`, 
-                `${group} ${labels[key]}`, 
-                units[key],
-              ];
-            }
-            layersAll.push(prefixedKey); // superset of keys with units and without
-          }
-        });
-      });
-    } else if(data[0]){
-      // THIS IS THE OPTION CURRENTLY IN USE IN GRAPHWRAPPER
-      for(let prefixedKey in data[0]){
-        if(Array.isArray(groupsSub)){
-          const unPrefix = prefixedKey.split('__');
-          let key, prefix, subGroup;
-          if(unPrefix.length === 1){
-            key      = unPrefix[0];
-          } else if(unPrefix.length === 2){
-            prefix   = unPrefix[0];
-            key      = unPrefix[1];
-          } else if(unPrefix.length === 3){
-            prefix   = unPrefix[0];
-            subGroup = unPrefix[1];
-            key      = unPrefix[2];
-          }
-          const prefixWithSpace   = prefix   ? `${prefix} `   : '' ;
-          const subGroupWithSpace = subGroup ? `${subGroup} ` : '' ;
-          if(units[key]){
-            layerSelectors.push(prefixedKey);
-            legendObject[prefixedKey] = [
-              `${prefixWithSpace}${subGroupWithSpace}${abbrevs[key]}`, 
-              `${prefixWithSpace}${subGroupWithSpace}${labels[key]}`, 
-              units[key]
-            ];
-          }
-          layersAll.push(prefixedKey); // superset of keys with units and without
-        } else {
-          const unPrefix = prefixedKey.split('__');
-          const prefix   = unPrefix[0];
-          const key      = unPrefix[1];
-          if(units[key]){
-            layerSelectors.push(prefixedKey);
-            legendObject[prefixedKey] = [
-              `${prefix} ${abbrevs[key]}`, 
-              `${prefix} ${labels[key]}`, 
-              units[key]
-            ];
-          }
-          layersAll.push(prefixedKey); // superset of keys with units and without
-        }
-      }
-    }
-  } else if(dataConvert === 0 ){
-    console.log('WE HAVE NOT WRITTEN THIS YET!');
-  } else {
-    if(data[0]){
-      for(let key in data[0]){
-        if(units[key]){
-          layerSelectors.push(key);
-          legendObject[key] = [
-            abbrevs[key],
-            labels[key],
-            units[key]  
-          ];
-        }
-        layersAll.push(key);  // superset of keys with units and without
-      }
+const listAllLayers = (oneUnit, layersRawPrefixCount) => {
+  // console.log('layersRawPrefixCount',layersRawPrefixCount)
+  const layers = [];
+  for(let layer in oneUnit){
+    if(layersRawPrefixCount === 0){
+      layers.push(layer);
+    } else {
+      const unPrefix = layer.split('__');
+      // console.log('layer',layer,'unPrefix', unPrefix)
+      // console.log(unPrefix[unPrefix.length-1]);
+      layers.push(unPrefix[unPrefix.length-1]);
     }
   }
+  return layers;
+};
+
+const whatIsThisFor = (oneUnit, layersAllUnPrefixed, groups, groupsSub, units, labels, abbrevs) => {
+  const legendObject      = {};
+  const layersAllPrefixed = [];
+  const layerSelectors    = [];
+  const alreadyDone       = {};
+
+  const g1 = Array.isArray(groups) ? groups : [''] ;
+  const g2 = Array.isArray(groupsSub) ? groupsSub : [''] ;
+  // console.log('g1', g1)
+  // console.log('g2', g2)
+  // console.log('groups', groups)
+  // console.log('groupsSub', groupsSub)
+  // console.log('units', units)
+
+  layersAllUnPrefixed.forEach(key =>{
+    g1.forEach(group=>{
+      const g  = group ? `${group}__` : '' ;
+      const g_ = group ? `${group} `  : '' ;
+      g2.forEach(subGroup=>{
+        const s  = subGroup ? `${subGroup}__` : '' ;
+        const s_ = subGroup ? `${subGroup} `  : '' ;
+        const prefixedKeyG  = `${g}${key}`;
+        const prefixedKeyGS = `${g}${s}${key}`;
+        const prefixedKeyS  = `${s}${key}`;
+        const keyToUse = 
+          oneUnit.hasOwnProperty(key) ?
+            key :
+            oneUnit.hasOwnProperty(prefixedKeyG) ?
+              prefixedKeyG :
+              oneUnit.hasOwnProperty(prefixedKeyGS) ?
+                prefixedKeyGS :
+                oneUnit.hasOwnProperty(prefixedKeyS) ?
+                  prefixedKeyS :
+                  key;
+        if(!alreadyDone[keyToUse]){
+          alreadyDone[keyToUse] = true;
+          layersAllPrefixed.push(keyToUse);
+          if(units[key]){
+            layerSelectors.push(keyToUse);
+            legendObject[keyToUse] = [
+              `${g_}${s_}${abbrevs[key]}`, 
+              `${g_}${s_}${labels[key]}`, 
+              units[key],
+            ];
+          }
+        }
+      });
+    });
+  });
 
   return {
     layerSelectors,
-    layersAll,
+    layersAllPrefixed,
     legendObject,
   };
 };
 
+const createLayerSelectors = input => {
+
+  const {
+    dataConvertFrom, // 1 or 2 or 0
+    data,
+    layersAllUnPrefixed,
+    groups,
+    groupsSub,
+    layersRawPrefixCount,
+    units,
+    abbrevs,
+    labels,
+  } = input;
+  // console.log('@@@@@@ layersAllUnPrefixed',layersAllUnPrefixed)
+  // 
+  // always receiving dataType1Processed
+  const oneUnit = data[0] ;
+  // console.log('dataConvertFrom',dataConvertFrom, 'oneUnit',oneUnit)
+
+  let needToListAllLayers = true;
+  if(layersRawPrefixCount > 0){
+    needToListAllLayers = true;
+  } else if(Array.isArray(layersAllUnPrefixed)){
+    if(layersAllUnPrefixed.length > 0){
+      needToListAllLayers = false;
+    }
+  }
+
+  const layersAllUnPrefixedNew = 
+    needToListAllLayers ? 
+      listAllLayers(oneUnit, layersRawPrefixCount) :
+      layersAllUnPrefixed;
+  // console.log('layersAllUnPrefixedNew',layersAllUnPrefixedNew);
+
+  const selectorObjectNew = whatIsThisFor(
+    oneUnit,
+    layersAllUnPrefixedNew,
+    groups, 
+    groupsSub,
+    units, 
+    labels, 
+    abbrevs);
+  // console.log('**** selectorObjectNew',selectorObjectNew);
+
+  return selectorObjectNew;
+};
+
 module.exports = {
-  createLayerSelectors,
+  createLayerSelectors
 };
