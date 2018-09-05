@@ -1,103 +1,117 @@
 'use strict';
 
-var createLayerSelectors = function createLayerSelectors(input) {
-  var dataConvert = input.dataConvert,
-      data = input.data,
-      units = input.units,
-      labels = input.labels,
-      abbrevs = input.abbrevs,
-      layersArray = input.layersArray,
-      dataGroupsArray = input.dataGroupsArray,
-      groupsSub = input.groupsSub;
-
-
-  var layerSelectors = [];
-  var layersAll = [];
-  var legendObject = {};
-
-  if (dataConvert === 2) {
-    // NOT CURRENTLY USING THIS OPTION IN GRAPHWRAPPER!!!
-    // I DO NOT REMEMBER WHAT dataGroupsArray IS FOR
-    if (Array.isArray(layersArray) && Array.isArray(dataGroupsArray)) {
-      layersArray.forEach(function (key) {
-        dataGroupsArray.forEach(function (group) {
-          if (Array.isArray(groupsSub)) {
-            groupsSub.forEach(function (subGroup) {
-              var prefixedKey = group + '__' + subGroup + '__' + key;
-              if (units[key]) {
-                layerSelectors.push(prefixedKey);
-                legendObject[prefixedKey] = [group + ' ' + abbrevs[key], group + ' ' + labels[key], units[key]];
-              }
-              layersAll.push(prefixedKey); // superset of keys with units and without
-            });
-          } else {
-            var prefixedKey = group + '__' + key;
-            if (units[key]) {
-              layerSelectors.push(prefixedKey);
-              legendObject[prefixedKey] = [group + ' ' + abbrevs[key], group + ' ' + labels[key], units[key]];
-            }
-            layersAll.push(prefixedKey); // superset of keys with units and without
-          }
-        });
-      });
-    } else if (data[0]) {
-      // THIS IS THE OPTION CURRENTLY IN USE IN GRAPHWRAPPER
-      for (var prefixedKey in data[0]) {
-        if (Array.isArray(groupsSub)) {
-          var unPrefix = prefixedKey.split('__');
-          var key = void 0,
-              prefix = void 0,
-              subGroup = void 0;
-          if (unPrefix.length === 1) {
-            key = unPrefix[0];
-          } else if (unPrefix.length === 2) {
-            prefix = unPrefix[0];
-            key = unPrefix[1];
-          } else if (unPrefix.length === 3) {
-            prefix = unPrefix[0];
-            subGroup = unPrefix[1];
-            key = unPrefix[2];
-          }
-          var prefixWithSpace = prefix ? prefix + ' ' : '';
-          var subGroupWithSpace = subGroup ? subGroup + ' ' : '';
-          if (units[key]) {
-            layerSelectors.push(prefixedKey);
-            legendObject[prefixedKey] = ['' + prefixWithSpace + subGroupWithSpace + abbrevs[key], '' + prefixWithSpace + subGroupWithSpace + labels[key], units[key]];
-          }
-          layersAll.push(prefixedKey); // superset of keys with units and without
-        } else {
-          var _unPrefix = prefixedKey.split('__');
-          var _prefix = _unPrefix[0];
-          var _key = _unPrefix[1];
-          if (units[_key]) {
-            layerSelectors.push(prefixedKey);
-            legendObject[prefixedKey] = [_prefix + ' ' + abbrevs[_key], _prefix + ' ' + labels[_key], units[_key]];
-          }
-          layersAll.push(prefixedKey); // superset of keys with units and without
-        }
-      }
-    }
-  } else if (dataConvert === 0) {
-    console.log('WE HAVE NOT WRITTEN THIS YET!');
-  } else {
-    if (data[0]) {
-      for (var _key2 in data[0]) {
-        if (units[_key2]) {
-          layerSelectors.push(_key2);
-          legendObject[_key2] = [abbrevs[_key2], labels[_key2], units[_key2]];
-        }
-        layersAll.push(_key2); // superset of keys with units and without
-      }
+var listAllLayers = function listAllLayers(oneUnit, layersRawPrefixCount) {
+  // console.log('layersRawPrefixCount',layersRawPrefixCount)
+  var layers = [];
+  for (var layer in oneUnit) {
+    if (layersRawPrefixCount === 0) {
+      layers.push(layer);
+    } else {
+      var unPrefix = layer.split('__');
+      // console.log('layer',layer,'unPrefix', unPrefix)
+      // console.log(unPrefix[unPrefix.length-1]);
+      layers.push(unPrefix[unPrefix.length - 1]);
     }
   }
+  return layers;
+};
+
+var createSelectorObject = function createSelectorObject(oneUnit, layersAllUnPrefixed, groups, groupsSub, units, labels, abbrevs) {
+  var legendObject = {};
+  var layersAllPrefixed = [];
+  var layerSelectors = [];
+  var alreadyDone = {};
+
+  var g1 = Array.isArray(groups) ? groups : [''];
+  var g2 = Array.isArray(groupsSub) ? groupsSub : [''];
+  // console.log('g1', g1)
+  // console.log('g2', g2)
+  // console.log('groups', groups)
+  // console.log('groupsSub', groupsSub)
+  // console.log('units', units)
+  // console.log('oneUnit', oneUnit)
+
+  layersAllUnPrefixed.forEach(function (key) {
+    g1.forEach(function (group) {
+      var g = group ? group + '__' : '';
+      var g_ = group ? group + ' ' : '';
+      g2.forEach(function (subGroup) {
+        var s = subGroup ? subGroup + '__' : '';
+        var s_ = subGroup ? subGroup + ' ' : '';
+        var prefixedKeyG = '' + g + key;
+        var prefixedKeyGS = '' + g + s + key;
+        var prefixedKeyS = '' + s + key;
+        var keyToUse = key;
+        var preToUse = '';
+        if (oneUnit.hasOwnProperty(key)) {
+          keyToUse = key;
+          preToUse = '';
+        } else if (oneUnit.hasOwnProperty(prefixedKeyG)) {
+          keyToUse = prefixedKeyG;
+          preToUse = '' + g_;
+        } else if (oneUnit.hasOwnProperty(prefixedKeyGS)) {
+          keyToUse = prefixedKeyGS;
+          preToUse = '' + g_ + s_;
+        } else if (oneUnit.hasOwnProperty(prefixedKeyS)) {
+          keyToUse = prefixedKeyS;
+          preToUse = '' + s_;
+        }
+        if (!alreadyDone[keyToUse]) {
+          alreadyDone[keyToUse] = true;
+          layersAllPrefixed.push(keyToUse);
+          if (units[key]) {
+            layerSelectors.push(keyToUse);
+            legendObject[keyToUse] = ['' + preToUse + abbrevs[key], '' + preToUse + labels[key], units[key]];
+          }
+        }
+      });
+    });
+  });
+  // console.log('####### layerSelectors',layerSelectors)
 
   return {
     layerSelectors: layerSelectors,
-    layersAll: layersAll,
+    layersAllPrefixed: layersAllPrefixed,
     legendObject: legendObject
   };
 };
 
+var createLayerSelectors = function createLayerSelectors(input) {
+  var data = input.data,
+      layersAllUnPrefixed = input.layersAllUnPrefixed,
+      groups = input.groups,
+      groupsSub = input.groupsSub,
+      layersRawPrefixCount = input.layersRawPrefixCount,
+      units = input.units,
+      abbrevs = input.abbrevs,
+      labels = input.labels;
+  // console.log('@@@@@@ layersAllUnPrefixed',layersAllUnPrefixed)
+  // 
+  // always receiving dataType1Processed
+
+  var oneUnit = data[0];
+  // console.log('oneUnit',oneUnit)
+
+  var needToListAllLayers = true;
+  if (layersRawPrefixCount > 0) {
+    needToListAllLayers = true;
+  } else if (Array.isArray(layersAllUnPrefixed)) {
+    if (layersAllUnPrefixed.length > 0) {
+      needToListAllLayers = false;
+    }
+  }
+
+  var layersAllUnPrefixedNew = needToListAllLayers ? listAllLayers(oneUnit, layersRawPrefixCount) : layersAllUnPrefixed;
+  // console.log('layersAllUnPrefixedNew',layersAllUnPrefixedNew);
+
+  var selectorObjectNew = createSelectorObject(oneUnit, layersAllUnPrefixedNew, groups, groupsSub, units, labels, abbrevs);
+  // console.log('**** selectorObjectNew',selectorObjectNew);
+
+  return selectorObjectNew;
+};
+
 module.exports = {
+  listAllLayers: listAllLayers,
+  createSelectorObject: createSelectorObject,
   createLayerSelectors: createLayerSelectors
 };
