@@ -61,7 +61,6 @@ const createSelectorObject = (oneUnit, layersAllUnPrefixed, groups, groupsSub, u
           layersAllPrefixed.push(keyToUse);
           if(units[key]){
             layerSelectors.push(keyToUse);
-            console.log('pushed',keyToUse);
             legendObject[keyToUse] = [
               `${preToUse}${abbrevs[key]}`, 
               `${preToUse}${labels[key]}`, 
