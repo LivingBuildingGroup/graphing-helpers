@@ -4,9 +4,19 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const { 
+  listAllLayers,
+  createSelectorObject,
   createLayerSelectors } = require('../index');
 
 describe('selectors', ()=> { 
+
+  it('listAllLayers', () => {
+
+  });
+
+  it('createSelectorObject', () => {
+
+  });
 
   it('createLayerSelectors convert 1', ()=>{
     const dataConvertFrom = 1;
