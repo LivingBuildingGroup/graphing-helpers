@@ -3,7 +3,7 @@
 var _require = require('conjunction-junction'),
     isObjectLiteral = _require.isObjectLiteral;
 
-var _require2 = require('../index'),
+var _require2 = require('./palettes'),
     listBright = _require2.listBright,
     createMonoChrome = _require2.createMonoChrome;
 

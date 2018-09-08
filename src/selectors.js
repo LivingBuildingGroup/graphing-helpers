@@ -16,13 +16,21 @@ const listAllLayers = (oneUnit, layersRawPrefixCount) => {
   return layers;
 };
 
-const createSelectorObject = (oneUnit, layersAllUnPrefixed, groups, groupsSub, units, labels, abbrevs) => {
-  const legendObject      = {};
-  const layersAllPrefixed = [];
-  const layerSelectors    = [];
-  const alreadyDone       = {};
+const finalizeSelectorObject = input  => {
+  const {
+    oneUnit, 
+    layersAllUnPrefixed, 
+    groups, 
+    groupsSub, 
+    units, 
+    labels, 
+    abbrevs} = input;
+  const legendObject       = {};
+  const layersAllPrefixed  = [];
+  const layersThatHaveUnits= [];
+  const alreadyDone        = {};
 
-  const g1 = Array.isArray(groups) ? groups : [''] ;
+  const g1 = Array.isArray(groups   ) ? groups    : [''] ;
   const g2 = Array.isArray(groupsSub) ? groupsSub : [''] ;
   // console.log('g1', g1)
   // console.log('g2', g2)
@@ -60,7 +68,7 @@ const createSelectorObject = (oneUnit, layersAllUnPrefixed, groups, groupsSub, u
           alreadyDone[keyToUse] = true;
           layersAllPrefixed.push(keyToUse);
           if(units[key]){
-            layerSelectors.push(keyToUse);
+            layersThatHaveUnits.push(keyToUse);
             legendObject[keyToUse] = [
               `${preToUse}${abbrevs[key]}`, 
               `${preToUse}${labels[key]}`, 
@@ -71,16 +79,16 @@ const createSelectorObject = (oneUnit, layersAllUnPrefixed, groups, groupsSub, u
       });
     });
   });
-  // console.log('####### layerSelectors',layerSelectors)
+  // console.log('####### layersThatHaveUnits',layersThatHaveUnits)
 
   return {
-    layerSelectors,
+    layersThatHaveUnits,
     layersAllPrefixed,
     legendObject,
   };
 };
 
-const createLayerSelectors = input => {
+const createLayerSelectorObject = input => {
 
   const {
     data,
@@ -113,14 +121,14 @@ const createLayerSelectors = input => {
       layersAllUnPrefixed;
   // console.log('layersAllUnPrefixedNew',layersAllUnPrefixedNew);
 
-  const selectorObjectNew = createSelectorObject(
+  const selectorObjectNew = finalizeSelectorObject({
     oneUnit,
     layersAllUnPrefixedNew,
     groups, 
     groupsSub,
     units, 
     labels, 
-    abbrevs);
+    abbrevs});
   // console.log('**** selectorObjectNew',selectorObjectNew);
 
   return selectorObjectNew;
@@ -128,6 +136,6 @@ const createLayerSelectors = input => {
 
 module.exports = {
   listAllLayers,
-  createSelectorObject,
-  createLayerSelectors
+  finalizeSelectorObject,
+  createLayerSelectorObject
 };

@@ -95,11 +95,14 @@ const correctPrefixOfLayersSelected = state => {
     return state.layersSelected;
   } 
   const prefixesToKeep = 
-    state.preSetSaveSettings.prefixGroups ?
-      state.groups :
-      state.preSetSaveSettings.prefixGroupsSub ?
-        state.prefixGroupsSub : 
-        null ;
+    state.preSetSaveSettings.prefixGroups &&
+    state.preSetSaveSettings.prefixGroupsSub ?
+      [...state.groups, ...state.prefixGroupsSub] : 
+      state.preSetSaveSettings.prefixGroups ?
+        state.groups :
+        state.preSetSaveSettings.prefixGroupsSub ?
+          state.prefixGroupsSub : 
+          null ;
   return unPrefixLayers(state.layersSelected, prefixesToKeep);
 };
 

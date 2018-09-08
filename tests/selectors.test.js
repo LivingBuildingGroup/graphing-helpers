@@ -5,8 +5,8 @@ const expect = chai.expect;
 
 const { 
   listAllLayers,
-  createSelectorObject,
-  createLayerSelectors } = require('../index');
+  finalizeSelectorObject,
+  createLayerSelectorObject } = require('../index');
 
 describe('selectors', ()=> { 
 
@@ -14,11 +14,11 @@ describe('selectors', ()=> {
 
   });
 
-  it('createSelectorObject', () => {
+  it('finalizeSelectorObject', () => {
 
   });
 
-  it('createLayerSelectors convert 1', ()=>{
+  it('createLayerSelectorObject convert 1', ()=>{
     const dataConvertFrom = 1;
     const data = [
       {
@@ -46,7 +46,7 @@ describe('selectors', ()=> {
       abbrevs,
     };
     const expectedResult = {
-      layerSelectors: [
+      layersThatHaveUnits: [
         'unit1',
         'unit2',
       ],
@@ -59,11 +59,11 @@ describe('selectors', ()=> {
         unit2: ['POUNDS' ,'lbs is weight'   , 'lbs' ],
       },
     };
-    const result = createLayerSelectors(input);
+    const result = createLayerSelectorObject(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('createLayerSelectors convert 2 without arrays', ()=>{
+  it('createLayerSelectorObject convert 2 without arrays', ()=>{
     const input = {
       data: [
         {
@@ -100,7 +100,7 @@ describe('selectors', ()=> {
 
     };
     const expectedResult = {
-      layerSelectors: [
+      layersThatHaveUnits: [
         'test1__unit1',
         'test2__unit1',
         'test1__unit2',
@@ -119,7 +119,7 @@ describe('selectors', ()=> {
         'test2__unit2',
       ],
     };
-    const result = createLayerSelectors(input);
+    const result = createLayerSelectorObject(input);
     expect(result).to.deep.equal(expectedResult);
   });
 

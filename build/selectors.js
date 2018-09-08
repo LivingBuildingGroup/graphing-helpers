@@ -16,10 +16,18 @@ var listAllLayers = function listAllLayers(oneUnit, layersRawPrefixCount) {
   return layers;
 };
 
-var createSelectorObject = function createSelectorObject(oneUnit, layersAllUnPrefixed, groups, groupsSub, units, labels, abbrevs) {
+var finalizeSelectorObject = function finalizeSelectorObject(input) {
+  var oneUnit = input.oneUnit,
+      layersAllUnPrefixed = input.layersAllUnPrefixed,
+      groups = input.groups,
+      groupsSub = input.groupsSub,
+      units = input.units,
+      labels = input.labels,
+      abbrevs = input.abbrevs;
+
   var legendObject = {};
   var layersAllPrefixed = [];
-  var layerSelectors = [];
+  var layersThatHaveUnits = [];
   var alreadyDone = {};
 
   var g1 = Array.isArray(groups) ? groups : [''];
@@ -60,23 +68,23 @@ var createSelectorObject = function createSelectorObject(oneUnit, layersAllUnPre
           alreadyDone[keyToUse] = true;
           layersAllPrefixed.push(keyToUse);
           if (units[key]) {
-            layerSelectors.push(keyToUse);
+            layersThatHaveUnits.push(keyToUse);
             legendObject[keyToUse] = ['' + preToUse + abbrevs[key], '' + preToUse + labels[key], units[key]];
           }
         }
       });
     });
   });
-  // console.log('####### layerSelectors',layerSelectors)
+  // console.log('####### layersThatHaveUnits',layersThatHaveUnits)
 
   return {
-    layerSelectors: layerSelectors,
+    layersThatHaveUnits: layersThatHaveUnits,
     layersAllPrefixed: layersAllPrefixed,
     legendObject: legendObject
   };
 };
 
-var createLayerSelectors = function createLayerSelectors(input) {
+var createLayerSelectorObject = function createLayerSelectorObject(input) {
   var data = input.data,
       layersRawPrefixCount = input.layersRawPrefixCount,
       layersAllUnPrefixed = input.layersAllUnPrefixed,
@@ -104,7 +112,14 @@ var createLayerSelectors = function createLayerSelectors(input) {
   var layersAllUnPrefixedNew = needToListAllLayers ? listAllLayers(oneUnit, layersRawPrefixCount) : layersAllUnPrefixed;
   // console.log('layersAllUnPrefixedNew',layersAllUnPrefixedNew);
 
-  var selectorObjectNew = createSelectorObject(oneUnit, layersAllUnPrefixedNew, groups, groupsSub, units, labels, abbrevs);
+  var selectorObjectNew = finalizeSelectorObject({
+    oneUnit: oneUnit,
+    layersAllUnPrefixedNew: layersAllUnPrefixedNew,
+    groups: groups,
+    groupsSub: groupsSub,
+    units: units,
+    labels: labels,
+    abbrevs: abbrevs });
   // console.log('**** selectorObjectNew',selectorObjectNew);
 
   return selectorObjectNew;
@@ -112,6 +127,6 @@ var createLayerSelectors = function createLayerSelectors(input) {
 
 module.exports = {
   listAllLayers: listAllLayers,
-  createSelectorObject: createSelectorObject,
-  createLayerSelectors: createLayerSelectors
+  finalizeSelectorObject: finalizeSelectorObject,
+  createLayerSelectorObject: createLayerSelectorObject
 };

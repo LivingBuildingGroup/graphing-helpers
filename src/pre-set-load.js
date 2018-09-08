@@ -3,7 +3,7 @@
 const { isObjectLiteral,
 } = require('conjunction-junction');
 const { listBright,
-  createMonoChrome } = require('../index');
+  createMonoChrome } = require('./palettes');
 
 const formatSelectors = (thisPreSet, groupTrue, groups) => {
   let selectors = [''];

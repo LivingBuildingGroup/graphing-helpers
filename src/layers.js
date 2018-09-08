@@ -3,6 +3,7 @@
 const {
   addAllItemsToArray,
   removeAllItemsFromArray,
+  isObjectLiteral,
 } = require('conjunction-junction');
 
 const unPrefixLayers = (layers, prefixesToKeep) => {
@@ -12,12 +13,11 @@ const unPrefixLayers = (layers, prefixesToKeep) => {
     const lSplit = l.split('__');
     // ADJUST THIS SO IT PICKS UP ANY COMBO OF PREFIXES
     // RIGHT NOW IT IS PICKING UP A__B, BUT NOT A__X__B
-    const lSlice = 
-      pre2K.includes(lSplit[0]) ?
-        lSplit.slice(1,lSplit.length) :
-        pre2K.includes(parseInt(lSplit[0],10)) ?
-          lSplit.slice(1,lSplit.length) :
-          lSplit;
+    const lSlice = lSplit.filter((l,i)=>{
+      return pre2K.includes(l) ||
+        pre2K.includes(parseInt(l,10)) ||
+        i === lSplit.length-1;
+    });
     const lJoin = lSlice.join('__');
     newLayerObj[lJoin] = true;
   });
@@ -25,52 +25,54 @@ const unPrefixLayers = (layers, prefixesToKeep) => {
   for(let k in newLayerObj){
     newLayers.push(k);
   }
-  newLayers.sort(); // for testability
+  newLayers.sort(); // this sorts by prefix, which is preferred in the UI
   return newLayers;
 };
 
-const formatLayerCheckboxGroups = (layerSelectors, legendObject, indexUnits) => {
-  const layerCheckboxGroups = {};
-  layerSelectors.forEach(key=>{
+const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
+  const layersGroupedByUnits = {};
+  layersThatHaveUnits.forEach(key=>{
     const thisUnit =
       !Array.isArray(legendObject[key]) ?
         'units' :
         legendObject[key][indexUnits];
       
-    if(!Array.isArray(layerCheckboxGroups[thisUnit])){
+    if(!Array.isArray(layersGroupedByUnits[thisUnit])){
       if(thisUnit !== 'units'){
-        layerCheckboxGroups[thisUnit] = [];
+        layersGroupedByUnits[thisUnit] = [];
       }
     }
     if(thisUnit !== 'units'){
-      layerCheckboxGroups[thisUnit].push(key);
+      layersGroupedByUnits[thisUnit].push(key);
     }
   });
 
   // the array is so units can be sorted in a predictable order
-  const layerCheckboxArray = [];
-  for(let key in layerCheckboxGroups){
-    layerCheckboxArray.push(key);
+  const layerUnitsArray = [];
+  for(let unit in layersGroupedByUnits){
+    layerUnitsArray.push(unit);
+    layersGroupedByUnits[unit].sort();
   }
-  layerCheckboxArray.sort();
+  layerUnitsArray.sort();
 
   return {
-    layerCheckboxGroups,
-    layerCheckboxArray
+    layersGroupedByUnits,
+    layerUnitsArray
   };
 };
 
 const calcFirstLayerOnList = state => {
-  const { layerCheckboxGroups, layerCheckboxArray, layerSelectors } = state;
+  const { layersGroupedByUnits, layerUnitsArray, layersThatHaveUnits } = state;
   const firstLayerOnList = 
-    !Array.isArray(layerCheckboxGroups) ||
-    !Array.isArray(layerCheckboxArray) ?
-      layerSelectors[0] :
-      !Array.isArray(layerCheckboxGroups[0]) ?
-        layerSelectors[0] :
-        layerCheckboxGroups[layerCheckboxArray[0]] ?
-          layerCheckboxGroups[layerCheckboxArray[0]] :
-          '' ;
+    Array.isArray(layersThatHaveUnits) ?
+      layersThatHaveUnits[0] :
+      !Array.isArray(layerUnitsArray) ?
+        '' :
+        !isObjectLiteral(layersGroupedByUnits) ?
+          '' :
+          !Array.isArray(layersGroupedByUnits[layerUnitsArray[0]]) ?
+            '' :
+            layersGroupedByUnits[layerUnitsArray[0]][0];
   return firstLayerOnList;
 };
 
@@ -104,7 +106,7 @@ const toggleLayerGroup = (state, group) => {
 
 module.exports = {
   unPrefixLayers,
-  formatLayerCheckboxGroups,
+  groupLayersByUnit,
   calcFirstLayerOnList,
   toggleLayerGroup,
 };
