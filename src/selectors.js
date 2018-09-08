@@ -84,10 +84,10 @@ const createLayerSelectors = input => {
 
   const {
     data,
+    layersRawPrefixCount,
     layersAllUnPrefixed,
     groups,
     groupsSub,
-    layersRawPrefixCount,
     units,
     abbrevs,
     labels,

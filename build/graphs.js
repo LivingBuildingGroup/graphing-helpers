@@ -198,6 +198,20 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
   };
 };
 
+var parseDataType1 = function parseDataType1(state) {
+
+  var keysSkip = ['xLabel'];
+
+  var dataType1ParsedFrom2 = Array.isArray(state.dataType2Raw) ? parseDataType2To1(state.dataType2Raw, state.groups, keysSkip).dataObjectsArray : [];
+
+  // NOT DONE YET !!!
+  var dataType1ParsedFrom0 = []; // 0 = compound arrays, (e.g. storms)
+
+  var dataType1Processed = state.dataConvertFrom === 2 ? dataType1ParsedFrom2 : state.dataConvertFrom === 0 ? dataType1ParsedFrom0 : state.dataType1Raw;
+
+  return dataType1Processed;
+};
+
 var calcDataLength = function calcDataLength(dataType0Raw, start, end) {
   var oneDataset = !Array.isArray(dataType0Raw) ? null : !Array.isArray(dataType0Raw[0]) ? null : dataType0Raw[0];
   if (!oneDataset) return {
@@ -375,6 +389,60 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
   return {
     canvasWidth: canvasWidth,
     canvasHeight: canvasHeight
+  };
+};
+
+var calcDimensions = function calcDimensions(state) {
+  // this runs on mount, on window resize, and when opening and closing selectors
+  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * window.innerHeight, 400) : 0;
+
+  var _calcCanvasDimensions = calcCanvasDimensions({
+    win: window,
+    marginVertical: state.cssMarginTop,
+    marginHorizontal: state.cssMarginHorizontal,
+    reduceCanvasHeightBy: reduceCanvasHeightBy
+  }),
+      canvasHeight = _calcCanvasDimensions.canvasHeight,
+      canvasWidth = _calcCanvasDimensions.canvasWidth;
+
+  var cssControlHeight = window.innerWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
+  var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
+  if (canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers') {
+    var widthPerCol = Math.ceil(state.cssSelectorsFullWidth / state.cssLayerSelectorsFullColumns);
+    var cols = Math.floor(canvasWidth / widthPerCol);
+    var ratio = state.cssLayerSelectorsFullColumns / cols;
+    selectorsHeight = selectorsHeight * ratio;
+  }
+  var cssSelectorOuterScrollingContainer = {
+    height: selectorsHeight,
+    overflowY: 'scroll',
+    width: '90vw'
+  };
+  var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
+    height: canvasHeight,
+    width: canvasWidth
+  };
+  var totalHeight = canvasHeight + state.cssMarginTop + selectorsHeight;
+
+  var cssGraphFlexInner = {
+    minHeight: totalHeight,
+    display: 'block',
+    maxWidth: '100vw',
+    maxHeight: '100vh'
+  };
+  var cssGraphFlexOuter = { // outermost div for the entire component
+    zIndex: 999,
+    marginTop: state.cssGraphMarginTop,
+    minHeight: totalHeight
+  };
+  return {
+    cssCanvasHeight: canvasHeight,
+    cssCanvasWidth: canvasWidth,
+    cssControlHeight: cssControlHeight,
+    cssGraphFlexOuter: cssGraphFlexOuter,
+    cssGraphFlexInner: cssGraphFlexInner,
+    cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
+    cssGraphStabilizer: cssGraphStabilizer
   };
 };
 
@@ -765,6 +833,7 @@ module.exports = {
   parseDataType1To0: parseDataType1To0,
   parseDataType2To1: parseDataType2To1,
   parseDataType2To0: parseDataType2To0,
+  parseDataType1: parseDataType1,
   calcDataLength: calcDataLength,
   conformDataLength: conformDataLength,
   addDataset: addDataset,
@@ -773,6 +842,7 @@ module.exports = {
   createGraphData: createGraphData,
   // size
   calcCanvasDimensions: calcCanvasDimensions,
+  calcDimensions: calcDimensions,
   // axes
   calcTicks: calcTicks,
   createXAxis: createXAxis,

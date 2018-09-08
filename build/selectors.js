@@ -78,10 +78,10 @@ var createSelectorObject = function createSelectorObject(oneUnit, layersAllUnPre
 
 var createLayerSelectors = function createLayerSelectors(input) {
   var data = input.data,
+      layersRawPrefixCount = input.layersRawPrefixCount,
       layersAllUnPrefixed = input.layersAllUnPrefixed,
       groups = input.groups,
       groupsSub = input.groupsSub,
-      layersRawPrefixCount = input.layersRawPrefixCount,
       units = input.units,
       abbrevs = input.abbrevs,
       labels = input.labels;
