@@ -56,24 +56,24 @@ const calcScreenType = (w,h) =>{
 
 const calcCanvasDimensions = input => {
   const {
+    win,
     state,
     reduceCanvasHeightBy,
   } = input;
-  if(!window) return {canvasWidth: 0, canvasHeight: 0};
-  if(!window.screen) return {canvasWidth: 0, canvasHeight: 0};
-  if(!window.screen.availWidth || !window.screen.availHeight){
+  if(!win) return {canvasWidth: 0, canvasHeight: 0};
+  if(!win.screen) return {canvasWidth: 0, canvasHeight: 0};
+  if(!win.screen.availWidth || !win.screen.availHeight){
     return {canvasWidth: 0 ,canvasHeight: 0};
   }
   const controlsCss = {
-    onLeftIfWidthOver: 520,
     heightAtTop: 40,
     marginH: 60, // this is double, since the graph is centered
     marginTop: state.cssMarginTop + state.cssGraphMarginTop, // former is margin of entire contain, latter is for graph itself
   };
-  const wRaw = window.screen.availWidth;
-  const hRaw = window.screen.availHeight;
-  const wAvailable = wRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? controlsCss.marginH : 0 ) ;
-  const hAvailable = hRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
+  const wRaw = win.screen.availWidth;
+  const hRaw = win.screen.availHeight;
+  const wAvailable = wRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
+  const hAvailable = hRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
   const screenType = calcScreenType(wRaw, hRaw).type;
   const idealRatio = 1.618; // golden mean!
   const canvasWidth = Math.floor(0.97 * wAvailable) ;
@@ -96,28 +96,25 @@ const calcCanvasDimensions = input => {
   };
 };
 
-const calcGraphContainerDimensions = (state, canvasHeight, canvasWidth) => {
+const calcGraphContainerDimensions = input => {
+  const { state, win, canvasHeight, canvasWidth } = input;
+
   const cssControlHeight =
-    window.innerWidth > state.cssLayerSelectorMediaBreak ?
+    win.screen.availWidth > state.cssLayerSelectorMediaBreak ?
       canvasHeight :
       25 ;
+
   let selectorsHeight = 
     state.controlInFocus === 'preSets' ?
       state.cssPreSetSelectorsHeight :
       state.controlInFocus === 'layers' ?
         state.cssLayerSelectorsHeight :
         0 ;
-  if(canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers'){
-    const widthPerCol = Math.ceil(state.cssSelectorsFullWidth / state.cssLayerSelectorsFullColumns);
-    const cols        = Math.floor(canvasWidth / widthPerCol);
-    const ratio       = state.cssLayerSelectorsFullColumns / cols;
-    selectorsHeight   = selectorsHeight * ratio;
-  }
+        
   const cssSelectorOuterScrollingContainer = {
     height:     selectorsHeight,
-    overflowY: 'scroll',
-    width:     '90vw',
   };
+
   const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
     height: canvasHeight,
     width:  canvasWidth,
@@ -134,31 +131,37 @@ const calcGraphContainerDimensions = (state, canvasHeight, canvasWidth) => {
     maxHeight: '100vh',
   };
   const cssGraphFlexOuter = { // outermost div for the entire component
-    zIndex: 999,
+    zIndex:    999,
     marginTop: state.cssGraphMarginTop,
     minHeight: totalHeight,
   };
 
   return {
     cssControlHeight,
-    cssGraphFlexOuter,
-    cssGraphFlexInner,
     cssSelectorOuterScrollingContainer,
+    cssGraphFlexInner,
+    cssGraphFlexOuter,
     cssGraphStabilizer,
   };
 };
 
-const calcDimensions = state => {
+const calcDimensions = (state, win=window) => {
   // this runs on mount, on window resize, and when opening and closing selectors
   const reduceCanvasHeightBy = 
   state.controlInFocus === 'preSets' ?
-    Math.min(0.3 * window.innerHeight, 400) : 0 ;
+    Math.min(0.3 * win.innerHeight, 400) : 0 ;
   const {canvasHeight, canvasWidth} = calcCanvasDimensions({
     state,
+    win,
     reduceCanvasHeightBy,
   });
 
-  const graphContainerDimensions = calcGraphContainerDimensions(state, canvasHeight, canvasWidth);
+  const graphContainerDimensions = calcGraphContainerDimensions({
+    state, 
+    win, 
+    canvasHeight, 
+    canvasWidth});
+
   return Object.assign({},
     graphContainerDimensions,
     {
@@ -170,5 +173,6 @@ const calcDimensions = state => {
 module.exports = {
   calcScreenType,
   calcCanvasDimensions,
+  calcGraphContainerDimensions,
   calcDimensions,
 };

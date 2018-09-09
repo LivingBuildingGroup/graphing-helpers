@@ -56,24 +56,24 @@ var calcScreenType = function calcScreenType(w, h) {
 };
 
 var calcCanvasDimensions = function calcCanvasDimensions(input) {
-  var state = input.state,
+  var win = input.win,
+      state = input.state,
       reduceCanvasHeightBy = input.reduceCanvasHeightBy;
 
-  if (!window) return { canvasWidth: 0, canvasHeight: 0 };
-  if (!window.screen) return { canvasWidth: 0, canvasHeight: 0 };
-  if (!window.screen.availWidth || !window.screen.availHeight) {
+  if (!win) return { canvasWidth: 0, canvasHeight: 0 };
+  if (!win.screen) return { canvasWidth: 0, canvasHeight: 0 };
+  if (!win.screen.availWidth || !win.screen.availHeight) {
     return { canvasWidth: 0, canvasHeight: 0 };
   }
   var controlsCss = {
-    onLeftIfWidthOver: 520,
     heightAtTop: 40,
     marginH: 60, // this is double, since the graph is centered
     marginTop: state.cssMarginTop + state.cssGraphMarginTop // former is margin of entire contain, latter is for graph itself
   };
-  var wRaw = window.screen.availWidth;
-  var hRaw = window.screen.availHeight;
-  var wAvailable = wRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? controlsCss.marginH : 0);
-  var hAvailable = hRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
+  var wRaw = win.screen.availWidth;
+  var hRaw = win.screen.availHeight;
+  var wAvailable = wRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0);
+  var hAvailable = hRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
   var screenType = calcScreenType(wRaw, hRaw).type;
   var idealRatio = 1.618; // golden mean!
   var canvasWidth = Math.floor(0.97 * wAvailable);
@@ -91,20 +91,21 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
   };
 };
 
-var calcGraphContainerDimensions = function calcGraphContainerDimensions(state, canvasHeight, canvasWidth) {
-  var cssControlHeight = window.innerWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
+var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) {
+  var state = input.state,
+      win = input.win,
+      canvasHeight = input.canvasHeight,
+      canvasWidth = input.canvasWidth;
+
+
+  var cssControlHeight = win.screen.availWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
+
   var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
-  if (canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers') {
-    var widthPerCol = Math.ceil(state.cssSelectorsFullWidth / state.cssLayerSelectorsFullColumns);
-    var cols = Math.floor(canvasWidth / widthPerCol);
-    var ratio = state.cssLayerSelectorsFullColumns / cols;
-    selectorsHeight = selectorsHeight * ratio;
-  }
+
   var cssSelectorOuterScrollingContainer = {
-    height: selectorsHeight,
-    overflowY: 'scroll',
-    width: '90vw'
+    height: selectorsHeight
   };
+
   var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
     height: canvasHeight,
     width: canvasWidth
@@ -125,25 +126,33 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(state, 
 
   return {
     cssControlHeight: cssControlHeight,
-    cssGraphFlexOuter: cssGraphFlexOuter,
-    cssGraphFlexInner: cssGraphFlexInner,
     cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
+    cssGraphFlexInner: cssGraphFlexInner,
+    cssGraphFlexOuter: cssGraphFlexOuter,
     cssGraphStabilizer: cssGraphStabilizer
   };
 };
 
 var calcDimensions = function calcDimensions(state) {
+  var win = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window;
+
   // this runs on mount, on window resize, and when opening and closing selectors
-  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * window.innerHeight, 400) : 0;
+  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * win.innerHeight, 400) : 0;
 
   var _calcCanvasDimensions = calcCanvasDimensions({
     state: state,
+    win: win,
     reduceCanvasHeightBy: reduceCanvasHeightBy
   }),
       canvasHeight = _calcCanvasDimensions.canvasHeight,
       canvasWidth = _calcCanvasDimensions.canvasWidth;
 
-  var graphContainerDimensions = calcGraphContainerDimensions(state, canvasHeight, canvasWidth);
+  var graphContainerDimensions = calcGraphContainerDimensions({
+    state: state,
+    win: win,
+    canvasHeight: canvasHeight,
+    canvasWidth: canvasWidth });
+
   return Object.assign({}, graphContainerDimensions, {
     cssCanvasHeight: canvasHeight,
     cssCanvasWidth: canvasWidth
@@ -153,5 +162,6 @@ var calcDimensions = function calcDimensions(state) {
 module.exports = {
   calcScreenType: calcScreenType,
   calcCanvasDimensions: calcCanvasDimensions,
+  calcGraphContainerDimensions: calcGraphContainerDimensions,
   calcDimensions: calcDimensions
 };
