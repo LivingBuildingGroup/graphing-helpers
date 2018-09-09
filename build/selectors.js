@@ -1,15 +1,13 @@
 'use strict';
 
 var listAllLayersUnPrefixed = function listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount) {
-  // console.log('layersRawPrefixCount',layersRawPrefixCount)
+  // I think this is abandoned.  I don't think we are using it anymore.
   var layersUsed = {};
   for (var layer in oneUnit) {
     if (layersRawPrefixCount === 0) {
       layersUsed[layer] = true;
     } else {
       var unPrefix = layer.split('__');
-      // console.log('layer',layer,'unPrefix', unPrefix)
-      // console.log(unPrefix[unPrefix.length-1]);
       layersUsed[unPrefix[unPrefix.length - 1]] = true;
     }
   }

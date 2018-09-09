@@ -231,7 +231,9 @@ const parseDataType1 = state => {
       dataType1ParsedFrom2 :
       state.dataConvertFrom === 0 ?
         dataType1ParsedFrom0 :
-        state.dataType1Raw ;
+        Array.isArray(state.dataType1Raw) ? 
+          state.dataType1Raw :
+          [] ;
 
   return dataType1Processed;
 };
@@ -405,126 +407,6 @@ const createGraphData = input => {
     datasets,
   };
 
-};
-
-// @@@@@@@@@@@@@@@ SIZE @@@@@@@@@@@@@@@
-
-const calcCanvasDimensions = input => {
-  const {
-    win,
-    marginVertical,
-    marginHorizontal,
-    reduceCanvasHeightBy,
-  } = input;
-  // win is window; make sure it is passed in
-  if(!win) return {canvasHeight: 0 ,canvasWidth: 0};
-  if(!win.innerWidth || !win.innerHeight){
-    return {w: 0 ,h: 0};
-  }
-  const wRaw = win.innerWidth;
-  const hRaw = win.innerHeight - reduceCanvasHeightBy;
-  const marginV = isPrimitiveNumber(marginVertical) ? marginVertical : 0 ;
-  const marginH = isPrimitiveNumber(marginHorizontal) ? marginHorizontal : 0 ;
-  const wAvailable = wRaw - marginV;
-  const hAvailable = hRaw - marginH;
-  const ratio = wAvailable / hAvailable ;
-  const category = 
-    ratio < 0.7 ? 'Pnarrow' :
-      ratio < 1.1 ? 'Pwide'   :
-        ratio < 1.6 ? 'Square'  :
-          ratio < 2.0 ? 'Ltall'   :
-            'Lshort'  ;
-  const idealRatio = 1.618; // golden mean!
-  const wIdeal = 
-    category === 'Pnarrow' ? 0.95 * wAvailable :
-      category === 'Pwide'   ? 0.90 * wAvailable :
-        category === 'Square'  ? 0.95 * wAvailable :
-          category === 'Ltall'   ? 0.95 * wAvailable :
-            0.90 * wAvailable ;
-  const hIdeal = wIdeal / idealRatio ;    
-  const hAdj = hIdeal <= hAvailable ? hIdeal : hAvailable ;
-  // through this point, we calculate a rectangle for the graph
-  // hExtraForLegend increases vertical height to adjust for legend
-  // otherwise, legend eats into graph space
-  const legendDeviceHeight =
-    hAvailable < 500       ? 180 : // correct for landscape phones
-      category === 'Pnarrow' ? 150 :
-        category === 'Pwide'   ? 100 :
-          category === 'Square'  ?  50 :
-            category === 'Ltall'   ?   0 :
-              0 ;
-  const canvasWidth = 
-    (hAdj * idealRatio) <= wAvailable ? 
-      hAdj * idealRatio : 
-      wAvailable ;               
-  const canvasHeight = hAdj + legendDeviceHeight;
-  return { 
-    canvasWidth, 
-    canvasHeight, 
-  };
-};
-
-const calcDimensions = state => {
-  // this runs on mount, on window resize, and when opening and closing selectors
-  const reduceCanvasHeightBy = 
-  state.controlInFocus === 'preSets' ?
-    Math.min(0.3 * window.innerHeight, 400) : 0 ;
-  const {canvasHeight, canvasWidth} = calcCanvasDimensions({
-    win: window,
-    marginVertical:   state.cssMarginTop,
-    marginHorizontal: state.cssMarginHorizontal,
-    reduceCanvasHeightBy,
-  });
-  const cssControlHeight =
-    window.innerWidth > state.cssLayerSelectorMediaBreak ?
-      canvasHeight :
-      25 ;
-  let selectorsHeight = 
-    state.controlInFocus === 'preSets' ?
-      state.cssPreSetSelectorsHeight :
-      state.controlInFocus === 'layers' ?
-        state.cssLayerSelectorsHeight :
-        0 ;
-  if(canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers'){
-    const widthPerCol = Math.ceil(state.cssSelectorsFullWidth / state.cssLayerSelectorsFullColumns);
-    const cols = Math.floor(canvasWidth / widthPerCol);
-    const ratio = state.cssLayerSelectorsFullColumns / cols;
-    selectorsHeight = selectorsHeight * ratio;
-  }
-  const cssSelectorOuterScrollingContainer = {
-    height: selectorsHeight,
-    overflowY: 'scroll',
-    width: '90vw',
-  };
-  const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
-    height: canvasHeight,
-    width: canvasWidth,
-  };
-  const totalHeight =
-    canvasHeight + 
-    state.cssMarginTop + 
-    selectorsHeight ;
-
-  const cssGraphFlexInner = {
-    minHeight: totalHeight,
-    display:   'block',
-    maxWidth:  '100vw',
-    maxHeight: '100vh',
-  };
-  const cssGraphFlexOuter = { // outermost div for the entire component
-    zIndex: 999,
-    marginTop: state.cssGraphMarginTop,
-    minHeight: totalHeight,
-  };
-  return {
-    cssCanvasHeight: canvasHeight,
-    cssCanvasWidth:  canvasWidth,
-    cssControlHeight,
-    cssGraphFlexOuter,
-    cssGraphFlexInner,
-    cssSelectorOuterScrollingContainer,
-    cssGraphStabilizer,
-  };
 };
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
@@ -1001,9 +883,6 @@ module.exports = {
   addDatapoints,
   editDatapoint,
   createGraphData,
-  // size
-  calcCanvasDimensions,
-  calcDimensions,
   // axes
   calcTicks,
   createXAxis,

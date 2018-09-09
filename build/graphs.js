@@ -207,7 +207,7 @@ var parseDataType1 = function parseDataType1(state) {
   // NOT DONE YET !!!
   var dataType1ParsedFrom0 = []; // 0 = compound arrays, (e.g. storms)
 
-  var dataType1Processed = state.dataConvertFrom === 2 ? dataType1ParsedFrom2 : state.dataConvertFrom === 0 ? dataType1ParsedFrom0 : state.dataType1Raw;
+  var dataType1Processed = state.dataConvertFrom === 2 ? dataType1ParsedFrom2 : state.dataConvertFrom === 0 ? dataType1ParsedFrom0 : Array.isArray(state.dataType1Raw) ? state.dataType1Raw : [];
 
   return dataType1Processed;
 };
@@ -351,98 +351,6 @@ var createGraphData = function createGraphData(input) {
   return {
     labels: labels,
     datasets: datasets
-  };
-};
-
-// @@@@@@@@@@@@@@@ SIZE @@@@@@@@@@@@@@@
-
-var calcCanvasDimensions = function calcCanvasDimensions(input) {
-  var win = input.win,
-      marginVertical = input.marginVertical,
-      marginHorizontal = input.marginHorizontal,
-      reduceCanvasHeightBy = input.reduceCanvasHeightBy;
-  // win is window; make sure it is passed in
-
-  if (!win) return { canvasHeight: 0, canvasWidth: 0 };
-  if (!win.innerWidth || !win.innerHeight) {
-    return { w: 0, h: 0 };
-  }
-  var wRaw = win.innerWidth;
-  var hRaw = win.innerHeight - reduceCanvasHeightBy;
-  var marginV = isPrimitiveNumber(marginVertical) ? marginVertical : 0;
-  var marginH = isPrimitiveNumber(marginHorizontal) ? marginHorizontal : 0;
-  var wAvailable = wRaw - marginV;
-  var hAvailable = hRaw - marginH;
-  var ratio = wAvailable / hAvailable;
-  var category = ratio < 0.7 ? 'Pnarrow' : ratio < 1.1 ? 'Pwide' : ratio < 1.6 ? 'Square' : ratio < 2.0 ? 'Ltall' : 'Lshort';
-  var idealRatio = 1.618; // golden mean!
-  var wIdeal = category === 'Pnarrow' ? 0.95 * wAvailable : category === 'Pwide' ? 0.90 * wAvailable : category === 'Square' ? 0.95 * wAvailable : category === 'Ltall' ? 0.95 * wAvailable : 0.90 * wAvailable;
-  var hIdeal = wIdeal / idealRatio;
-  var hAdj = hIdeal <= hAvailable ? hIdeal : hAvailable;
-  // through this point, we calculate a rectangle for the graph
-  // hExtraForLegend increases vertical height to adjust for legend
-  // otherwise, legend eats into graph space
-  var legendDeviceHeight = hAvailable < 500 ? 180 : // correct for landscape phones
-  category === 'Pnarrow' ? 150 : category === 'Pwide' ? 100 : category === 'Square' ? 50 : category === 'Ltall' ? 0 : 0;
-  var canvasWidth = hAdj * idealRatio <= wAvailable ? hAdj * idealRatio : wAvailable;
-  var canvasHeight = hAdj + legendDeviceHeight;
-  return {
-    canvasWidth: canvasWidth,
-    canvasHeight: canvasHeight
-  };
-};
-
-var calcDimensions = function calcDimensions(state) {
-  // this runs on mount, on window resize, and when opening and closing selectors
-  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * window.innerHeight, 400) : 0;
-
-  var _calcCanvasDimensions = calcCanvasDimensions({
-    win: window,
-    marginVertical: state.cssMarginTop,
-    marginHorizontal: state.cssMarginHorizontal,
-    reduceCanvasHeightBy: reduceCanvasHeightBy
-  }),
-      canvasHeight = _calcCanvasDimensions.canvasHeight,
-      canvasWidth = _calcCanvasDimensions.canvasWidth;
-
-  var cssControlHeight = window.innerWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
-  var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
-  if (canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers') {
-    var widthPerCol = Math.ceil(state.cssSelectorsFullWidth / state.cssLayerSelectorsFullColumns);
-    var cols = Math.floor(canvasWidth / widthPerCol);
-    var ratio = state.cssLayerSelectorsFullColumns / cols;
-    selectorsHeight = selectorsHeight * ratio;
-  }
-  var cssSelectorOuterScrollingContainer = {
-    height: selectorsHeight,
-    overflowY: 'scroll',
-    width: '90vw'
-  };
-  var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
-    height: canvasHeight,
-    width: canvasWidth
-  };
-  var totalHeight = canvasHeight + state.cssMarginTop + selectorsHeight;
-
-  var cssGraphFlexInner = {
-    minHeight: totalHeight,
-    display: 'block',
-    maxWidth: '100vw',
-    maxHeight: '100vh'
-  };
-  var cssGraphFlexOuter = { // outermost div for the entire component
-    zIndex: 999,
-    marginTop: state.cssGraphMarginTop,
-    minHeight: totalHeight
-  };
-  return {
-    cssCanvasHeight: canvasHeight,
-    cssCanvasWidth: canvasWidth,
-    cssControlHeight: cssControlHeight,
-    cssGraphFlexOuter: cssGraphFlexOuter,
-    cssGraphFlexInner: cssGraphFlexInner,
-    cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
-    cssGraphStabilizer: cssGraphStabilizer
   };
 };
 
@@ -840,9 +748,6 @@ module.exports = {
   addDatapoints: addDatapoints,
   editDatapoint: editDatapoint,
   createGraphData: createGraphData,
-  // size
-  calcCanvasDimensions: calcCanvasDimensions,
-  calcDimensions: calcDimensions,
   // axes
   calcTicks: calcTicks,
   createXAxis: createXAxis,

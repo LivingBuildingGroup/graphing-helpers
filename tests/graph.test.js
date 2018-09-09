@@ -11,14 +11,13 @@ const {
   parseDataType1To0,
   parseDataType2To1,
   parseDataType2To0,
+  parseDataType1,
   calcDataLength,
   conformDataLength,
   addDataset, 
   addDatapoints,
   editDatapoint,
   createGraphData,
-  // size
-  calcCanvasDimensions,
   // axes
   calcTicks,
   createXAxis,
@@ -30,9 +29,7 @@ const {
   // options
   createGraphOptions,
   checkForGraphRefresh,
-  createGraph,
-  // selectors
-  createLayerSelectors } = require('../index');
+  createGraph,} = require('../index');
 
 describe('graphs', ()=> { 
 
@@ -351,6 +348,112 @@ describe('graphs', ()=> {
     const result = parseDataType2To1(
       arraysOfDataObjects, 
       arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('parseDataType1 calling parseDataType2To1', () => {
+    const state = {
+      groups: [
+        'test1', 'test7'
+      ],
+      dataConvertFrom: 2,
+      dataType2Raw: [
+        [ // group 0 = test 1
+          // this is longest array
+          {
+            key1: 1,  // pt 0
+            key2: 3,
+            key3: 5,
+            key5: 3.5,
+            keyX: 7,
+            xLabel: 'one',
+          },
+          {
+            key1: 15, // pt 1
+            key2: 36,
+            key3: 52,
+            key5: 3.8,
+            keyX: 71,
+            xLabel: 'two',
+          },
+        ],
+        [ // group 1 = test 7
+          {
+            key1: 11,
+            key2: 31,
+            key3: 51,
+            key5: 3.51,
+            keyX: 71,
+            xLabel: 'one again',
+          },
+          {
+            key1: 151,
+            key2: 361,
+            key3: 521,
+            key5: 3.81,
+            keyX: 711,
+            xLabel: 'two again',
+          },
+        ]
+      ]
+    };
+    const expectedResult = [
+      {
+        test1__key1: 1,
+        test1__key2: 3,
+        test1__key3: 5,
+        test1__key5: 3.5,
+        test1__keyX: 7,
+  
+        test7__key1: 11,
+        test7__key2: 31,
+        test7__key3: 51,
+        test7__key5: 3.51,
+        test7__keyX: 71,
+        xLabel: 'one again',
+      },
+      {
+        test1__key1: 15,
+        test1__key2: 36,
+        test1__key3: 52,
+        test1__key5: 3.8,
+        test1__keyX: 71,
+  
+        test7__key1: 151,
+        test7__key2: 361,
+        test7__key3: 521,
+        test7__key5: 3.81,
+        test7__keyX: 711,
+        xLabel: 'two again',
+      },
+    ];
+    const result = parseDataType1(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType1 empty array if no data', () => {
+    const state = {
+      groups: [
+        'test1', 'test7'
+      ],
+      dataType2Raw: 'not an array',
+      dataConvertFrom: 'not 2 or 0',
+      dataType1Raw: 'not an array',
+    };
+    const expectedResult = [];
+    const result = parseDataType1(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType1 TEMPORARY empty array if type 0', () => {
+    // have not written type 0 yet, not sure if needed
+    const state = {
+      groups: [
+        'test1', 'test7'
+      ],
+      dataConvertFrom: 0,
+      dataType1Raw: ['array but doesn\'t matter'],
+    };
+    const expectedResult = [];
+    const result = parseDataType1(state);
     expect(result).to.deep.equal(expectedResult);
   });
 
