@@ -57,6 +57,7 @@ var calcScreenType = function calcScreenType(w, h) {
 
 var calcCanvasDimensions = function calcCanvasDimensions(input) {
   var win = input.win,
+      state = input.state,
       reduceCanvasHeightBy = input.reduceCanvasHeightBy;
   // win is window; make sure it is passed in
 
@@ -67,15 +68,16 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
   var controlsCss = {
     onLeftIfWidthOver: 520,
     heightAtTop: 40,
-    widthAtLeft: 30
+    widthAtLeft: 30,
+    marginTop: state.cssGraphMarginTop
   };
   var wRaw = win.innerWidth;
   var hRaw = win.innerHeight;
   var wAvailable = wRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? controlsCss.widthAtLeft : 0);
-  var hAvailable = hRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? 0 : controlsCss.heightAtTop);
+  var hAvailable = hRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
   var screenType = calcScreenType(wRaw, hRaw).type;
   var idealRatio = 1.618; // golden mean!
-  var canvasWidth = Math.floor(0.99 * wAvailable);
+  var canvasWidth = Math.floor(0.97 * wAvailable);
   var canvasHeightRaw = screenType === 'phoneP' ? hRaw : screenType === 'phoneL' ? Math.floor(canvasWidth / idealRatio) : screenType === 'tabletL' ? hAvailable : screenType === 'tabletP' ? wRaw : hAvailable;
   // const hAdj = hIdeal <= hAvailable ? hIdeal : Math.floor(hAvailable) ;
   // through this point, we calculate a rectangle for the graph
