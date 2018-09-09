@@ -316,6 +316,48 @@ describe('styles', ()=> {
     }
 
   });
+  it('createStyle full default with other type comparisons', () => {
+    const expectedResult = {
+      fill:                   true,
+      opacityBackground:      0.1, 
+      opacityBackgroundHover: 0.4,
+      opacityBorder:          1,
+      opacityBorderHover:     1,
+      opacityPoint:           1,
+      opacityPointHover:      1,
+      opacityPointBackgroundHover: 1,
+    
+      lineTension:            0.5,
+      bezierCurve:            true,
+      bezierCurveTension:     0.5,
+  
+      borderCapStyle:         'butt',
+      borderDash:             [],
+      borderDashOffset:       0.0,
+      borderJoinStyle:        'miter',
+      borderWidth:            1,
+      pointBorderWidth:       1,
+      pointHoverRadius:       5,
+      pointHoverBorderWidth:  2,
+      pointRadius:            1,
+      pointHitRadius:         10,
+
+      backgroundColor:           'rgba(227, 163,  79,0.1)',// opacityBackground}),
+      hoverBackgroundColor:      'rgba(227, 163,  79,0.4)',// opacityBackgroundHover})',
+      borderColor:               'rgba(227, 163,  79,1)',// opacityBorder})',
+      hoverBorderColor:          'rgba(227, 163,  79,1)',// opacityBorderHover})',
+      pointBorderColor:          'rgba(227, 163,  79,1)',// opacityPoint})',
+      pointHoverBorderColor:     'rgba(227, 163,  79,1)',// opacityPointHover})',
+      pointHoverBackgroundColor: 'rgba(227, 163,  79,1)',// opacityPointBackgroundHover})',
+      pointBackgroundColor:      '#fff',
+    };
+    const input = {
+      borderWidth: ()=>{return 'testing typeof function';},
+      pointBorderWidth: ()=>{return 'testing typeof object';},
+    };
+    const result = createStyle(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
 
   it('createStylesArray 1 specific key, 1 default key, no named colors, no fallback', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
@@ -367,8 +409,8 @@ describe('styles', ()=> {
         opacityBackground: 0.5, // <<<< passed in
         // VVVVVVVVVV color AND opacity passed in
         backgroundColor:           'rgba(254,   0,   0,0.5)',// opacityBackground}),
-        // VVVVVVVVVV ONLY color passed in
         hoverBackgroundColor:      'rgba(254,   0,   0,0.4)',// opacityBackgroundHover})',
+        // VVVVVVVVVV ONLY color passed in
         borderColor:               'rgba(254,   0,   0,1)',// opacityBorder})',
         hoverBorderColor:          'rgba(254,   0,   0,1)',// opacityBorderHover})',
         pointBorderColor:          'rgba(254,   0,   0,1)',// opacityPoint})',
@@ -443,7 +485,7 @@ describe('styles', ()=> {
       },
       gals: {
         color: 'color2',
-        style: {borderDash: [10,10]},
+        style: {borderDash: [20,20]},
       },
       grams: {
         color: '252, 231,   3',
@@ -470,7 +512,7 @@ describe('styles', ()=> {
     const style2 = Object.assign({},
       general,
       {
-        borderDash: [10,10], // <<<<<< passed in
+        borderDash: [20,20], // <<<<<< passed in
         // VVVVVVVVVV ONLY color passed in
         backgroundColor:           'rgba(  0, 254,   0,0.1)',// opacityBackground}),
         hoverBackgroundColor:      'rgba(  0, 254,   0,0.4)',// opacityBackgroundHover})',
@@ -509,6 +551,136 @@ describe('styles', ()=> {
       }
     );
     const expectedResult = [style1, style2, style3, style4];
+    const result = createStylesArray(layersSelected, styleKey, namedColors);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('createStylesArray 5 specific keys, incorrectly named colors, no fallback', () => {
+    // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
+    const general = {
+      fill:                   true,
+      opacityBackground:      0.1, 
+      opacityBackgroundHover: 0.4,
+      opacityBorder:          1,
+      opacityBorderHover:     1,
+      opacityPoint:           1,
+      opacityPointHover:      1,
+      opacityPointBackgroundHover: 1,
+    
+      lineTension:            0.5,
+      bezierCurve:            true,
+      bezierCurveTension:     0.5,
+  
+      borderCapStyle:         'butt',
+      borderDash:             [],
+      borderDashOffset:       0.0,
+      borderJoinStyle:        'miter',
+      borderWidth:            1,
+      pointBorderWidth:       1,
+      pointHoverRadius:       5,
+      pointHoverBorderWidth:  2,
+      pointRadius:            1,
+      pointHitRadius:         10,
+
+      backgroundColor:           'rgba(227, 163,  79,0.1)',// opacityBackground}),
+      hoverBackgroundColor:      'rgba(227, 163,  79,0.4)',// opacityBackgroundHover})',
+      borderColor:               'rgba(227, 163,  79,1)',// opacityBorder})',
+      hoverBorderColor:          'rgba(227, 163,  79,1)',// opacityBorderHover})',
+      pointBorderColor:          'rgba(227, 163,  79,1)',// opacityPoint})',
+      pointHoverBorderColor:     'rgba(227, 163,  79,1)',// opacityPointHover})',
+      pointHoverBackgroundColor: 'rgba(227, 163,  79,1)',// opacityPointBackgroundHover})',
+
+      pointBackgroundColor:      '#fff',
+    };
+    const layersSelected = ['lbs','gals','grams','kilos','cubits'];
+    const namedColors = {
+      color1: '254,   0,   0',
+      color2: '  0, 254,   0',
+    };
+    const styleKey = {
+      lbs: {
+        color: 'not color1',
+        style: {opacityBackground: 0.5},
+      },
+      gals: {
+        color: 'not color2',
+      },
+      grams: {
+        color: '252, 231,   3',
+      },
+      kilos: {
+        style: {borderDash: [10,10]},
+      },
+      // intentionally missing cubits
+    };
+    const style1 = Object.assign({},
+      general,
+      {
+        opacityBackground: 0.5, // <<<< passed in
+        // VVVVVVVVVV color AND opacity passed in
+        backgroundColor:           'rgba(not color1,0.5)',// opacityBackground}),
+        // VVVVVVVVVV ONLY color passed in
+        hoverBackgroundColor:      'rgba(not color1,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(not color1,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(not color1,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(not color1,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(not color1,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(not color1,1)',// opacityPointBackgroundHover})',
+      }
+    );
+    const style2 = Object.assign({},
+      general,
+      {
+        // VVVVVVVVVV ONLY color passed in
+        backgroundColor:           'rgba(not color2,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba(not color2,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(not color2,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(not color2,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(not color2,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(not color2,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(not color2,1)',// opacityPointBackgroundHover})',
+      }
+    );
+    const style3 = Object.assign({},
+      general,
+      {
+        // VVVVVVVVVV named color is invalid, but a color is passed in, so use that color
+        backgroundColor:           'rgba(252, 231,   3,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba(252, 231,   3,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(252, 231,   3,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(252, 231,   3,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(252, 231,   3,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(252, 231,   3,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(252, 231,   3,1)',// opacityPointBackgroundHover})',
+      }
+    );
+    const style4 = Object.assign({},
+      general,
+      {
+        borderDash: [10,10], // <<<<< passed in
+        // VVVVVVVVVV color is undefined in key, so mapped from palette23()[3] ... peach8[4]
+        backgroundColor:           'rgba(203,  71,  43,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba(203,  71,  43,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba(203,  71,  43,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba(203,  71,  43,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba(203,  71,  43,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba(203,  71,  43,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba(203,  71,  43,1)',// opacityPointBackgroundHover})',
+      }
+    );
+    const style5 = Object.assign({},
+      general,
+      {
+        // VVVVVVVVVV color is undefined in key, so mapped from palette23()[3] ... peach8[4]
+        backgroundColor:           'rgba( 93,   6,  22,0.1)',// opacityBackground}),
+        hoverBackgroundColor:      'rgba( 93,   6,  22,0.4)',// opacityBackgroundHover})',
+        borderColor:               'rgba( 93,   6,  22,1)',// opacityBorder})',
+        hoverBorderColor:          'rgba( 93,   6,  22,1)',// opacityBorderHover})',
+        pointBorderColor:          'rgba( 93,   6,  22,1)',// opacityPoint})',
+        pointHoverBorderColor:     'rgba( 93,   6,  22,1)',// opacityPointHover})',
+        pointHoverBackgroundColor: 'rgba( 93,   6,  22,1)',// opacityPointBackgroundHover})',
+      }
+    );
+    const expectedResult = [style1, style2, style3, style4, style5];
     const result = createStylesArray(layersSelected, styleKey, namedColors);
     expect(result).to.deep.equal(expectedResult);
   });

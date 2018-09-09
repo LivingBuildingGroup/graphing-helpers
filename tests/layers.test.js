@@ -218,7 +218,7 @@ describe('layers', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it.only('calcFirstLayerOnList, list is provided', () => {
+  it('calcFirstLayerOnList, list is provided', () => {
     const state = {
       layersGroupedByUnits: {
         lbs:    ['layer0', 'layer1', 'layer8'],
@@ -242,7 +242,62 @@ describe('layers', ()=> {
     const result = calcFirstLayerOnList(state);
     expect(result).to.equal(expectedResult);
   });
-  it.only('calcFirstLayerOnList, list is not provided', () => {
+  it('calcFirstLayerOnList, no list, layerUnitsArray[0] value not found', () => {
+    const state = {
+      layersGroupedByUnits: {
+        lbs:    ['layer0', 'layer1', 'layer8'],
+        pounds: ['layer7'],
+        apples: ['weirdUnit'],
+        gals:   ['layer4'],
+      },
+      layerUnitsArray: ['not apples','gals','lbs','pounds'],
+      layersThatHaveUnits:'not an array',
+    };
+    const expectedResult = '';
+    const result = calcFirstLayerOnList(state);
+    expect(result).to.equal(expectedResult);
+  });
+  it('calcFirstLayerOnList, no list, layersGroupedByUnits not an object', () => {
+    const state = {
+      layersGroupedByUnits: 'not an object',
+      layerUnitsArray: ['apples','gals','lbs','pounds'],
+      layersThatHaveUnits:'not an array',
+    };
+    const expectedResult = '';
+    const result = calcFirstLayerOnList(state);
+    expect(result).to.equal(expectedResult);
+  });
+  it('calcFirstLayerOnList, no list, layersGroupedByUnits key is not an array', () => {
+    const state = {
+      layersGroupedByUnits: {
+        lbs:    ['layer0', 'layer1', 'layer8'],
+        pounds: ['layer7'],
+        apples: 'not an array',
+        gals:   ['layer4'],
+      },
+      layerUnitsArray: ['apples','gals','lbs','pounds'],
+      layersThatHaveUnits:'not an array',
+    };
+    const expectedResult = '';
+    const result = calcFirstLayerOnList(state);
+    expect(result).to.equal(expectedResult);
+  });
+  it('calcFirstLayerOnList, no list, layerUnitsArray is empty', () => {
+    const state = {
+      layersGroupedByUnits: {
+        lbs:    ['layer0', 'layer1', 'layer8'],
+        pounds: ['layer7'],
+        apples: ['weirdUnit'],
+        gals:   ['layer4'],
+      },
+      layerUnitsArray: [],
+      layersThatHaveUnits:'not an array',
+    };
+    const expectedResult = '';
+    const result = calcFirstLayerOnList(state);
+    expect(result).to.equal(expectedResult);
+  });
+  it('calcFirstLayerOnList, list is not provided', () => {
     const state = {
       layersGroupedByUnits: {
         lbs:    ['layer0', 'layer1', 'layer8'],
@@ -258,12 +313,94 @@ describe('layers', ()=> {
     expect(result).to.equal(expectedResult);
   });
 
-  it('toggleLayerGroup', () => {
-    const expectedResult = {
-      
+  it('toggleLayerGroup removes all layers', () => {
+    const state = {
+      layersSelected: [
+        'layer1',
+        'layer2',
+      ]
     };
-    const input = {};
-    const result = toggleLayerGroup(input);
+    const groupOfLayers = ['layer1','layer2','layer3'];
+    const expectedResult = [];
+    const result = toggleLayerGroup(state, groupOfLayers);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('toggleLayerGroup removes all layers in group', () => {
+    const state = {
+      layersSelected: [
+        'layer1',
+        'layer2',
+        'layerA',
+        'layerB',
+      ]
+    };
+    const groupOfLayers = ['layer1','layer2','layer3'];
+    const expectedResult = [
+      'layerA',
+      'layerB',
+    ];
+    const result = toggleLayerGroup(state, groupOfLayers);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('toggleLayerGroup adds all layers in group', () => {
+    const state = {
+      layersSelected: [
+        'layerA',
+        'layerB',
+      ]
+    };
+    const groupOfLayers = ['layer1','layer2','layer3'];
+    const expectedResult = [
+      'layerA',
+      'layerB',
+      'layer1',
+      'layer2',
+      'layer3',
+    ];
+    const result = toggleLayerGroup(state, groupOfLayers);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('toggleLayerGroup adds full group if layersSelected is not an array', () => {
+    const state = {
+      layersSelected: 'not an array',
+    };
+    const groupOfLayers = ['layer1','layer2','layer3'];
+    const expectedResult = [
+      'layer1',
+      'layer2',
+      'layer3',
+    ];
+    const result = toggleLayerGroup(state, groupOfLayers);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('toggleLayerGroup returns empty array as worst case', () => {
+    const state = {
+      layersSelected: 'not an array',
+    };
+    const groupOfLayers = 'neither an array';
+    const expectedResult = [];
+    const result = toggleLayerGroup(state, groupOfLayers);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('toggleLayerGroup returns layers selected if group is not an array', () => {
+    const state = {
+      layersSelected: [
+        'layerA',
+        'layerB',
+        'layer1',
+        'layer2',
+        'layer3',
+      ],
+    };
+    const groupOfLayers = 'not an array';
+    const expectedResult = [
+      'layerA',
+      'layerB',
+      'layer1',
+      'layer2',
+      'layer3',
+    ];
+    const result = toggleLayerGroup(state, groupOfLayers);
     expect(result).to.deep.equal(expectedResult);
   });
 

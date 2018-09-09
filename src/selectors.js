@@ -1,141 +1,71 @@
 'use strict';
 
-const listAllLayers = (oneUnit, layersRawPrefixCount) => {
-  // console.log('layersRawPrefixCount',layersRawPrefixCount)
-  const layers = [];
+const listAllLayersUnPrefixed = (oneUnit, layersRawPrefixCount) => {
+  // I think this is abandoned.  I don't think we are using it anymore.
+  const layersUsed = {};
   for(let layer in oneUnit){
     if(layersRawPrefixCount === 0){
-      layers.push(layer);
+      layersUsed[layer] = true;
     } else {
       const unPrefix = layer.split('__');
-      // console.log('layer',layer,'unPrefix', unPrefix)
-      // console.log(unPrefix[unPrefix.length-1]);
-      layers.push(unPrefix[unPrefix.length-1]);
+      layersUsed[unPrefix[unPrefix.length-1]] = true;
     }
   }
+  const layers = [];
+  for(let layer in layersUsed){
+    layers.push(layer);
+  }
+  layers.sort();
   return layers;
-};
-
-const finalizeSelectorObject = input  => {
-  const {
-    oneUnit, 
-    layersAllUnPrefixed, 
-    groups, 
-    groupsSub, 
-    units, 
-    labels, 
-    abbrevs} = input;
-  const legendObject       = {};
-  const layersAllPrefixed  = [];
-  const layersThatHaveUnits= [];
-  const alreadyDone        = {};
-
-  const g1 = Array.isArray(groups   ) ? groups    : [''] ;
-  const g2 = Array.isArray(groupsSub) ? groupsSub : [''] ;
-  // console.log('g1', g1)
-  // console.log('g2', g2)
-  // console.log('groups', groups)
-  // console.log('groupsSub', groupsSub)
-  // console.log('units', units)
-  // console.log('oneUnit', oneUnit)
-
-  layersAllUnPrefixed.forEach(key =>{
-    g1.forEach(group=>{
-      const g  = group ? `${group}__` : '' ;
-      const g_ = group ? `${group} `  : '' ;
-      g2.forEach(subGroup=>{
-        const s  = subGroup ? `${subGroup}__` : '' ;
-        const s_ = subGroup ? `${subGroup} `  : '' ;
-        const prefixedKeyG  = `${g}${key}`;
-        const prefixedKeyGS = `${g}${s}${key}`;
-        const prefixedKeyS  = `${s}${key}`;
-        let keyToUse = key;
-        let preToUse = '';
-        if(oneUnit.hasOwnProperty(key)){
-          keyToUse = key;
-          preToUse = '';
-        } else if (oneUnit.hasOwnProperty(prefixedKeyG)){
-          keyToUse = prefixedKeyG;
-          preToUse = `${g_}`;
-        } else if (oneUnit.hasOwnProperty(prefixedKeyGS)){
-          keyToUse = prefixedKeyGS;
-          preToUse = `${g_}${s_}`;
-        } else if (oneUnit.hasOwnProperty(prefixedKeyS)){
-          keyToUse = prefixedKeyS;
-          preToUse = `${s_}`;
-        }
-        if(!alreadyDone[keyToUse]){
-          alreadyDone[keyToUse] = true;
-          layersAllPrefixed.push(keyToUse);
-          if(units[key]){
-            layersThatHaveUnits.push(keyToUse);
-            legendObject[keyToUse] = [
-              `${preToUse}${abbrevs[key]}`, 
-              `${preToUse}${labels[key]}`, 
-              units[key],
-            ];
-          }
-        }
-      });
-    });
-  });
-  // console.log('####### layersThatHaveUnits',layersThatHaveUnits)
-
-  return {
-    layersThatHaveUnits,
-    layersAllPrefixed,
-    legendObject,
-  };
 };
 
 const createLayerSelectorObject = input => {
 
   const {
     data,
-    layersRawPrefixCount,
-    layersAllUnPrefixed,
-    groups,
-    groupsSub,
     units,
     abbrevs,
     labels,
   } = input;
-  // console.log('@@@@@@ layersAllUnPrefixed',layersAllUnPrefixed)
-  // 
+
   // always receiving dataType1Processed
   const oneUnit = data[0] ;
-  // console.log('oneUnit',oneUnit)
 
-  let needToListAllLayers = true;
-  if(layersRawPrefixCount > 0){
-    needToListAllLayers = true;
-  } else if(Array.isArray(layersAllUnPrefixed)){
-    if(layersAllUnPrefixed.length > 0){
-      needToListAllLayers = false;
+  const legendObject       = {};
+  const layersAllTemp      = [];
+  const layersThatHaveUnitsTemp= [];
+
+  for(let layer in oneUnit){
+    const split = layer.split('__');
+    const unPrefix = split[split.length-1];
+    layersAllTemp.push({unPrefix, layer});
+    if(units[unPrefix]){
+      const prefixes = split.length > 1 ? split.slice(0,split.length-1) : [] ;
+      const prefixesFormatted = prefixes.length > 0 ? `${prefixes.join(' ')} ` : '' ;
+      layersThatHaveUnitsTemp.push({unPrefix, layer});
+      legendObject[layer] = [
+        `${prefixesFormatted}${abbrevs[unPrefix]}`, 
+        `${prefixesFormatted}${labels[unPrefix]}`, 
+        units[unPrefix],
+      ];
     }
   }
 
-  const layersAllUnPrefixedNew = 
-    needToListAllLayers ? 
-      listAllLayers(oneUnit, layersRawPrefixCount) :
-      layersAllUnPrefixed;
-  // console.log('layersAllUnPrefixedNew',layersAllUnPrefixedNew);
+  // sort by unprefixed layers so that like layers (e.g. "rain") are grouped, not like groups (e.g. "test 52")
+  layersAllTemp.sort(          (a,b)=>a.unPrefix>b.unPrefix);
+  layersThatHaveUnitsTemp.sort((a,b)=>a.unPrefix>b.unPrefix);
+  const layersAllPrefixed   = layersAllTemp.map(l=>l.layer);
+  const layersThatHaveUnits = layersThatHaveUnitsTemp.map(l=>l.layer);
 
-  const selectorObjectNew = finalizeSelectorObject({
-    oneUnit,
-    layersAllUnPrefixedNew,
-    groups, 
-    groupsSub,
-    units, 
-    labels, 
-    abbrevs});
-  // console.log('**** selectorObjectNew',selectorObjectNew);
+  return {
+    layersThatHaveUnits,
+    layersAllPrefixed,
+    legendObject,
+  };
 
-  return selectorObjectNew;
 };
 
 module.exports = {
-  listAllLayers,
-  finalizeSelectorObject,
+  listAllLayersUnPrefixed,
   createLayerSelectorObject
 };

@@ -70,10 +70,21 @@ var createStylesArray = function createStylesArray(layersSelected, styleKey, nam
   var sk = styleKey;
   var nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright');
   var fa = fallbackArray ? fallbackArray : selectPalette(30);
-  var stylesArray = !isObjectLiteral(sk) ? layersSelected.map(function (k, i) {
+  var stylesArray =
+  // no style key = just pick colors off the array
+  !isObjectLiteral(sk) ? layersSelected.map(function (k, i) {
     return createStyle({ color: fa[i] });
-  }) : layersSelected.map(function (k, i) {
-    var style = !sk[k] ? { color: fa[i] } : sk[k].color && sk[k].style ? Object.assign({}, sk[k].style, { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color }) : sk[k].color ? { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[i] }) : { color: fa[i] };
+  }) :
+  // there is a style key
+  layersSelected.map(function (k, i) {
+    // layer is not in key = color from array
+    var style = !sk[k] ? { color: fa[i] } :
+    // layer has color and style
+    sk[k].color && sk[k].style ? Object.assign({}, sk[k].style,
+    // convert named color (string) to rgba as needed
+    { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color }) : sk[k].color ?
+    // convert named color (string) to rgba as needed
+    { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[i] }) : { color: fa[i] };
     return createStyle(style);
   });
   return stylesArray;

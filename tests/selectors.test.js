@@ -4,18 +4,120 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const { 
-  listAllLayers,
-  finalizeSelectorObject,
+  listAllLayersUnPrefixed,
+  // finalizeSelectorObject,
   createLayerSelectorObject } = require('../index');
 
 describe('selectors', ()=> { 
 
-  it('listAllLayers', () => {
-
+  it('listAllLayersUnPrefixed prefix count = 0, no prefixes', () => {
+    const oneUnit = {
+      layer1: 3,
+      layer2: 4,
+    };
+    const layersRawPrefixCount = 0;
+    const expectedResult = [
+      'layer1',
+      'layer2',
+    ];
+    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('listAllLayersUnPrefixed prefix count = 1, no prefixes', () => {
+    const oneUnit = {
+      layer1: 3,
+      layer2: 4,
+    };
+    const layersRawPrefixCount = 0;
+    const expectedResult = [
+      'layer1',
+      'layer2',
+    ];
+    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('listAllLayersUnPrefixed prefix count = 0, with prefixes', () => {
+    const oneUnit = {
+      A__layer1: 3,
+      B__layer2: 4,
+    };
+    const layersRawPrefixCount = 0;
+    const expectedResult = [
+      'A__layer1',
+      'B__layer2',
+    ];
+    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
+    const oneUnit = {
+      A__layer1: 3,
+      B__layer2: 4,
+    };
+    const layersRawPrefixCount = 1;
+    const expectedResult = [
+      'layer1',
+      'layer2',
+    ];
+    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
+    const oneUnit = {
+      '52__B__layer2': 4,
+      '53__B__layer2': 5,
+      '52__A__layer1': 3,
+    };
+    const layersRawPrefixCount = 1;
+    const expectedResult = [
+      'layer1',
+      'layer2',
+    ];
+    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+    expect(result).to.deep.equal(expectedResult);
   });
 
-  it('finalizeSelectorObject', () => {
-
+  it('createLayerSelectorObject again', () => {
+    const input = {
+      data: [
+        {
+          '52__B__layer2': 4,
+          '53__B__layer2': 5,
+          '52__A__layer1': 3,
+        },
+      ],
+      units: {
+        layer1: 'gals',
+        layer2: 'lbs',
+      },
+      abbrevs: {
+        layer1: 'GALS',
+        layer2: 'POUNDS',
+      },
+      labels: {
+        layer1: 'gallons of stuff',
+        layer2: 'lbs is weight',
+      },
+    };
+    const expectedResult = {
+      layersThatHaveUnits: [
+        '52__A__layer1',
+        '52__B__layer2',
+        '53__B__layer2',
+      ],
+      layersAllPrefixed: [
+        '52__A__layer1',
+        '52__B__layer2',
+        '53__B__layer2',
+      ],
+      legendObject: {
+        '52__A__layer1': ['52 A GALS','52 A gallons of stuff','gals'],
+        '52__B__layer2': ['52 B POUNDS','52 B lbs is weight','lbs'],
+        '53__B__layer2': ['53 B POUNDS','53 B lbs is weight','lbs'],
+      }
+    };
+    const result = createLayerSelectorObject(input);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('createLayerSelectorObject convert 1', ()=>{
@@ -73,18 +175,6 @@ describe('selectors', ()=> {
           test2__unit2: 55,
         }
       ], 
-      layersRawPrefixCount: 1, // there is up to 1 prefix in the layers of data
-      layersAllUnPrefixed: [
-        'unit1',
-        'unit2',
-      ],
-      groups: [
-        'test1',
-        'test2',
-      ],
-      groupsSub: [
-        '',
-      ],
       units: {
         unit1: 'gals',
         unit2: 'lbs',

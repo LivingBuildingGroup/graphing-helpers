@@ -71,17 +71,23 @@ const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray)
   const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
   const fa = fallbackArray ? fallbackArray : selectPalette(30);
   const stylesArray = 
+    // no style key = just pick colors off the array
     !isObjectLiteral(sk) ? 
       layersSelected.map((k,i)=>createStyle({color:fa[i]})) :
+      // there is a style key
       layersSelected.map((k,i)=>{
+        // layer is not in key = color from array
         const style = !sk[k] ?
           { color: fa[i] } :
+          // layer has color and style
           sk[k].color && sk[k].style ?
             Object.assign({},
               sk[k].style,
+              // convert named color (string) to rgba as needed
               { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } 
             ):
             sk[k].color ?
+              // convert named color (string) to rgba as needed
               { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } :
               sk[k].style ?
                 Object.assign({},

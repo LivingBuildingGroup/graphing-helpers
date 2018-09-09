@@ -62,6 +62,9 @@ const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
 };
 
 const calcFirstLayerOnList = state => {
+  // find the first layer listed, which is used to toggle a single layer on as a default condition if there is no preSet
+  // if layers are supplied, just read the first one
+  // if layers are not supplied (something else is wrong), but at least try to find a layer
   const { layersGroupedByUnits, layerUnitsArray, layersThatHaveUnits } = state;
   const firstLayerOnList = 
     Array.isArray(layersThatHaveUnits) ?
@@ -76,17 +79,25 @@ const calcFirstLayerOnList = state => {
   return firstLayerOnList;
 };
 
-const toggleLayerGroup = (state, group) => {
-
+const toggleLayerGroup = (state, groupOfLayers) => {
+  // add or remove an entire group of layer from the layers selected
   let action = 
     !Array.isArray(state.layersSelected) ?
       'new' :
       'add' ;
 
+  if(!Array.isArray(groupOfLayers)){
+    if(!Array.isArray(state.layersSelected)){
+      return [];
+    } else {
+      return state.layersSelected;
+    } 
+  }
+
   let index = 0;
-  while(action==='add' && index < group.length){
+  while(action==='add' && index < groupOfLayers.length){
     action = 
-      state.layersSelected.includes(group[index]) ?
+      state.layersSelected.includes(groupOfLayers[index]) ?
         'remove' : 
         'add' ;
     index ++;
@@ -94,11 +105,11 @@ const toggleLayerGroup = (state, group) => {
 
   const layersSelected =
     action === 'new' ?
-      group :
+      groupOfLayers :
       action === 'add' ?
-        addAllItemsToArray(state.layersSelected, group) :
+        addAllItemsToArray(state.layersSelected, groupOfLayers) :
         action === 'remove' ?
-          removeAllItemsFromArray(state.layersSelected, group) :
+          removeAllItemsFromArray(state.layersSelected, groupOfLayers) :
           state.layersSelected ;
 
   return layersSelected;
