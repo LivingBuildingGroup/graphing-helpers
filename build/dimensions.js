@@ -56,42 +56,29 @@ var calcScreenType = function calcScreenType(w, h) {
 };
 
 var calcCanvasDimensions = function calcCanvasDimensions(input) {
-  var win = input.win,
-      state = input.state,
+  var state = input.state,
       reduceCanvasHeightBy = input.reduceCanvasHeightBy;
-  // win is window; make sure it is passed in
 
-  if (!win) return { canvasWidth: 0, canvasHeight: 0 };
-  if (!win.innerWidth || !win.innerHeight) {
+  if (!window) return { canvasWidth: 0, canvasHeight: 0 };
+  if (!window.screen) return { canvasWidth: 0, canvasHeight: 0 };
+  if (!window.screen.availWidth || !window.screen.availHeight) {
     return { canvasWidth: 0, canvasHeight: 0 };
   }
   var controlsCss = {
     onLeftIfWidthOver: 520,
     heightAtTop: 40,
-    widthAtLeft: 30,
-    marginTop: state.cssGraphMarginTop
+    marginH: 60, // this is double, since the graph is centered
+    marginTop: state.cssMarginTop + state.cssGraphMarginTop // former is margin of entire contain, latter is for graph itself
   };
-  var wRaw = win.innerWidth;
-  var hRaw = win.innerHeight;
-  var wAvailable = wRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? controlsCss.widthAtLeft : 0);
+  var wRaw = window.screen.availWidth;
+  var hRaw = window.screen.availHeight;
+  var wAvailable = wRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? controlsCss.marginH : 0);
   var hAvailable = hRaw - (wRaw >= controlsCss.onLeftIfWidthOver ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
   var screenType = calcScreenType(wRaw, hRaw).type;
   var idealRatio = 1.618; // golden mean!
   var canvasWidth = Math.floor(0.97 * wAvailable);
   var canvasHeightRaw = screenType === 'phoneP' ? hRaw : screenType === 'phoneL' ? Math.floor(canvasWidth / idealRatio) : screenType === 'tabletL' ? hAvailable : screenType === 'tabletP' ? wRaw : hAvailable;
-  // const hAdj = hIdeal <= hAvailable ? hIdeal : Math.floor(hAvailable) ;
-  // through this point, we calculate a rectangle for the graph
-  // hExtraForLegend increases vertical height to adjust for legend
-  // otherwise, legend eats into graph space
-
-  // const legendDeviceHeight =
-  //   hAvailable < 500       ? 180 : // correct for landscape phones
-  //     screenType === 'Pnarrow' ? 150 :
-  //       screenType === 'Pwide'   ? 100 :
-  //         screenType === 'Square'  ?  50 :
-  //           screenType === 'Ltall'   ?   0 :
-  //             0 ;              
-  var canvasHeight = canvasHeightRaw - reduceCanvasHeightBy; // + legendDeviceHeight;
+  var canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
   return {
     canvasWidth: canvasWidth,
     canvasHeight: canvasHeight,
@@ -104,19 +91,7 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
   };
 };
 
-var calcDimensions = function calcDimensions(state) {
-  // this runs on mount, on window resize, and when opening and closing selectors
-  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * window.innerHeight, 400) : 0;
-
-  var _calcCanvasDimensions = calcCanvasDimensions({
-    win: window,
-    marginVertical: state.cssMarginTop,
-    marginHorizontal: state.cssMarginHorizontal,
-    reduceCanvasHeightBy: reduceCanvasHeightBy
-  }),
-      canvasHeight = _calcCanvasDimensions.canvasHeight,
-      canvasWidth = _calcCanvasDimensions.canvasWidth;
-
+var calcGraphContainerDimensions = function calcGraphContainerDimensions(state, canvasHeight, canvasWidth) {
   var cssControlHeight = window.innerWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
   var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
   if (canvasWidth < state.cssSelectorsFullWidth && state.controlInFocus === 'layers') {
@@ -147,15 +122,32 @@ var calcDimensions = function calcDimensions(state) {
     marginTop: state.cssGraphMarginTop,
     minHeight: totalHeight
   };
+
   return {
-    cssCanvasHeight: canvasHeight,
-    cssCanvasWidth: canvasWidth,
     cssControlHeight: cssControlHeight,
     cssGraphFlexOuter: cssGraphFlexOuter,
     cssGraphFlexInner: cssGraphFlexInner,
     cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
     cssGraphStabilizer: cssGraphStabilizer
   };
+};
+
+var calcDimensions = function calcDimensions(state) {
+  // this runs on mount, on window resize, and when opening and closing selectors
+  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * window.innerHeight, 400) : 0;
+
+  var _calcCanvasDimensions = calcCanvasDimensions({
+    state: state,
+    reduceCanvasHeightBy: reduceCanvasHeightBy
+  }),
+      canvasHeight = _calcCanvasDimensions.canvasHeight,
+      canvasWidth = _calcCanvasDimensions.canvasWidth;
+
+  var graphContainerDimensions = calcGraphContainerDimensions(state, canvasHeight, canvasWidth);
+  return Object.assign({}, graphContainerDimensions, {
+    cssCanvasHeight: canvasHeight,
+    cssCanvasWidth: canvasWidth
+  });
 };
 
 module.exports = {
