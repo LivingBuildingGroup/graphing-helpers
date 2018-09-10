@@ -10,9 +10,8 @@ const applyPreSetGlobalColorToStyles = (styles, preSetGlobalPalette) => {
     if(newStyles[layer].style){
       if(newStyles[layer].style.shade > 0){
         layerToTrigger = layer;
-        const color = newStyles[layer].color;
         const shade = newStyles[layer].style.shade - 1;
-        newStyles[layer].color = preSetGlobalPalette[color][shade];
+        newStyles[layer].color = preSetGlobalPalette[shade];
       }
     }
   }
