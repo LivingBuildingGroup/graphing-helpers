@@ -7,6 +7,7 @@ const {
   general14,
   createBright7,
   addBright, // tested as a helper
+  addBrights, // tested as helper
   createBark8,
   createFern8,
   createCorn8,
@@ -14,15 +15,95 @@ const {
   createWine8,
   createEggplant8,
   createSky8,
-  createPalette23,
-  createPalette19,
-  createPalette16,
-  createPalette13,
+  createMonoChrome,
+  listBright,
   createPalette11,
+  createPalette13,
+  createPalette16,
+  createPalette19,
+  createPalette23,
   selectPalette,
-  named23, } = require('../index');
+  createNamed, } = require('../index');
 
 describe('palettes', ()=> { 
+
+  const bark8Unshift = [
+    '254, 128,   0', // bright
+    '246, 189, 111',
+    '227, 163,  79',
+    '205, 145,  67',
+    '166, 114,  47',
+    '137,  90,  30',
+    '115,  74,  19',
+    '102,  62,  12',
+    ' 92,  55,   6',
+  ];
+  const fern8Unshift = [
+    '  0, 254,   0', // bright
+    '128, 248, 109',
+    ' 99,  24,  79',
+    ' 79, 190,  64',
+    ' 56, 150,  45',
+    ' 38, 119,  31',
+    ' 24,  93,  19',
+    ' 13,  75,  11',
+    ' 92,  55,   6',
+  ];
+  const corn8Unshift = [
+    '254, 254,   0', // bright
+    '227, 243,  92',
+    '220, 233,  49',
+    '203, 204,  31',
+    '186, 173,  26',
+    '174, 150,  22',
+    '163, 130,  19',
+    '155, 116,  17',
+    '150, 106,  15',
+  ];
+  const peach8Unshift = [
+    '254,   0,   0', // bright
+    '245, 167, 143',
+    '234, 138, 110',
+    '224, 116,  88',
+    '213,  91,  63',
+    '203,  71,  43',
+    '196,  54,  25',
+    '189,  40,  11',
+    '165,  31,   5',
+  ];
+  const wine8Unshift = [
+    '169,   0,  81', // bright
+    '243, 158, 162',
+    '227, 124, 131',
+    '202.  99, 108',
+    '174,  70,  83',
+    '150,  46,  62',
+    '132,  28,  45',
+    '118,  15,  34',
+    ' 93,   6,  22',
+  ];
+  const eggplant8Unshift = [
+    '254,   0, 254', // bright
+    '227, 146, 247',
+    '206, 114, 225',
+    '183,  92, 197',
+    '158,  66, 167',
+    '135,  44, 139',
+    '117,  26, 117',
+    '107,  16, 104',
+    ' 88,   6,  83',
+  ];
+  const sky8Unshift = [
+    '  0,   0, 254', // bright
+    '189, 209, 245',
+    '155, 180, 223',
+    '123, 147, 190',
+    ' 81, 103, 144',
+    ' 53,  74, 112',
+    ' 33,  53,  93',
+    ' 14,  34,  71',
+    '  3,  19,  51',
+  ];
 
   it('general14', () => {
     const expectedResult = [
@@ -91,17 +172,7 @@ describe('palettes', ()=> {
   });
 
   it('createBark8 unshift', () => {
-    const expectedResult = [
-      '254, 128,   0', // bright
-      '246, 189, 111',
-      '227, 163,  79',
-      '205, 145,  67',
-      '166, 114,  47',
-      '137,  90,  30',
-      '115,  74,  19',
-      '102,  62,  12',
-      ' 92,  55,   6',
-    ];
+    const expectedResult = bark8Unshift;
     const pos = -1;
     const result = createBark8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -156,17 +227,7 @@ describe('palettes', ()=> {
   });
 
   it('createFern8 unshift', () => {
-    const expectedResult = [
-      '  0, 254,   0', // bright
-      '128, 248, 109',
-      ' 99,  24,  79',
-      ' 79, 190,  64',
-      ' 56, 150,  45',
-      ' 38, 119,  31',
-      ' 24,  93,  19',
-      ' 13,  75,  11',
-      ' 92,  55,   6',
-    ];
+    const expectedResult = fern8Unshift;
     const pos = -1;
     const result = createFern8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -221,17 +282,7 @@ describe('palettes', ()=> {
   });
 
   it('createCorn8 unshift', () => {
-    const expectedResult = [
-      '254, 254,   0', // bright
-      '227, 243,  92',
-      '220, 233,  49',
-      '203, 204,  31',
-      '186, 173,  26',
-      '174, 150,  22',
-      '163, 130,  19',
-      '155, 116,  17',
-      '150, 106,  15',
-    ];
+    const expectedResult = corn8Unshift;
     const pos = -13;
     const result = createCorn8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -286,17 +337,7 @@ describe('palettes', ()=> {
   });
 
   it('createPeach8 unshift', () => {
-    const expectedResult = [
-      '254,   0,   0', // bright
-      '245, 167, 143',
-      '234, 138, 110',
-      '224, 116,  88',
-      '213,  91,  63',
-      '203,  71,  43',
-      '196,  54,  25',
-      '189,  40,  11',
-      '165,  31,   5',
-    ];
+    const expectedResult = peach8Unshift;
     const pos = -1;
     const result = createPeach8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -351,17 +392,7 @@ describe('palettes', ()=> {
   });
 
   it('createWine8 unshift', () => {
-    const expectedResult = [
-      '169,   0,  81', // bright
-      '243, 158, 162',
-      '227, 124, 131',
-      '202.  99, 108',
-      '174,  70,  83',
-      '150,  46,  62',
-      '132,  28,  45',
-      '118,  15,  34',
-      ' 93,   6,  22',
-    ];
+    const expectedResult = wine8Unshift;
     const pos = -1;
     const result = createWine8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -416,17 +447,7 @@ describe('palettes', ()=> {
   });
 
   it('createEggplant8 unshift', () => {
-    const expectedResult = [
-      '254,   0, 254', // bright
-      '227, 146, 247',
-      '206, 114, 225',
-      '183,  92, 197',
-      '158,  66, 167',
-      '135,  44, 139',
-      '117,  26, 117',
-      '107,  16, 104',
-      ' 88,   6,  83',
-    ];
+    const expectedResult = eggplant8Unshift;
     const pos = -1;
     const result = createEggplant8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -481,17 +502,7 @@ describe('palettes', ()=> {
   });
 
   it('createSky8 unshift', () => {
-    const expectedResult = [
-      '  0,   0, 254', // bright
-      '189, 209, 245',
-      '155, 180, 223',
-      '123, 147, 190',
-      ' 81, 103, 144',
-      ' 53,  74, 112',
-      ' 33,  53,  93',
-      ' 14,  34,  71',
-      '  3,  19,  51',
-    ];
+    const expectedResult = sky8Unshift;
     const pos = -1;
     const result = createSky8(pos);
     expect(result).to.deep.equal(expectedResult);
@@ -527,6 +538,53 @@ describe('palettes', ()=> {
     ];
     const pos = 10;
     const result = createSky8(pos);
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('createMonoChrome green',()=>{
+    const result = createMonoChrome('green');
+    expect(result).to.deep.equal(fern8Unshift);
+  });
+  it('createMonoChrome yellow',()=>{
+    const result = createMonoChrome('yellow');
+    expect(result).to.deep.equal(corn8Unshift);
+  });
+  it('createMonoChrome green',()=>{
+    const result = createMonoChrome('orange');
+    expect(result).to.deep.equal(bark8Unshift);
+  });
+  it('createMonoChrome yellow',()=>{
+    const result = createMonoChrome('red');
+    expect(result).to.deep.equal(peach8Unshift);
+  });
+  it('createMonoChrome green',()=>{
+    const result = createMonoChrome('purple');
+    expect(result).to.deep.equal(wine8Unshift);
+  });
+  it('createMonoChrome yellow',()=>{
+    const result = createMonoChrome('violet');
+    expect(result).to.deep.equal(eggplant8Unshift);
+  });
+  it('createMonoChrome green',()=>{
+    const result = createMonoChrome('blue');
+    expect(result).to.deep.equal(sky8Unshift);
+  });
+  it('createMonoChrome yellow',()=>{
+    const result = createMonoChrome('anything else');
+    expect(result).to.deep.equal(peach8Unshift);
+  });
+
+  it('listBright',()=>{
+    const expectedResult = [
+      'green',
+      'yellow',
+      'orange',
+      'red',
+      'purple',
+      'violet',
+      'blue',
+    ];
+    const result = listBright();
     expect(result).to.deep.equal(expectedResult);
   });
 
@@ -824,6 +882,72 @@ describe('palettes', ()=> {
     expect(result2).to.deep.equal(expectedResult);
     const result3 = selectPalette(500, option);
     expect(result3).to.deep.equal(expectedResult);
+  });
+
+  it('createNamed', ()=>{
+    const expectedResult = { 
+      mocha: '227, 163,  79',
+      cinnamon: '166, 114,  47',
+      chocolate: ' 92,  55,   6',
+      sprite: '128, 248, 109',
+      lime: ' 79, 190,  64',
+      chartreuse: ' 38, 119,  31',
+      forest: ' 13,  75,  11',
+      parchment: '227, 243,  92',
+      mustard: '186, 173,  26',
+      tan: '150, 106,  15',
+      skin: '245, 167, 143',
+      coral: '224, 116,  88',
+      papaya: '203,  71,  43',
+      nandina: '189,  40,  11',
+      pink: '227, 124, 131',
+      rose: '150,  46,  62',
+      merlot: ' 93,   6,  22',
+      lavendar: '227, 146, 247',
+      lilac: '158,  66, 167',
+      aubergine: '107,  16, 104',
+      sea: '155, 180, 223',
+      dusk: ' 53,  74, 112',
+      navy: '  3,  19,  51' 
+    };
+    const result = createNamed();
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('createNamed bright', ()=>{
+    const expectedResult = { 
+      mocha: '227, 163,  79',
+      cinnamon: '166, 114,  47',
+      chocolate: ' 92,  55,   6',
+      sprite: '128, 248, 109',
+      lime: ' 79, 190,  64',
+      chartreuse: ' 38, 119,  31',
+      forest: ' 13,  75,  11',
+      parchment: '227, 243,  92',
+      mustard: '186, 173,  26',
+      tan: '150, 106,  15',
+      skin: '245, 167, 143',
+      coral: '224, 116,  88',
+      papaya: '203,  71,  43',
+      nandina: '189,  40,  11',
+      pink: '227, 124, 131',
+      rose: '150,  46,  62',
+      merlot: ' 93,   6,  22',
+      lavendar: '227, 146, 247',
+      lilac: '158,  66, 167',
+      aubergine: '107,  16, 104',
+      sea: '155, 180, 223',
+      dusk: ' 53,  74, 112',
+      navy: '  3,  19,  51',
+      blue:   '  0,   0, 254',
+      brown:  '254, 128,   0',
+      green:  '  0, 254,   0',
+      purple: '254,   0, 254',
+      red:    '254,   0,   0',
+      violet: '169,   0,  81',
+      yellow: '254, 254,   0',
+    };
+    const result = createNamed('bright');
+    expect(result).to.deep.equal(expectedResult);
   });
 
 });

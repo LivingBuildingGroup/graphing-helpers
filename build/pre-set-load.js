@@ -7,12 +7,13 @@ var _require2 = require('./palettes'),
     listBright = _require2.listBright,
     createMonoChrome = _require2.createMonoChrome;
 
-var formatSelectors = function formatSelectors(thisPreSet, groupTrue, groups) {
+var formatSelectors = function formatSelectors(thisPreSet, groupTrue, groupsRaw) {
+  var groups = Array.isArray(groupsRaw) ? groupsRaw : [];
   var selectors = [''];
   if (Array.isArray(thisPreSet.layersSelected)) {
     if (thisPreSet.layersSelected.length > 0) {
       if (thisPreSet.type === 'group') {
-        if (groupTrue && Array.isArray(groups)) {
+        if (groupTrue) {
           selectors = [];
           thisPreSet.layersSelected.forEach(function (layer) {
             groups.forEach(function (group) {
@@ -20,7 +21,6 @@ var formatSelectors = function formatSelectors(thisPreSet, groupTrue, groups) {
             });
           });
         } else {
-          // console.error('You selected a group preset, but layers are not properly formatted as groups');
           selectors = thisPreSet.layersSelected;
         }
       } else {
@@ -136,29 +136,17 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
     newGroupColors: {},
     groupDotColors: {}
   };
-  console.log('groupTrue', groupTrue, 'will not group styles if false');
-  console.log('groupsSub', groupsSub);
-  console.log('groups', groups);
-  console.log('@@@@@ thisPreSet', thisPreSet);
-  // if(preSetSaveSettings.prefixGroups)
+
   if (!isObjectLiteral(thisPreSet.styles)) {
     // i.e. no material to read from
-    return defaultObject;
+    return Object.assign({}, defaultObject, { styles: {} });
   }
-  // if(thisPreSet.type !== 'group'){
-  //   return defaultObject;
-  // } else 
+
   if ((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements') {
     console.error('You selected a group preset, but we do not have enough information to properly format styles as groups');
     return defaultObject;
   }
-  // start back here
-  // the variables on lines 97-100 are not being properly read for platforms
-  // untether grouping of styles and layers
-  console.log('GROUP STYLES RUNNING!');
   var stylesAppended = isObjectLiteral(thisPreSet.styles) ? thisPreSet.styles : styles;
-
-  console.log('groups in format preset styles', groups);
 
   var _assignPreSetGroupCol = assignPreSetGroupColors({
     groups: groups,
@@ -192,15 +180,6 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
     stylesAppended: stylesAppended,
     newGroupColors: newGroupColors,
     groupDotColors: groupDotColors
-  };
-};
-
-var formatIcons = function formatIcons(thisPreSet) {
-  var icon = !thisPreSet.icon ? null : thisPreSet.icon;
-  var name = !thisPreSet.name ? null : thisPreSet.name;
-  return {
-    preSetIconNew: icon,
-    preSetNameNew: name
   };
 };
 
@@ -249,6 +228,15 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
     preSetIconNew: preSetIconNew, // pre-load for editing
     preSetNameNew: preSetNameNew, // pre-load for editing
     preSetIdPrior: id // this is intended to work like "last selected"
+  };
+};
+
+var formatIcons = function formatIcons(thisPreSet) {
+  var icon = !thisPreSet.icon ? null : thisPreSet.icon;
+  var name = !thisPreSet.name ? null : thisPreSet.name;
+  return {
+    preSetIconNew: icon,
+    preSetNameNew: name
   };
 };
 
@@ -333,25 +321,29 @@ var createPreSetGlobalPalettes = function createPreSetGlobalPalettes() {
   colors.forEach(function (color) {
     preSetGlobalPalettes[color] = createMonoChrome(color);
   });
-  return { preSetGlobalPalettes: preSetGlobalPalettes };
+  return preSetGlobalPalettes;
 };
 
 var selectDefaultPreSet = function selectDefaultPreSet(state) {
-  var preSetIdActive = state.preSetIds[0];
-  for (var id in state.preSets) {
-    if (state.preSets[id].graph === state.graphName && state.preSets[id].def) {
+  var preSets = state.preSets,
+      graphName = state.graphName;
+
+  var preSetIdActive = void 0;
+  for (var id in preSets) {
+    if (preSets[id].graph === graphName && preSets[id].def) {
       preSetIdActive = id;
     }
   }
   // worst case, no default and id list didn't load yet
-  if (!preSetIdActive) {
-    for (var _id in state.preSets) {
-      if (!preSetIdActive) {
-        preSetIdActive = _id;
-      }
+  if (preSetIdActive) return preSetIdActive;
+
+  for (var _id in preSets) {
+    if (preSets[_id].graph === graphName) {
+      preSetIdActive = _id;
     }
   }
-  return { preSetIdActive: preSetIdActive };
+
+  return preSetIdActive;
 };
 
 module.exports = {
@@ -359,8 +351,8 @@ module.exports = {
   formatAllStylesOneGroup: formatAllStylesOneGroup,
   assignPreSetGroupColors: assignPreSetGroupColors,
   formatGroupsStyles: formatGroupsStyles,
-  formatIcons: formatIcons,
   formatPreSetToLoad: formatPreSetToLoad,
+  formatIcons: formatIcons,
   formatPreSetColumns: formatPreSetColumns,
   createPreSetGlobalPalettes: createPreSetGlobalPalettes,
   selectDefaultPreSet: selectDefaultPreSet

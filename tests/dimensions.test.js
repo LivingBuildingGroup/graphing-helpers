@@ -106,6 +106,110 @@ describe('dimensions', ()=> {
     const result = calcCanvasDimensions(input);
     expect(result).to.deep.equal(expectedResult);
   });
+  it('calcCanvasDimensions 0 if no window', ()=>{
+    const input = {
+      state: {
+        cssMarginTop: 0,
+        cssGraphMarginTop: 0,
+        cssLayerSelectorMediaBreak: 520,
+      },
+      reduceCanvasHeightBy: 0,
+    };
+    const expectedResult = {
+      canvasHeight: 0,
+      canvasWidth: 0,
+    };
+    const result = calcCanvasDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcCanvasDimensions 0 if no window.screen', ()=>{
+    const input = {
+      win: {
+      },
+      state: {
+        cssMarginTop: 0,
+        cssGraphMarginTop: 0,
+        cssLayerSelectorMediaBreak: 520,
+      },
+      reduceCanvasHeightBy: 0,
+    };
+    const expectedResult = {
+      canvasHeight: 0,
+      canvasWidth: 0,
+    };
+    const result = calcCanvasDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcCanvasDimensions 0 if no window.screen.availHeight', ()=>{
+    const input = {
+      win: {
+        screen: {
+          availWidth: 1300,
+        },
+      },
+      state: {
+        cssMarginTop: 0,
+        cssGraphMarginTop: 0,
+        cssLayerSelectorMediaBreak: 520,
+      },
+      reduceCanvasHeightBy: 0,
+    };
+    const expectedResult = {
+      canvasHeight: 0,
+      canvasWidth: 0,
+    };
+    const result = calcCanvasDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcCanvasDimensions 0 if no window.screen.availWidth', ()=>{
+    const input = {
+      win: {
+        screen: {
+          availHeight: 900,
+        },
+      },
+      state: {
+        cssMarginTop: 0,
+        cssGraphMarginTop: 0,
+        cssLayerSelectorMediaBreak: 520,
+      },
+      reduceCanvasHeightBy: 0,
+    };
+    const expectedResult = {
+      canvasHeight: 0,
+      canvasWidth: 0,
+    };
+    const result = calcCanvasDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcCanvasDimensions 900h 1000w desktop', ()=>{
+    const input = {
+      win: {
+        screen: {
+          availWidth: 1000,
+          availHeight: 900,
+        },
+      },
+      state: {
+        cssMarginTop: 0,
+        cssGraphMarginTop: 0,
+        cssLayerSelectorMediaBreak: 520,
+      },
+      reduceCanvasHeightBy: 0,
+    };
+    const expectedResult = {
+      canvasHeight: 900,
+      canvasWidth: 911, // 97% of (1000-60)
+      testKeys: {
+        screenType: 'tabletL',
+        canvasHeightRaw: 900,
+        wAvailable: 1000 - 60, // control is on left since over 520 wide
+        hAvailable: 900,
+      }
+    };
+    const result = calcCanvasDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
 
   it('calcGraphContainerDimensions', ()=>{
     const input = {
@@ -147,7 +251,140 @@ describe('dimensions', ()=> {
       },
     };
     const result = calcGraphContainerDimensions(input);
-    expect(result).to.deep.equal(expectedResult)
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('calcDimensions all provided wider than 520',()=>{
+    const win = {
+      screen: {
+        availWidth: 1000,
+        availHeight: 900, 
+      },
+    };
+    const state = {
+      controlInFocus: 'layers',
+      cssPreSetSelectorsHeight: 200,
+      cssLayerSelectorsHeight: 100,
+      cssMarginTop: 0,
+      cssGraphMarginTop: 0,
+      cssLayerSelectorMediaBreak: 520,
+    };
+    const expectedResult = {
+      testKeys: {
+        reduceCanvasHeightBy: 0,
+      },
+      cssCanvasHeight: 900,
+      cssCanvasWidth: 911, // 97% of (1000-60)
+      cssControlHeight: 900,
+      cssGraphFlexOuter: {
+        zIndex:    999,
+        marginTop: 0,
+        minHeight: 900 + 0 + 100, // canvasHeight + marginTop + selectorsHeight
+      },
+      cssGraphFlexInner: {
+        minHeight: 900 + 0 + 100,
+        display:   'block',
+        maxWidth:  '100vw',
+        maxHeight: '100vh',
+      },
+      cssSelectorOuterScrollingContainer: {
+        height: 100,
+      },
+      cssGraphStabilizer: {
+        height: 900,
+        width: 911,
+      },
+    };
+    const result = calcDimensions(state, win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcDimensions all provided narrower than 520',()=>{
+    const win = {
+      screen: {
+        availWidth: 500,
+        availHeight: 900, 
+      },
+    };
+    const state = {
+      controlInFocus: 'layers',
+      cssPreSetSelectorsHeight: 200,
+      cssLayerSelectorsHeight: 100,
+      cssMarginTop: 0,
+      cssGraphMarginTop: 0,
+      cssLayerSelectorMediaBreak: 520,
+    };
+    const expectedResult = {
+      testKeys: {
+        reduceCanvasHeightBy: 0,
+      },
+      cssCanvasHeight: 500,
+      cssCanvasWidth: 485, // 97% of (1000-60)
+      cssControlHeight: 25,
+      cssGraphFlexOuter: {
+        zIndex:    999,
+        marginTop: 0,
+        minHeight: 500 + 0 + 100, // canvasHeight + marginTop + selectorsHeight
+      },
+      cssGraphFlexInner: {
+        minHeight: 500 + 0 + 100,
+        display:   'block',
+        maxWidth:  '100vw',
+        maxHeight: '100vh',
+      },
+      cssSelectorOuterScrollingContainer: {
+        height: 100,
+      },
+      cssGraphStabilizer: {
+        height: 500,
+        width: 485,
+      },
+    };
+    const result = calcDimensions(state, win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcDimensions all provided narrower than 520, preSets on',()=>{
+    const win = {
+      screen: {
+        availWidth: 500,
+        availHeight: 900, 
+      },
+    };
+    const state = {
+      controlInFocus: 'preSets',
+      cssPreSetSelectorsHeight: 200,
+      cssLayerSelectorsHeight: 100,
+      cssMarginTop: 0,
+      cssGraphMarginTop: 0,
+      cssLayerSelectorMediaBreak: 520,
+    };
+    const expectedResult = {
+      testKeys: {
+        reduceCanvasHeightBy: 270, // smaller of 30% of availHeight || 400
+      },
+      cssCanvasHeight: 500 - 270, // for tabletP, square up, so use raw width - reduce height by
+      cssCanvasWidth: 485, // 97% of (500-60)
+      cssControlHeight: 25,
+      cssGraphFlexOuter: {
+        zIndex:    999,
+        marginTop: 0,
+        minHeight: (500-270) + 0 + 200, // canvasHeight + marginTop + selectorsHeight
+      },
+      cssGraphFlexInner: {
+        minHeight: (500-270) + 0 + 200,
+        display:   'block',
+        maxWidth:  '100vw',
+        maxHeight: '100vh',
+      },
+      cssSelectorOuterScrollingContainer: {
+        height: 200,
+      },
+      cssGraphStabilizer: {
+        height: 500-270,
+        width: 485,
+      },
+    };
+    const result = calcDimensions(state, win);
+    expect(result).to.deep.equal(expectedResult);
   });
 
 });

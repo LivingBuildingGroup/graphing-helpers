@@ -15,7 +15,9 @@ var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(sty
     if (newStyles[layer].style) {
       if (newStyles[layer].style.shade > 0) {
         layerToTrigger = layer;
-        newStyles[layer].color = preSetGlobalPalette[newStyles[layer].style.shade - 1];
+        var color = newStyles[layer].color;
+        var shade = newStyles[layer].style.shade - 1;
+        newStyles[layer].color = preSetGlobalPalette[color][shade];
       }
     }
   }

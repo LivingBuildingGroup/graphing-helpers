@@ -5,12 +5,13 @@ const { isObjectLiteral,
 const { listBright,
   createMonoChrome } = require('./palettes');
 
-const formatSelectors = (thisPreSet, groupTrue, groups) => {
+const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
+  const groups = Array.isArray(groupsRaw) ? groupsRaw : [] ;
   let selectors = [''];
   if(Array.isArray(thisPreSet.layersSelected)){
     if(thisPreSet.layersSelected.length > 0){
       if(thisPreSet.type === 'group'){
-        if(groupTrue && Array.isArray(groups)){
+        if(groupTrue){
           selectors = [];
           thisPreSet.layersSelected.forEach(layer=>{
             groups.forEach(group=>{
@@ -18,7 +19,6 @@ const formatSelectors = (thisPreSet, groupTrue, groups) => {
             });
           });
         } else {
-          // console.error('You selected a group preset, but layers are not properly formatted as groups');
           selectors = thisPreSet.layersSelected;
         }
       } else {
@@ -157,32 +157,20 @@ const formatGroupsStyles = input => {
     newGroupColors: {},
     groupDotColors: {},
   };
-  console.log('groupTrue',groupTrue, 'will not group styles if false');
-  console.log('groupsSub',groupsSub);
-  console.log('groups',groups);
-  console.log('@@@@@ thisPreSet',thisPreSet);
-  // if(preSetSaveSettings.prefixGroups)
+
   if(!isObjectLiteral(thisPreSet.styles)){
     // i.e. no material to read from
-    return defaultObject;
+    return Object.assign({}, defaultObject, {styles: {}});
   }
-  // if(thisPreSet.type !== 'group'){
-  //   return defaultObject;
-  // } else 
+
   if((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements'){ 
     console.error('You selected a group preset, but we do not have enough information to properly format styles as groups');
     return defaultObject;
   }
-  // start back here
-  // the variables on lines 97-100 are not being properly read for platforms
-  // untether grouping of styles and layers
-  console.log('GROUP STYLES RUNNING!');
   let stylesAppended =
     isObjectLiteral(thisPreSet.styles) ? 
       thisPreSet.styles :
       styles ;
-
-  console.log('groups in format preset styles', groups);
   
   const {newGroupColors, 
     groupDotColors} = assignPreSetGroupColors({
@@ -215,19 +203,6 @@ const formatGroupsStyles = input => {
     stylesAppended,
     newGroupColors,
     groupDotColors,
-  };
-};
-
-const formatIcons = thisPreSet => {
-  const icon =
-    !thisPreSet.icon ? null :
-      thisPreSet.icon ;
-  const name =
-    !thisPreSet.name ? null :
-      thisPreSet.name ;
-  return {
-    preSetIconNew: icon,
-    preSetNameNew: name,
   };
 };
 
@@ -275,6 +250,19 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     preSetIconNew,        // pre-load for editing
     preSetNameNew,        // pre-load for editing
     preSetIdPrior:  id,   // this is intended to work like "last selected"
+  };
+};
+
+const formatIcons = thisPreSet => {
+  const icon =
+    !thisPreSet.icon ? null :
+      thisPreSet.icon ;
+  const name =
+    !thisPreSet.name ? null :
+      thisPreSet.name ;
+  return {
+    preSetIconNew: icon,
+    preSetNameNew: name,
   };
 };
 
@@ -368,25 +356,27 @@ const createPreSetGlobalPalettes = () => {
   colors.forEach(color=>{
     preSetGlobalPalettes[color] = createMonoChrome(color);
   });
-  return {preSetGlobalPalettes};
+  return preSetGlobalPalettes;
 };
 
 const selectDefaultPreSet = state => {
-  let preSetIdActive = state.preSetIds[0];
-  for(let id in state.preSets){
-    if(state.preSets[id].graph === state.graphName && state.preSets[id].def){
+  const {preSets, graphName} = state;
+  let preSetIdActive;
+  for(let id in preSets){
+    if(preSets[id].graph === graphName && preSets[id].def){
       preSetIdActive = id;
     }
   }
   // worst case, no default and id list didn't load yet
-  if(!preSetIdActive){
-    for(let id in state.preSets){
-      if(!preSetIdActive){
-        preSetIdActive = id;
-      }
+  if(preSetIdActive) return preSetIdActive;
+
+  for(let id in preSets){
+    if(preSets[id].graph === graphName){
+      preSetIdActive = id;
     }
   }
-  return {preSetIdActive};
+
+  return preSetIdActive;
 };
 
 module.exports = {
@@ -394,8 +384,8 @@ module.exports = {
   formatAllStylesOneGroup,
   assignPreSetGroupColors,
   formatGroupsStyles,
-  formatIcons,
   formatPreSetToLoad,
+  formatIcons,
   formatPreSetColumns,
   createPreSetGlobalPalettes,
   selectDefaultPreSet,

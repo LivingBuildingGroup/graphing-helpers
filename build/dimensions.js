@@ -1,9 +1,5 @@
 'use strict';
 
-var _require = require('conjunction-junction'),
-    isPrimitiveNumber = _require.isPrimitiveNumber,
-    isObjectLiteral = _require.isObjectLiteral;
-
 var calcScreenType = function calcScreenType(w, h) {
   var phoneP_minW = 0;
   var phoneP_maxW = 500;
@@ -137,7 +133,7 @@ var calcDimensions = function calcDimensions(state) {
   var win = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window;
 
   // this runs on mount, on window resize, and when opening and closing selectors
-  var reduceCanvasHeightBy = state.controlInFocus === 'preSets' ? Math.min(0.3 * win.innerHeight, 400) : 0;
+  var reduceCanvasHeightBy = state.controlInFocus !== 'preSets' ? 0 : !win.screen ? 0 : !win.screen.availHeight ? 0 : Math.min(0.3 * win.screen.availHeight, 400);
 
   var _calcCanvasDimensions = calcCanvasDimensions({
     state: state,
@@ -155,7 +151,10 @@ var calcDimensions = function calcDimensions(state) {
 
   return Object.assign({}, graphContainerDimensions, {
     cssCanvasHeight: canvasHeight,
-    cssCanvasWidth: canvasWidth
+    cssCanvasWidth: canvasWidth,
+    testKeys: {
+      reduceCanvasHeightBy: reduceCanvasHeightBy
+    }
   });
 };
 

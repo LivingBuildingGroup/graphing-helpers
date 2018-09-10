@@ -1,7 +1,6 @@
 'use strict';
 
-const { isObjectLiteral,
-} = require('conjunction-junction');
+const { isObjectLiteral} = require('conjunction-junction');
 const { unPrefixLayers } = require('./layers');
 
 const applyPreSetGlobalColorToStyles = (styles, preSetGlobalPalette) => {
@@ -11,7 +10,9 @@ const applyPreSetGlobalColorToStyles = (styles, preSetGlobalPalette) => {
     if(newStyles[layer].style){
       if(newStyles[layer].style.shade > 0){
         layerToTrigger = layer;
-        newStyles[layer].color = preSetGlobalPalette[newStyles[layer].style.shade - 1];
+        const color = newStyles[layer].color;
+        const shade = newStyles[layer].style.shade - 1;
+        newStyles[layer].color = preSetGlobalPalette[color][shade];
       }
     }
   }

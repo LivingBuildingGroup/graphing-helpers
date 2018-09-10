@@ -1,8 +1,5 @@
 'use strict';
 
-const { isPrimitiveNumber, 
-  isObjectLiteral }  = require('conjunction-junction');
-
 const calcScreenType = (w,h) =>{
   const phoneP_minW   =     0;
   const phoneP_maxW   =   500;
@@ -82,7 +79,7 @@ const calcCanvasDimensions = input => {
       screenType === 'phoneL'   ? Math.floor(canvasWidth / idealRatio) :
         screenType === 'tabletL'  ?  hAvailable :
           screenType === 'tabletP'   ? wRaw :
-            hAvailable;             
+            hAvailable;    
   const canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
   return { 
     canvasWidth, 
@@ -148,8 +145,13 @@ const calcGraphContainerDimensions = input => {
 const calcDimensions = (state, win=window) => {
   // this runs on mount, on window resize, and when opening and closing selectors
   const reduceCanvasHeightBy = 
-  state.controlInFocus === 'preSets' ?
-    Math.min(0.3 * win.innerHeight, 400) : 0 ;
+    state.controlInFocus !== 'preSets' ?
+      0 :
+      !win.screen ?
+        0 :
+        !win.screen.availHeight ?
+          0 :
+          Math.min(0.3 * win.screen.availHeight, 400) ;
   const {canvasHeight, canvasWidth} = calcCanvasDimensions({
     state,
     win,
@@ -167,6 +169,9 @@ const calcDimensions = (state, win=window) => {
     {
       cssCanvasHeight: canvasHeight,
       cssCanvasWidth:  canvasWidth,
+      testKeys: {
+        reduceCanvasHeightBy,
+      }
     });
 };
 
