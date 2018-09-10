@@ -58,7 +58,7 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
 
   if (!win) return { canvasWidth: 0, canvasHeight: 0 };
   if (!win.screen) return { canvasWidth: 0, canvasHeight: 0 };
-  if (!win.screen.availWidth || !win.screen.availHeight) {
+  if (!win.screen.availWidth || !win.screen.availHeight || !win.innerWidth || !win.innerHeight) {
     return { canvasWidth: 0, canvasHeight: 0 };
   }
   var controlsCss = {
@@ -66,8 +66,8 @@ var calcCanvasDimensions = function calcCanvasDimensions(input) {
     marginH: 60, // this is double, since the graph is centered
     marginTop: state.cssMarginTop + state.cssGraphMarginTop // former is margin of entire contain, latter is for graph itself
   };
-  var wRaw = win.screen.availWidth;
-  var hRaw = win.screen.availHeight;
+  var wRaw = Math.min(win.screen.availWidth, win.innerWidth);
+  var hRaw = Math.min(win.screen.availHeight, win.innerHeight);
   var wAvailable = wRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0);
   var hAvailable = hRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
   var screenType = calcScreenType(wRaw, hRaw).type;
@@ -106,6 +106,9 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) 
     height: canvasHeight,
     width: canvasWidth
   };
+  if (win.screen.availWidth < state.cssLayerSelectorMediaBreak) {
+    cssGraphStabilizer.marginTop = 50;
+  }
   var totalHeight = canvasHeight + state.cssMarginTop + selectorsHeight;
 
   var cssGraphFlexInner = {

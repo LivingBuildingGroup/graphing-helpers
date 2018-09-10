@@ -59,7 +59,7 @@ const calcCanvasDimensions = input => {
   } = input;
   if(!win) return {canvasWidth: 0, canvasHeight: 0};
   if(!win.screen) return {canvasWidth: 0, canvasHeight: 0};
-  if(!win.screen.availWidth || !win.screen.availHeight){
+  if(!win.screen.availWidth || !win.screen.availHeight || !win.innerWidth || !win.innerHeight){
     return {canvasWidth: 0 ,canvasHeight: 0};
   }
   const controlsCss = {
@@ -67,8 +67,8 @@ const calcCanvasDimensions = input => {
     marginH: 60, // this is double, since the graph is centered
     marginTop: state.cssMarginTop + state.cssGraphMarginTop, // former is margin of entire contain, latter is for graph itself
   };
-  const wRaw = win.screen.availWidth;
-  const hRaw = win.screen.availHeight;
+  const wRaw = Math.min(win.screen.availWidth , win.innerWidth);
+  const hRaw = Math.min(win.screen.availHeight, win.innerHeight);
   const wAvailable = wRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
   const hAvailable = hRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
   const screenType = calcScreenType(wRaw, hRaw).type;
@@ -116,6 +116,9 @@ const calcGraphContainerDimensions = input => {
     height: canvasHeight,
     width:  canvasWidth,
   };
+  if( win.screen.availWidth < state.cssLayerSelectorMediaBreak){
+    cssGraphStabilizer.marginTop = 50;
+  }
   const totalHeight =
     canvasHeight + 
     state.cssMarginTop + 

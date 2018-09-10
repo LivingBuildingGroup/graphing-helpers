@@ -13,7 +13,7 @@ const {
 
 describe('pre-set-edit', ()=> { 
 
-  it.only('applyPreSetGlobalColorToStyles', () => {
+  it('applyPreSetGlobalColorToStyles', () => {
     const preSetGlobalPalette = [
       '  0,   0, 254',
       '189, 209, 245',

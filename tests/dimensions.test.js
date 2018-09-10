@@ -81,9 +81,11 @@ describe('dimensions', ()=> {
   it('calcCanvasDimensions 900h 1300w desktop', ()=>{
     const input = {
       win: {
+        innerWidth: 1300,
+        innerHeight: 900,
         screen: {
-          availWidth: 1300,
-          availHeight: 900,
+          availWidth: 99999999,
+          availHeight: 7777777,
         },
       },
       state: {
@@ -125,6 +127,8 @@ describe('dimensions', ()=> {
   it('calcCanvasDimensions 0 if no window.screen', ()=>{
     const input = {
       win: {
+        innerWidth: 999999,
+        innerHeight: 998889,
       },
       state: {
         cssMarginTop: 0,
@@ -143,6 +147,8 @@ describe('dimensions', ()=> {
   it('calcCanvasDimensions 0 if no window.screen.availHeight', ()=>{
     const input = {
       win: {
+        innerWidth: 999,
+        innerHeight: 999,
         screen: {
           availWidth: 1300,
         },
@@ -164,6 +170,8 @@ describe('dimensions', ()=> {
   it('calcCanvasDimensions 0 if no window.screen.availWidth', ()=>{
     const input = {
       win: {
+        innerWidth: 999,
+        innerHeight: 999,
         screen: {
           availHeight: 900,
         },
@@ -185,6 +193,8 @@ describe('dimensions', ()=> {
   it('calcCanvasDimensions 900h 1000w desktop', ()=>{
     const input = {
       win: {
+        innerWidth: 100000,
+        innerHeight: 222222,
         screen: {
           availWidth: 1000,
           availHeight: 900,
@@ -256,6 +266,8 @@ describe('dimensions', ()=> {
 
   it('calcDimensions all provided wider than 520',()=>{
     const win = {
+      innerWidth: 634635,
+      innerHeight: 9022423430, 
       screen: {
         availWidth: 1000,
         availHeight: 900, 
@@ -300,9 +312,11 @@ describe('dimensions', ()=> {
   });
   it('calcDimensions all provided narrower than 520',()=>{
     const win = {
+      innerWidth: 4543234,
+      innerHeight: 900, 
       screen: {
         availWidth: 500,
-        availHeight: 900, 
+        availHeight: 902524352430,
       },
     };
     const state = {
@@ -337,6 +351,7 @@ describe('dimensions', ()=> {
       cssGraphStabilizer: {
         height: 500,
         width: 485,
+        marginTop: 50,
       },
     };
     const result = calcDimensions(state, win);
@@ -344,6 +359,8 @@ describe('dimensions', ()=> {
   });
   it('calcDimensions all provided narrower than 520, preSets on',()=>{
     const win = {
+      innerWidth: 500,
+      innerHeight: 900, 
       screen: {
         availWidth: 500,
         availHeight: 900, 
@@ -381,6 +398,7 @@ describe('dimensions', ()=> {
       cssGraphStabilizer: {
         height: 500-270,
         width: 485,
+        marginTop: 50,
       },
     };
     const result = calcDimensions(state, win);
