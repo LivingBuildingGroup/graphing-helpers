@@ -94,19 +94,22 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) 
       canvasWidth = input.canvasWidth;
 
 
-  var cssControlHeight = win.screen.availWidth > state.cssLayerSelectorMediaBreak ? canvasHeight : 25;
+  var isNarrowScreen = win.screen.availWidth < state.cssLayerSelectorMediaBreak || win.innerWidth < state.cssLayerSelectorMediaBreak;
+  console.log('isNarrowScreen', isNarrowScreen);
+  var cssControlHeight = isNarrowScreen ? 25 : canvasHeight;
 
   var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
 
-  var cssSelectorOuterScrollingContainer = {
-    height: selectorsHeight
-  };
+  var cssSelectorOuterScrollingContainer = {};
+  if (!isNarrowScreen) {
+    cssSelectorOuterScrollingContainer.height = selectorsHeight;
+  }
 
   var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
     height: canvasHeight,
     width: canvasWidth
   };
-  if (win.screen.availWidth < state.cssLayerSelectorMediaBreak) {
+  if (isNarrowScreen) {
     cssGraphStabilizer.marginTop = 50;
   }
   var totalHeight = canvasHeight + state.cssMarginTop + selectorsHeight;

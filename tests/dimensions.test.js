@@ -346,7 +346,7 @@ describe('dimensions', ()=> {
         maxHeight: '100vh',
       },
       cssSelectorOuterScrollingContainer: {
-        height: 100,
+        // height: 100, // height is auto (and scrolling disabled) on narrow screens
       },
       cssGraphStabilizer: {
         height: 500,
@@ -393,7 +393,7 @@ describe('dimensions', ()=> {
         maxHeight: '100vh',
       },
       cssSelectorOuterScrollingContainer: {
-        height: 200,
+        // height: 200, // height is auto (and scrolling disabled) on narrow screens
       },
       cssGraphStabilizer: {
         height: 500-270,

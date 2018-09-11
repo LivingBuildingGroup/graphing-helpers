@@ -96,10 +96,11 @@ const calcCanvasDimensions = input => {
 const calcGraphContainerDimensions = input => {
   const { state, win, canvasHeight, canvasWidth } = input;
 
-  const cssControlHeight =
-    win.screen.availWidth > state.cssLayerSelectorMediaBreak ?
-      canvasHeight :
-      25 ;
+  const isNarrowScreen = 
+    win.screen.availWidth < state.cssLayerSelectorMediaBreak ||
+    win.innerWidth        < state.cssLayerSelectorMediaBreak;
+  console.log('isNarrowScreen',isNarrowScreen)
+  const cssControlHeight = isNarrowScreen ? 25 : canvasHeight ;
 
   let selectorsHeight = 
     state.controlInFocus === 'preSets' ?
@@ -108,15 +109,16 @@ const calcGraphContainerDimensions = input => {
         state.cssLayerSelectorsHeight :
         0 ;
         
-  const cssSelectorOuterScrollingContainer = {
-    height:     selectorsHeight,
-  };
+  const cssSelectorOuterScrollingContainer = {};
+  if(!isNarrowScreen){
+    cssSelectorOuterScrollingContainer.height = selectorsHeight;
+  }
 
   const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
     height: canvasHeight,
     width:  canvasWidth,
   };
-  if( win.screen.availWidth < state.cssLayerSelectorMediaBreak){
+  if(isNarrowScreen){
     cssGraphStabilizer.marginTop = 50;
   }
   const totalHeight =
