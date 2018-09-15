@@ -33,52 +33,77 @@ const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
   return { selectors, selectorsRemaining };
 };
 
-const formatAllStylesOneGroup = input => {
+const formatAllStyles = input => {
   const {
     thisPreSet, 
-    group, 
-    groupSub,
+    styles,
+    groups, 
+    groupsSub,
     newGroupColors, 
-    preSetGlobalPalettes} = input;
+    preSetGlobalPalettes,
+    layersAllPrefixed,
+    layersAllUnPrefixed, } = input;
+  console.log('layersAllUnPrefixed',layersAllUnPrefixed);
+  console.log('layersAllUnPrefixed',layersAllUnPrefixed);
 
-  const g = group    ? group    : '' ;
-  const g_ = g       ? `${g}__` : '' ;
-  const s = groupSub ? groupSub : '' ;
-  const s_ = s       ? `${s}__` : '' ;
-  
-  const groupColor = newGroupColors[group];
   const theseStyles = {};
-  for(let layer in thisPreSet.styles){
+
+  layersAllPrefixed.forEach(layer=>{
+    const unPrefixedArr = layer.split('__');
+    const unPrefix = unPrefixedArr[unPrefixedArr.length-1];
+    let group, groupSub;
+    groups.forEach(g=>{
+      if(layer.includes(`${g}__`)){
+        group = g;
+      }
+    });
+    groupsSub.forEach(s=>{
+      if(layer.includes(`${s}__`)){
+        groupSub = s;
+      }
+    });
+    const g = group    ? group    : '' ;
+    const g_ = g       ? `${g}__` : '' ;
+    const s = groupSub ? groupSub : '' ;
+    const s_ = s       ? `${s}__` : '' ;
+    // find the closest style match
     const thisStyle = 
       isObjectLiteral(thisPreSet.styles[layer]) ?
         Object.assign({},thisPreSet.styles[layer]) : 
-        isObjectLiteral(thisPreSet.styles[`${g_}${s_}${layer}`]) ?
-          Object.assign({},thisPreSet.styles[`${g_}${s_}${layer}`]) : 
-          isObjectLiteral(thisPreSet.styles[`${g_}${layer}`]) ?
-            Object.assign({},thisPreSet.styles[`${g_}${layer}`]) : 
-            isObjectLiteral(thisPreSet.styles[`${s_}${layer}`]) ?
-              Object.assign({},thisPreSet.styles[`${s_}${layer}`]) : 
-              {} ;
+        isObjectLiteral(thisPreSet.styles[unPrefix]) ?
+          Object.assign({},thisPreSet.styles[unPrefix]) : 
+          isObjectLiteral(thisPreSet.styles[`${g_}${s_}${layer}`]) ?
+            Object.assign({},thisPreSet.styles[`${g_}${s_}${layer}`]) : 
+            isObjectLiteral(thisPreSet.styles[`${g_}${layer}`]) ?
+              Object.assign({},thisPreSet.styles[`${g_}${layer}`]) : 
+              isObjectLiteral(thisPreSet.styles[`${s_}${layer}`]) ?
+                Object.assign({},thisPreSet.styles[`${s_}${layer}`]) : 
+                isObjectLiteral(styles[layer]) ?
+                  Object.assign({},styles[layer]) : 
+                  isObjectLiteral(styles[unPrefix]) ?
+                    Object.assign({},styles[unPrefix]) : 
+                    {style:{}} ;
+
     const shade = 
       !isObjectLiteral(thisStyle.style) ? 
         0 :
         thisStyle.style.shade > 0 ?
           thisStyle.style.shade : 
           0 ;
-    const color =
-      shade === 0 ? 
-        thisStyle.color :
-        !preSetGlobalPalettes[groupColor] ? 
-          '80,80,80' :
-          !preSetGlobalPalettes[groupColor][shade-1] ? 
-            '80,80,80' :
-            preSetGlobalPalettes[groupColor][shade-1] ;
-    thisStyle.color = color;
 
-    theseStyles[`${g_}${s_}${layer}`] = thisStyle;
-    theseStyles[`${g_}${layer}`     ] = thisStyle;
-    theseStyles[`${s_}${layer}`     ] = thisStyle;
-  }
+    let color = thisStyle.color;
+    const groupColor = newGroupColors[group];
+    if(groupColor){
+      if(preSetGlobalPalettes[groupColor]){
+        if(shade >= 0 && preSetGlobalPalettes[groupColor][shade-1]){
+          color = preSetGlobalPalettes[groupColor][shade-1];
+        }
+      }
+    }
+    thisStyle.color = color ? color : '80, 80, 80';
+    theseStyles[layer] = thisStyle;
+  });
+
   return theseStyles;
 };
 
@@ -149,7 +174,9 @@ const formatGroupsStyles = input => {
     groupColors, 
     preSetGlobalColorOptions, 
     preSetGlobalPalettes, 
-    styles} = input;
+    layersAllPrefixed,
+    layersAllUnPrefixed,
+    styles } = input;
 
   const defaultObject = {
     stylesAppended:  styles,
@@ -161,16 +188,10 @@ const formatGroupsStyles = input => {
   if(!isObjectLiteral(thisPreSet.styles)){
     // i.e. no material to read from
     return Object.assign({}, defaultObject, {styles: {}});
-  }
-
-  if((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements'){ 
-    console.error('You selected a group preset, but we do not have enough information to properly format styles as groups');
+  } else if((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements'){ 
+    // FIX ABOVE ^^^^^^^^^ DO NOT HARD CODE GRAPH TYPE !!!!!!
     return defaultObject;
   }
-  let stylesAppended =
-    isObjectLiteral(thisPreSet.styles) ? 
-      thisPreSet.styles :
-      styles ;
   
   const {newGroupColors, 
     groupDotColors} = assignPreSetGroupColors({
@@ -180,24 +201,16 @@ const formatGroupsStyles = input => {
     preSetGlobalColorOptions,
   });
 
-  const groupsArray    = Array.isArray(groups)    ? groups : [''] ;
-  const groupsSubArray = Array.isArray(groupsSub) ? groupsSub : [''] ;
-
-  groupsArray.forEach(group=>{
-    groupsSubArray.forEach(groupSub=>{
-      const stylesToAdd = formatAllStylesOneGroup({
-        thisPreSet, 
-        group, 
-        groupSub,
-        newGroupColors, 
-        preSetGlobalPalettes
-      });
-      stylesAppended = Object.assign({}, stylesAppended, stylesToAdd);
-    });
+  const stylesAppended = formatAllStyles({
+    thisPreSet, 
+    styles,
+    groups, 
+    groupsSub,
+    newGroupColors, 
+    preSetGlobalPalettes,
+    layersAllPrefixed,
+    layersAllUnPrefixed,
   });
-
-  // this ensures that any explicitly declared styles are not over-written
-  stylesAppended = Object.assign({}, thisPreSet.styles, stylesAppended);
 
   return {
     stylesAppended,
@@ -207,6 +220,9 @@ const formatGroupsStyles = input => {
 };
 
 const formatPreSetToLoad = (state, thisPreSet, id) => {
+  // this is adding extra prefixes
+  // edit this to add ALL possible styles, hydrating from defaults
+  // AND NO extra styles from extra prefix combinations
   const { 
     groupTrue, 
     groups,
@@ -215,11 +231,12 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     styles,
     preSetGlobalPalettes, 
     preSetGlobalColorOptions,
-    // titleText, 
-    // cssBackground,
+    layersAllUnPrefixed,
+    layersAllPrefixed,
   } = state;
   console.log('styles in formatPreSetToLoad',styles);
-  const {selectorsRemaining,
+  const {
+    selectorsRemaining,
     selectors      } = formatSelectors(thisPreSet, groupTrue, groups);
   const {
     stylesAppended,
@@ -233,6 +250,8 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     preSetGlobalColorOptions, 
     preSetGlobalPalettes, 
     styles,
+    layersAllPrefixed,
+    layersAllUnPrefixed,
   });
   console.log('stylesAppended in formatPreSetToLoad',stylesAppended);
 
@@ -381,7 +400,7 @@ const selectDefaultPreSet = state => {
 
 module.exports = {
   formatSelectors,
-  formatAllStylesOneGroup,
+  formatAllStyles,
   assignPreSetGroupColors,
   formatGroupsStyles,
   formatPreSetToLoad,

@@ -51,11 +51,31 @@ describe('pre-set-edit', ()=> {
   });
 
   it.skip('prefixStyles', () => {
+    // I AM NOT SURE WE NEED THIS!!!!
+    const exStyles = {
+      rain_lbs: {
+        color: 'blue',
+        style: {
+          borderDash: [10,10],
+        },
+      },
+      rain_gals: {
+        color: 'green',
+        style: {
+          fill: false,
+        },
+      },
+    };
+    const defaults = {
+
+    };
+    const layersAllUnPrefixed = [
+
+    ];
     const expectedResult = {
       
     };
-    const input = {};
-    const result = prefixStyles(input);
+    const result = prefixStyles(exStyles, defaults, layersAllUnPrefixed);
     expect(result).to.deep.equal(expectedResult);
   });
 

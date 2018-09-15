@@ -35,7 +35,7 @@ var prefixStyles = function prefixStyles(exStyles, defaults, layersAllUnPrefixed
     console.log('l', l);
     var lSplit = l.includes('__') ? l.split('__') : l;
     var lUnprefixed = Array.isArray(lSplit) ? lSplit[lSplit.length - 1] : l;
-    newStyles[l] = isObjectLiteral(exStyles[l]) ? exStyles[l] : isObjectLiteral(defaults[l]) ? defaults[l] : isObjectLiteral(defaults[lUnprefixed]) ? defaults[lUnprefixed] : { color: 'tan' };
+    newStyles[l] = isObjectLiteral(exStyles[l]) ? exStyles[l] : isObjectLiteral(defaults[l]) ? defaults[l] : isObjectLiteral(exStyles[lUnprefixed]) ? exStyles[lUnprefixed] : isObjectLiteral(defaults[lUnprefixed]) ? defaults[lUnprefixed] : { color: 'tan' };
   });
   console.log('newStyles', newStyles);
   return newStyles;

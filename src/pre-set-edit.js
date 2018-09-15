@@ -41,9 +41,11 @@ const prefixStyles = (exStyles, defaults, layersAllUnPrefixed) => {
         exStyles[l] :
         isObjectLiteral(defaults[l]) ?
           defaults[l] :
-          isObjectLiteral(defaults[lUnprefixed]) ?
-            defaults[lUnprefixed] :
-            { color: 'tan' };
+          isObjectLiteral(exStyles[lUnprefixed]) ?
+            exStyles[lUnprefixed] :
+            isObjectLiteral(defaults[lUnprefixed]) ?
+              defaults[lUnprefixed] :
+              { color: 'tan' };
   });
   console.log('newStyles', newStyles);
   return newStyles;
