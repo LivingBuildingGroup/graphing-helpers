@@ -224,7 +224,7 @@ describe('dimensions', ()=> {
   it('calcGraphContainerDimensions', ()=>{
     const input = {
       state: {
-        controlInFocus: 'layers',
+        selectorsInFocus: 'layers',
         cssLayerSelectorMediaBreak: 520,
         cssPreSetSelectorsHeight: 200,
         cssLayerSelectorsHeight: 100,
@@ -274,7 +274,7 @@ describe('dimensions', ()=> {
       },
     };
     const state = {
-      controlInFocus: 'layers',
+      selectorsInFocus: 'layers',
       cssPreSetSelectorsHeight: 200,
       cssLayerSelectorsHeight: 100,
       cssMarginTop: 0,
@@ -320,7 +320,7 @@ describe('dimensions', ()=> {
       },
     };
     const state = {
-      controlInFocus: 'layers',
+      selectorsInFocus: 'layers',
       cssPreSetSelectorsHeight: 200,
       cssLayerSelectorsHeight: 100,
       cssMarginTop: 0,
@@ -367,7 +367,7 @@ describe('dimensions', ()=> {
       },
     };
     const state = {
-      controlInFocus: 'preSets',
+      selectorsInFocus: 'preSets',
       cssPreSetSelectorsHeight: 200,
       cssLayerSelectorsHeight: 100,
       cssMarginTop: 0,

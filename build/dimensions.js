@@ -98,7 +98,7 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) 
   console.log('isNarrowScreen', isNarrowScreen);
   var cssControlHeight = isNarrowScreen ? 25 : canvasHeight;
 
-  var selectorsHeight = state.controlInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.controlInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
+  var selectorsHeight = state.selectorsInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.selectorsInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
 
   var cssSelectorOuterScrollingContainer = {};
   if (!isNarrowScreen) {
@@ -139,7 +139,7 @@ var calcDimensions = function calcDimensions(state) {
   var win = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window;
 
   // this runs on mount, on window resize, and when opening and closing selectors
-  var reduceCanvasHeightBy = state.controlInFocus !== 'preSets' ? 0 : !win.screen ? 0 : !win.screen.availHeight ? 0 : Math.min(0.3 * win.screen.availHeight, 400);
+  var reduceCanvasHeightBy = state.selectorsInFocus !== 'preSets' ? 0 : !win.screen ? 0 : !win.screen.availHeight ? 0 : Math.min(0.3 * win.screen.availHeight, 400);
 
   var _calcCanvasDimensions = calcCanvasDimensions({
     state: state,

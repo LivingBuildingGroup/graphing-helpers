@@ -103,9 +103,9 @@ const calcGraphContainerDimensions = input => {
   const cssControlHeight = isNarrowScreen ? 25 : canvasHeight ;
 
   let selectorsHeight = 
-    state.controlInFocus === 'preSets' ?
+    state.selectorsInFocus === 'preSets' ?
       state.cssPreSetSelectorsHeight :
-      state.controlInFocus === 'layers' ?
+      state.selectorsInFocus === 'layers' ?
         state.cssLayerSelectorsHeight :
         0 ;
         
@@ -150,7 +150,7 @@ const calcGraphContainerDimensions = input => {
 const calcDimensions = (state, win=window) => {
   // this runs on mount, on window resize, and when opening and closing selectors
   const reduceCanvasHeightBy = 
-    state.controlInFocus !== 'preSets' ?
+    state.selectorsInFocus !== 'preSets' ?
       0 :
       !win.screen ?
         0 :
