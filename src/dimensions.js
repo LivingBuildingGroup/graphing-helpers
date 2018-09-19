@@ -57,11 +57,12 @@ const calcCanvasDimensions = input => {
     state,
     reduceCanvasHeightBy,
   } = input;
-  if(!win) return {canvasWidth: 0, canvasHeight: 0};
-  if(!win.screen) return {canvasWidth: 0, canvasHeight: 0};
-  if(!win.screen.availWidth || !win.screen.availHeight || !win.innerWidth || !win.innerHeight){
-    return {canvasWidth: 0 ,canvasHeight: 0};
-  }
+  // validate
+  const defaultReturn = {canvasWidth: 0, canvasHeight: 0};
+  if(!win) return defaultReturn;
+  if(!win.screen) return defaultReturn;
+  if(!win.screen.availWidth || !win.screen.availHeight || !win.innerWidth || !win.innerHeight) return defaultReturn;
+  // validated
   const controlsCss = {
     heightAtTop: 40,
     marginH: 60, // this is double, since the graph is centered
@@ -149,6 +150,7 @@ const calcGraphContainerDimensions = input => {
 
 const calcDimensions = (state, win=window) => {
   // this runs on mount, on window resize, and when opening and closing selectors
+  // if preSets are in focus, reduce the height by 400px or 30% of the screen height
   const reduceCanvasHeightBy = 
     state.selectorsInFocus !== 'preSets' ?
       0 :
@@ -167,7 +169,8 @@ const calcDimensions = (state, win=window) => {
     state, 
     win, 
     canvasHeight, 
-    canvasWidth});
+    canvasWidth
+  });
 
   return Object.assign({},
     graphContainerDimensions,

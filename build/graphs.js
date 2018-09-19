@@ -427,10 +427,10 @@ var createXAxis = function createXAxis(options) {
     max: max || 500,
     maxTicksLimit: maxTicksLimit || 100
   });
-  var scaleLabel = Object.assign({}, defaultXAxis.scaleLabel, {
+  var scaleLabel = label ? Object.assign({}, defaultXAxis.scaleLabel, {
     labelString: label,
     fontColor: scaleAndTickColor
-  });
+  }) : { display: false };
   return Object.assign({}, defaultXAxis, {
     gridLines: gridLines,
     ticks: ticks,
@@ -573,7 +573,7 @@ var createGraphOptions = function createGraphOptions(options) {
   };
   var arrayOfYOptions = createYAxesOptions(yAxesOptions);
   var xAxisOptions = {
-    label: xLabel,
+    label: xLabel ? xLabel : null,
     cssBackground: cssBackground,
     min: minX,
     max: maxX,
@@ -687,8 +687,6 @@ var createGraph = function createGraph(input) {
       message = _checkForGraphRefresh.message;
 
   var xLabelsArray = xLabelKey ? parseDataArraysByKeys(dataType1Processed, [xLabelKey])[0] : null;
-  // console.log('xLabelKey',xLabelKey);
-  // console.log('xLabelsArray',xLabelsArray);
 
   var graphData = createGraphData({
     layersSelected: layersSelected,

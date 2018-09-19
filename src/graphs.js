@@ -501,13 +501,16 @@ const createXAxis = options => {
       maxTicksLimit: maxTicksLimit || 100,
     }
   );
-  const scaleLabel = Object.assign({},
-    defaultXAxis.scaleLabel,
-    {
-      labelString: label,
-      fontColor: scaleAndTickColor,
-    }
-  );
+  const scaleLabel = 
+    label ?
+      Object.assign({},
+        defaultXAxis.scaleLabel,
+        {
+          labelString: label,
+          fontColor: scaleAndTickColor,
+        } 
+      ):
+      { display: false } ;
   return Object.assign({},
     defaultXAxis,
     {
@@ -673,7 +676,7 @@ const createGraphOptions = options => {
   };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
   const xAxisOptions = {
-    label: xLabel,
+    label: xLabel ? xLabel : null ,
     cssBackground,
     min: minX,
     max: maxX,
@@ -822,8 +825,6 @@ const createGraph = input => {
   const xLabelsArray = xLabelKey ?
     parseDataArraysByKeys(dataType1Processed, [xLabelKey])[0] :
     null ;
-  // console.log('xLabelKey',xLabelKey);
-  // console.log('xLabelsArray',xLabelsArray);
 
   const graphData = createGraphData({
     layersSelected,
