@@ -285,20 +285,20 @@ const formatIcons = thisPreSet => {
   };
 };
 
-const formatPreSetColumns = styleColorsNamed => {
+const formatPreSetColumns = cssStyleColorsNamed => {
   // this is only the names of the colors to use for selectors
-  const styleColorsNamedArray = [];
-  for(let key in styleColorsNamed){
-    styleColorsNamedArray.push(key);
+  const cssStyleColorsNamedArray = [];
+  for(let key in cssStyleColorsNamed){
+    cssStyleColorsNamedArray.push(key);
   }
-  styleColorsNamedArray.sort();
+  cssStyleColorsNamedArray.sort();
   const preSetColumns = [
     { 
       key: 'color',
       label: 'color',
       type: 'color',
-      optionLabels: styleColorsNamedArray,
-      optionValues: styleColorsNamedArray,
+      optionLabels: cssStyleColorsNamedArray,
+      optionValues: cssStyleColorsNamedArray,
       defaultValue: 'red',
     },
     { 
@@ -365,7 +365,7 @@ const formatPreSetColumns = styleColorsNamed => {
   ];
   return{
     preSetColumns,
-    styleColorsNamedArray,
+    cssStyleColorsNamedArray,
   };
 };
 

@@ -249,12 +249,12 @@ describe('pre-set-load', ()=> {
   });
 
   it('formatPreSetColumns', () => {
-    const styleColorsNamed = {
+    const cssStyleColorsNamed = {
       red: 'red',
       yellow: 'yellow',
     };
     const expectedResult = {
-      styleColorsNamedArray: ['red', 'yellow'],
+      cssStyleColorsNamedArray: ['red', 'yellow'],
       preSetColumns: [
         { 
           key: 'color',
@@ -327,7 +327,7 @@ describe('pre-set-load', ()=> {
         },
       ],
     };
-    const result = formatPreSetColumns(styleColorsNamed);
+    const result = formatPreSetColumns(cssStyleColorsNamed);
     expect(result).to.deep.equal(expectedResult);
   });
 

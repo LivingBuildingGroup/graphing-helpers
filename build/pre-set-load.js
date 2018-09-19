@@ -265,19 +265,19 @@ var formatIcons = function formatIcons(thisPreSet) {
   };
 };
 
-var formatPreSetColumns = function formatPreSetColumns(styleColorsNamed) {
+var formatPreSetColumns = function formatPreSetColumns(cssStyleColorsNamed) {
   // this is only the names of the colors to use for selectors
-  var styleColorsNamedArray = [];
-  for (var key in styleColorsNamed) {
-    styleColorsNamedArray.push(key);
+  var cssStyleColorsNamedArray = [];
+  for (var key in cssStyleColorsNamed) {
+    cssStyleColorsNamedArray.push(key);
   }
-  styleColorsNamedArray.sort();
+  cssStyleColorsNamedArray.sort();
   var preSetColumns = [{
     key: 'color',
     label: 'color',
     type: 'color',
-    optionLabels: styleColorsNamedArray,
-    optionValues: styleColorsNamedArray,
+    optionLabels: cssStyleColorsNamedArray,
+    optionValues: cssStyleColorsNamedArray,
     defaultValue: 'red'
   }, {
     key: 'fill',
@@ -336,7 +336,7 @@ var formatPreSetColumns = function formatPreSetColumns(styleColorsNamed) {
   }];
   return {
     preSetColumns: preSetColumns,
-    styleColorsNamedArray: styleColorsNamedArray
+    cssStyleColorsNamedArray: cssStyleColorsNamedArray
   };
 };
 
