@@ -1,6 +1,6 @@
 {
   "name": "graphing-helpers",
-  "version": "4.3.2",
+  "version": "4.4.0",
   "description": "Helper library as a data preprocessor for react-chartjs-2",
   "main": "index.js",
   "scripts": {
