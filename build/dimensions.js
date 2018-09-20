@@ -97,13 +97,12 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) 
 
   var isNarrowScreen = win.screen.availWidth < state.cssLayerSelectorMediaBreak || win.innerWidth < state.cssLayerSelectorMediaBreak;
   console.log('isNarrowScreen', isNarrowScreen);
-  var cssControlHeight = isNarrowScreen ? 25 : canvasHeight;
 
   var selectorsHeight = state.selectorsInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.selectorsInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
 
   var cssSelectorOuterScrollingContainer = {};
   if (!isNarrowScreen) {
-    cssSelectorOuterScrollingContainer.height = selectorsHeight;
+    cssSelectorOuterScrollingContainer.maxHeight = selectorsHeight;
   }
 
   var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
@@ -113,25 +112,16 @@ var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) 
   if (isNarrowScreen) {
     cssGraphStabilizer.marginTop = 50;
   }
-  var totalHeight = canvasHeight + state.cssMarginTop + selectorsHeight;
 
-  var cssGraphFlexInner = {
-    minHeight: totalHeight,
+  var cssGraphFlex = {
     display: 'block',
-    maxWidth: '100vw',
-    maxHeight: '100vh'
-  };
-  var cssGraphFlexOuter = { // outermost div for the entire component
-    zIndex: 999,
-    marginTop: state.cssGraphMarginTop,
-    minHeight: totalHeight
+    width: win.screen.availWidth,
+    maxHeight: win.screen.availHeight
   };
 
   return {
-    cssControlHeight: cssControlHeight,
     cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
-    cssGraphFlexInner: cssGraphFlexInner,
-    cssGraphFlexOuter: cssGraphFlexOuter,
+    cssGraphFlex: cssGraphFlex,
     cssGraphStabilizer: cssGraphStabilizer
   };
 };
@@ -141,7 +131,7 @@ var calcDimensions = function calcDimensions(state) {
 
   // this runs on mount, on window resize, and when opening and closing selectors
   // if preSets are in focus, reduce the height by 400px or 30% of the screen height
-  var reduceCanvasHeightBy = state.selectorsInFocus !== 'preSets' ? 0 : !win.screen ? 0 : !win.screen.availHeight ? 0 : Math.min(0.3 * win.screen.availHeight, 400);
+  var reduceCanvasHeightBy = state.selectorsInFocus !== 'preSets' ? 50 : !win.screen ? 50 : !win.screen.availHeight ? 50 : Math.min(0.3 * win.screen.availHeight, 400);
 
   var _calcCanvasDimensions = calcCanvasDimensions({
     state: state,

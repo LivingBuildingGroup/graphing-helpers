@@ -100,8 +100,7 @@ const calcGraphContainerDimensions = input => {
   const isNarrowScreen = 
     win.screen.availWidth < state.cssLayerSelectorMediaBreak ||
     win.innerWidth        < state.cssLayerSelectorMediaBreak;
-  console.log('isNarrowScreen',isNarrowScreen)
-  const cssControlHeight = isNarrowScreen ? 25 : canvasHeight ;
+  console.log('isNarrowScreen',isNarrowScreen);
 
   let selectorsHeight = 
     state.selectorsInFocus === 'preSets' ?
@@ -112,7 +111,7 @@ const calcGraphContainerDimensions = input => {
         
   const cssSelectorOuterScrollingContainer = {};
   if(!isNarrowScreen){
-    cssSelectorOuterScrollingContainer.height = selectorsHeight;
+    cssSelectorOuterScrollingContainer.maxHeight = selectorsHeight;
   }
 
   const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
@@ -122,28 +121,16 @@ const calcGraphContainerDimensions = input => {
   if(isNarrowScreen){
     cssGraphStabilizer.marginTop = 50;
   }
-  const totalHeight =
-    canvasHeight + 
-    state.cssMarginTop + 
-    selectorsHeight ;
 
-  const cssGraphFlexInner = {
-    minHeight: totalHeight,
+  const cssGraphFlex = {
     display:   'block',
-    maxWidth:  '100vw',
-    maxHeight: '100vh',
-  };
-  const cssGraphFlexOuter = { // outermost div for the entire component
-    zIndex:    999,
-    marginTop: state.cssGraphMarginTop,
-    minHeight: totalHeight,
+    width:     win.screen.availWidth,
+    maxHeight: win.screen.availHeight,
   };
 
   return {
-    cssControlHeight,
     cssSelectorOuterScrollingContainer,
-    cssGraphFlexInner,
-    cssGraphFlexOuter,
+    cssGraphFlex,
     cssGraphStabilizer,
   };
 };
@@ -153,11 +140,11 @@ const calcDimensions = (state, win=window) => {
   // if preSets are in focus, reduce the height by 400px or 30% of the screen height
   const reduceCanvasHeightBy = 
     state.selectorsInFocus !== 'preSets' ?
-      0 :
+      50 :
       !win.screen ?
-        0 :
+        50 :
         !win.screen.availHeight ?
-          0 :
+          50 :
           Math.min(0.3 * win.screen.availHeight, 400) ;
   const {canvasHeight, canvasWidth} = calcCanvasDimensions({
     state,
