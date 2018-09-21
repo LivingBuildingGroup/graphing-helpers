@@ -56,31 +56,34 @@ const calcScreenType = (w,h) =>{
 const calcCanvasDimensions = input => {
   const {
     state,
-    widthToUse,
-    heightToUse,
+    widthLowestCommon,
+    heightLowestCommon,
     reduceCanvasHeightBy,
+    screenType,
   } = input;
   // validate
   const defaultReturn = {canvasWidth: 0, canvasHeight: 0};
-  if(!widthToUse || !heightToUse ) return defaultReturn;
+  if(!widthLowestCommon || !heightLowestCommon ) return defaultReturn;
   // validated
   const controlsCss = {
     heightAtTop: 40,
     marginH: 60, // this is double, since the graph is centered
-    marginTop: state.cssMarginTop + state.cssGraphMarginTop, // former is margin of entire contain, latter is for graph itself
   };
-  const wAvailable = widthToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
-  const hAvailable = heightToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
-  const screenType = calcScreenType(widthToUse, heightToUse).type;
+  const wAvailable = widthLowestCommon - (widthLowestCommon >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
+  const hAvailable = heightLowestCommon - (widthLowestCommon >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
   const idealRatio = 1.618; // golden mean!
-  const canvasWidth = Math.floor(0.97 * wAvailable) ;
+  const canvasWidth = 
+    screenType === 'phoneP' ? Math.floor(wAvailable * 2) :
+      screenType === 'phoneL'  ?  Math.floor(wAvailable * 1.2) :
+        Math.floor(0.97 * wAvailable) ;
   const canvasHeightRaw = 
-    screenType === 'phoneP' ? heightToUse :
+    screenType === 'phoneP' ? Math.floor(heightLowestCommon * 1.5) :
       screenType === 'phoneL'   ? Math.floor(canvasWidth / idealRatio) :
         screenType === 'tabletL'  ?  hAvailable :
-          screenType === 'tabletP'   ? widthToUse :
+          screenType === 'tabletP'   ? widthLowestCommon :
             hAvailable;    
   const canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
+  console.log('widthLowestCommon',widthLowestCommon,'heightLowestCommon',heightLowestCommon,'hAvailable',hAvailable,'canvasHeightRaw',canvasHeightRaw,'canvasHeight',canvasHeight,'screenType',screenType,'reduceCanvasHeightBy',reduceCanvasHeightBy)
   return { 
     canvasWidth, 
     canvasHeight, 
@@ -96,13 +99,13 @@ const calcCanvasDimensions = input => {
 const calcGraphContainerDimensions = input => {
   const { 
     state,     
-    widthToUse,
-    heightToUse, 
+    widthLowestCommon,
+    heightLowestCommon, 
     canvasHeight, 
     canvasWidth } = input;
 
   const isNarrowScreen = 
-  widthToUse < state.cssLayerSelectorMediaBreak ;
+  widthLowestCommon < state.cssLayerSelectorMediaBreak ;
   console.log('isNarrowScreen',isNarrowScreen);
 
   let selectorsHeight = 
@@ -118,8 +121,8 @@ const calcGraphContainerDimensions = input => {
   }
 
   const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
-    height: canvasHeight,
-    width:  canvasWidth,
+    width:     Math.max(widthLowestCommon,canvasWidth),
+    maxHeight: Math.max(heightLowestCommon,canvasHeight),
   };
   if(isNarrowScreen){
     cssGraphStabilizer.marginTop = 50;
@@ -127,8 +130,8 @@ const calcGraphContainerDimensions = input => {
 
   const cssGraphFlex = {
     display:   'block',
-    width:     widthToUse,
-    maxHeight: heightToUse,
+    width:     Math.max(widthLowestCommon,canvasWidth),
+    maxHeight: Math.max(heightLowestCommon,canvasHeight),
   };
 
   return {
@@ -153,30 +156,38 @@ const calcDimensions = (state, win=window) => {
       !win.screen.availWidth ?
         0:
         win.screen.availWidth;
-  const heightToUse =
+  const heightLowestCommon =
     !isPrimitiveNumber(win.innerHeight) ?
       availHeight :
       Math.min(win.innerHeight, availHeight);
-  const widthToUse =
+  const widthLowestCommon =
     !isPrimitiveNumber(win.innerWidth) ?
       availWidth :
       Math.min(win.innerWidth, availWidth);
 
+  // do better type checking and content checking for state.cssScreenType
+  const screenType = state.cssScreenType ? state.cssScreenType : calcScreenType(widthLowestCommon, heightLowestCommon).type;
+  console.log('screenType',screenType,'state.cssScreenType',state.cssScreenType)
+
   const reduceCanvasHeightBy = 
-    state.selectorsInFocus !== 'preSets' ?
-      50 :
-      Math.min(0.3 * heightToUse, 400) ;
+    screenType === 'phoneP' ? 0 :
+      screenType === 'phoneL'   ? 0 :
+        state.selectorsInFocus !== 'preSets' ?
+          50 :
+          Math.min(0.3 * heightLowestCommon, 400) ;
+
   const {canvasHeight, canvasWidth} = calcCanvasDimensions({
     state,
-    widthToUse,
-    heightToUse,
+    widthLowestCommon,
+    heightLowestCommon,
     reduceCanvasHeightBy,
+    screenType,
   });
 
   const graphContainerDimensions = calcGraphContainerDimensions({
     state, 
-    widthToUse,
-    heightToUse,
+    widthLowestCommon,
+    heightLowestCommon,
     canvasHeight, 
     canvasWidth
   });
