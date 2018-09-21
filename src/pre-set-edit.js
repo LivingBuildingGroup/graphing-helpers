@@ -116,7 +116,7 @@ const editOnePreSetStyle = (exStyles, valueRaw, layer, property, preSetGlobalPal
   } else if (property.type === 'shade'){
     value = parseInt(value, 10);
   } else if (property.type === 'array'){
-    const arr = value.split(',');
+    const arr = typeof value === 'string' ? value.split(',') : value ;
     value = arr.map(a=>parseInt(a,10));
   } else if (property.type === 'boolean'){
     value = value === 'true';
@@ -152,7 +152,7 @@ const editOnePreSetStyle = (exStyles, valueRaw, layer, property, preSetGlobalPal
     };
   } else {
     nestedStyle[property.key] = value;
-    const newStyle = Object.assign({}, styles[layer], nestedStyle);
+    const newStyle = Object.assign({}, styles[layer], {style: nestedStyle});
     styles[layer] = newStyle;
   }
   return styles;

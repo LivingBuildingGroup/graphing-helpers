@@ -233,6 +233,7 @@ const listBright = () => {
 };
 
 const createPalette11 = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -242,6 +243,7 @@ const createPalette11 = option => {
   const sky8      = createSky8();
 
   const arr = [
+    white,
     bark8[1],
     fern8[2],
     corn8[3],
@@ -262,6 +264,7 @@ const createPalette11 = option => {
 };
 
 const createPalette13 = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -271,6 +274,7 @@ const createPalette13 = option => {
   const sky8      = createSky8();
 
   const arr = [
+    white,
     bark8[1],
     fern8[2],
     corn8[3],
@@ -292,6 +296,7 @@ const createPalette13 = option => {
 };
 
 const createPalette16 = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -301,6 +306,7 @@ const createPalette16 = option => {
   const sky8      = createSky8();
 
   const arr = [
+    white,
     bark8[1],
     fern8[2],
     corn8[3],
@@ -325,6 +331,7 @@ const createPalette16 = option => {
 };
 
 const createPalette19 = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -334,6 +341,7 @@ const createPalette19 = option => {
   const sky8      = createSky8();
 
   const arr = [
+    white,
     bark8[1],
     fern8[2],
     corn8[3],
@@ -361,6 +369,7 @@ const createPalette19 = option => {
 };
 
 const createPalette23 = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -370,6 +379,7 @@ const createPalette23 = option => {
   const sky8      = createSky8();
 
   const arr = [
+    white,
     bark8[1],
     fern8[2],
     corn8[3],
@@ -417,6 +427,7 @@ const selectPalette = (num, option) => {
 };
 
 const createNamed = option => {
+  const white     = '255 255 255';
   const bark8     = createBark8();
   const fern8     = createFern8();
   const corn8     = createCorn8();
@@ -426,6 +437,7 @@ const createNamed = option => {
   const sky8      = createSky8();
 
   const namedColors = {
+    white,
     mocha:      bark8[1],
     cinnamon:   bark8[3],
     chocolate:  bark8[7],

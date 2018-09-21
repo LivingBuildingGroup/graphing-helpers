@@ -539,7 +539,7 @@ const defaultYAxis = {
 };
 
 const createYAxis = options => {
-  const { label, id, position, cssBackground } = options;
+  const { label, id, position, cssBackground, min, max, maxTicksLimitY } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
       'black':
@@ -564,7 +564,9 @@ const createYAxis = options => {
     defaultYAxis.ticks,
     {
       fontColor: scaleAndTickColor,
-
+      min,
+      max,
+      maxTicksLimit: maxTicksLimitY,
     }
   );
   const scaleLabel = Object.assign({},
@@ -587,26 +589,33 @@ const createYAxis = options => {
 };
 
 const createYAxesOptions = options => {
-  const { labels, cssBackground } = options;
+  const { labels, cssBackground, yAxisUnitOptions } = options;
+  const _yAxisUnitOptions = isObjectLiteral(yAxisUnitOptions) ? yAxisUnitOptions : {} ;
   let labelsUsed = [];
   const subOptions = [];
   if(Array.isArray(labels)){
     labels.forEach(l=>{
+      console.log('labels', l);
+      const thisOption = isObjectLiteral(_yAxisUnitOptions[l]) ? _yAxisUnitOptions[l] : {} ;
       const usedIndex = labelsUsed.findIndex(u=>u===l);
       let id, position;
       if(usedIndex < 0){
         labelsUsed.push(l);
         id = alpha[labelsUsed.length-1];
-        position = labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
+        position = 'left' ; // labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
         subOptions.push({
           label: l,
           id,
           position,
           cssBackground,
+          min: thisOption.min,
+          max: thisOption.max,
+          maxTicksLimitY: thisOption.maxTicksLimitY,
         });
       }
     });
   }
+  subOptions.sort((a,b)=>a.label - b.label);
   return subOptions;
 };
 
@@ -668,11 +677,13 @@ const createGraphOptions = options => {
     maxX, 
     maxTicksLimitX,
     legendPosition,
+    yAxisUnitOptions,
   } = options;
 
   const yAxesOptions = {
     labels: Array.isArray(yLabel) ? yLabel : [] ,
     cssBackground,
+    yAxisUnitOptions,
   };
   const arrayOfYOptions = createYAxesOptions(yAxesOptions);
   const xAxisOptions = {
@@ -768,6 +779,7 @@ const createGraph = input => {
     cssBackgroundPrior,
     xLabelKey,
     xLabelStartAt,
+    yAxisUnitOptions,
   } = input;
 
   const {
@@ -810,6 +822,7 @@ const createGraph = input => {
     maxX: lengthRoundUp + 1, 
     maxTicksLimitX: maxTicksLimitUp,
     legendPosition,
+    yAxisUnitOptions,
   };
   
   const graphOptions = createGraphOptions(optionsInput);

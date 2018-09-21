@@ -81,7 +81,7 @@ var editOnePreSetStyle = function editOnePreSetStyle(exStyles, valueRaw, layer, 
   } else if (property.type === 'shade') {
     value = parseInt(value, 10);
   } else if (property.type === 'array') {
-    var arr = value.split(',');
+    var arr = typeof value === 'string' ? value.split(',') : value;
     value = arr.map(function (a) {
       return parseInt(a, 10);
     });
@@ -114,7 +114,7 @@ var editOnePreSetStyle = function editOnePreSetStyle(exStyles, valueRaw, layer, 
     };
   } else {
     nestedStyle[property.key] = value;
-    var newStyle = Object.assign({}, styles[layer], nestedStyle);
+    var newStyle = Object.assign({}, styles[layer], { style: nestedStyle });
     styles[layer] = newStyle;
   }
   return styles;

@@ -459,7 +459,10 @@ var createYAxis = function createYAxis(options) {
   var label = options.label,
       id = options.id,
       position = options.position,
-      cssBackground = options.cssBackground;
+      cssBackground = options.cssBackground,
+      min = options.min,
+      max = options.max,
+      maxTicksLimitY = options.maxTicksLimitY;
 
   var zeroLineColor = cssBackground === 'white' ? 'black' : 'white';
   var gridLinesColor = cssBackground === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
@@ -470,8 +473,10 @@ var createYAxis = function createYAxis(options) {
     axisColor: gridLinesColor
   });
   var ticks = Object.assign({}, defaultYAxis.ticks, {
-    fontColor: scaleAndTickColor
-
+    fontColor: scaleAndTickColor,
+    min: min,
+    max: max,
+    maxTicksLimit: maxTicksLimitY
   });
   var scaleLabel = Object.assign({}, defaultYAxis.scaleLabel, {
     labelString: convertCcToSpace(label),
@@ -488,12 +493,16 @@ var createYAxis = function createYAxis(options) {
 
 var createYAxesOptions = function createYAxesOptions(options) {
   var labels = options.labels,
-      cssBackground = options.cssBackground;
+      cssBackground = options.cssBackground,
+      yAxisUnitOptions = options.yAxisUnitOptions;
 
+  var _yAxisUnitOptions = isObjectLiteral(yAxisUnitOptions) ? yAxisUnitOptions : {};
   var labelsUsed = [];
   var subOptions = [];
   if (Array.isArray(labels)) {
     labels.forEach(function (l) {
+      console.log('labels', l);
+      var thisOption = isObjectLiteral(_yAxisUnitOptions[l]) ? _yAxisUnitOptions[l] : {};
       var usedIndex = labelsUsed.findIndex(function (u) {
         return u === l;
       });
@@ -502,16 +511,22 @@ var createYAxesOptions = function createYAxesOptions(options) {
       if (usedIndex < 0) {
         labelsUsed.push(l);
         id = alpha[labelsUsed.length - 1];
-        position = labelsUsed.length % 2 === 0 ? 'right' : 'left';
+        position = 'left'; // labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
         subOptions.push({
           label: l,
           id: id,
           position: position,
-          cssBackground: cssBackground
+          cssBackground: cssBackground,
+          min: thisOption.min,
+          max: thisOption.max,
+          maxTicksLimitY: thisOption.maxTicksLimitY
         });
       }
     });
   }
+  subOptions.sort(function (a, b) {
+    return a.label - b.label;
+  });
   return subOptions;
 };
 
@@ -564,12 +579,14 @@ var createGraphOptions = function createGraphOptions(options) {
       minX = options.minX,
       maxX = options.maxX,
       maxTicksLimitX = options.maxTicksLimitX,
-      legendPosition = options.legendPosition;
+      legendPosition = options.legendPosition,
+      yAxisUnitOptions = options.yAxisUnitOptions;
 
 
   var yAxesOptions = {
     labels: Array.isArray(yLabel) ? yLabel : [],
-    cssBackground: cssBackground
+    cssBackground: cssBackground,
+    yAxisUnitOptions: yAxisUnitOptions
   };
   var arrayOfYOptions = createYAxesOptions(yAxesOptions);
   var xAxisOptions = {
@@ -646,7 +663,8 @@ var createGraph = function createGraph(input) {
       graphOptionsPrior = input.graphOptionsPrior,
       cssBackgroundPrior = input.cssBackgroundPrior,
       xLabelKey = input.xLabelKey,
-      xLabelStartAt = input.xLabelStartAt;
+      xLabelStartAt = input.xLabelStartAt,
+      yAxisUnitOptions = input.yAxisUnitOptions;
 
   var _parseDataType1To = parseDataType1To0(dataType1Processed, legendObject, layersSelected),
       dataType0Raw = _parseDataType1To.dataType0Raw,
@@ -675,7 +693,8 @@ var createGraph = function createGraph(input) {
     minX: first,
     maxX: lengthRoundUp + 1,
     maxTicksLimitX: maxTicksLimitUp,
-    legendPosition: legendPosition
+    legendPosition: legendPosition,
+    yAxisUnitOptions: yAxisUnitOptions
   };
 
   var graphOptions = createGraphOptions(optionsInput);

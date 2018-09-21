@@ -159,6 +159,7 @@ var listBright = function listBright() {
 };
 
 var createPalette11 = function createPalette11(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -167,7 +168,7 @@ var createPalette11 = function createPalette11(option) {
   var eggplant8 = createEggplant8();
   var sky8 = createSky8();
 
-  var arr = [bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0]];
+  var arr = [white, bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0]];
 
   if (option === 'bright') {
     return addBrights(arr);
@@ -176,6 +177,7 @@ var createPalette11 = function createPalette11(option) {
 };
 
 var createPalette13 = function createPalette13(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -184,7 +186,7 @@ var createPalette13 = function createPalette13(option) {
   var eggplant8 = createEggplant8();
   var sky8 = createSky8();
 
-  var arr = [bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4]];
+  var arr = [white, bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4]];
   if (option === 'bright') {
     return addBrights(arr);
   }
@@ -192,6 +194,7 @@ var createPalette13 = function createPalette13(option) {
 };
 
 var createPalette16 = function createPalette16(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -200,7 +203,7 @@ var createPalette16 = function createPalette16(option) {
   var eggplant8 = createEggplant8();
   var sky8 = createSky8();
 
-  var arr = [bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7]];
+  var arr = [white, bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7]];
   if (option === 'bright') {
     return addBrights(arr);
   }
@@ -208,6 +211,7 @@ var createPalette16 = function createPalette16(option) {
 };
 
 var createPalette19 = function createPalette19(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -216,7 +220,7 @@ var createPalette19 = function createPalette19(option) {
   var eggplant8 = createEggplant8();
   var sky8 = createSky8();
 
-  var arr = [bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7], eggplant8[3], fern8[0], wine8[4]];
+  var arr = [white, bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7], eggplant8[3], fern8[0], wine8[4]];
   if (option === 'bright') {
     return addBrights(arr);
   }
@@ -224,6 +228,7 @@ var createPalette19 = function createPalette19(option) {
 };
 
 var createPalette23 = function createPalette23(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -232,7 +237,7 @@ var createPalette23 = function createPalette23(option) {
   var eggplant8 = createEggplant8();
   var sky8 = createSky8();
 
-  var arr = [bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7], eggplant8[3], fern8[0], wine8[4], corn8[7], fern8[4], wine8[1], peach8[6]];
+  var arr = [white, bark8[1], fern8[2], corn8[3], peach8[4], wine8[7], sky8[7], fern8[6], sky8[1], peach8[0], eggplant8[6], eggplant8[0], bark8[3], sky8[4], peach8[2], corn8[0], bark8[7], eggplant8[3], fern8[0], wine8[4], corn8[7], fern8[4], wine8[1], peach8[6]];
   if (option === 'bright') {
     return addBrights(arr);
   }
@@ -256,6 +261,7 @@ var selectPalette = function selectPalette(num, option) {
 };
 
 var createNamed = function createNamed(option) {
+  var white = '255 255 255';
   var bark8 = createBark8();
   var fern8 = createFern8();
   var corn8 = createCorn8();
@@ -265,6 +271,7 @@ var createNamed = function createNamed(option) {
   var sky8 = createSky8();
 
   var namedColors = {
+    white: white,
     mocha: bark8[1],
     cinnamon: bark8[3],
     chocolate: bark8[7],

@@ -1,5 +1,7 @@
 'use strict';
 
+const { isPrimitiveNumber } = require('conjunction-junction');
+
 const calcScreenType = (w,h) =>{
   const phoneP_minW   =     0;
   const phoneP_maxW   =   500;
@@ -53,33 +55,30 @@ const calcScreenType = (w,h) =>{
 
 const calcCanvasDimensions = input => {
   const {
-    win,
     state,
+    widthToUse,
+    heightToUse,
     reduceCanvasHeightBy,
   } = input;
   // validate
   const defaultReturn = {canvasWidth: 0, canvasHeight: 0};
-  if(!win) return defaultReturn;
-  if(!win.screen) return defaultReturn;
-  if(!win.screen.availWidth || !win.screen.availHeight || !win.innerWidth || !win.innerHeight) return defaultReturn;
+  if(!widthToUse || !heightToUse ) return defaultReturn;
   // validated
   const controlsCss = {
     heightAtTop: 40,
     marginH: 60, // this is double, since the graph is centered
     marginTop: state.cssMarginTop + state.cssGraphMarginTop, // former is margin of entire contain, latter is for graph itself
   };
-  const wRaw = Math.min(win.screen.availWidth , win.innerWidth);
-  const hRaw = Math.min(win.screen.availHeight, win.innerHeight);
-  const wAvailable = wRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
-  const hAvailable = hRaw - (wRaw >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
-  const screenType = calcScreenType(wRaw, hRaw).type;
+  const wAvailable = widthToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
+  const hAvailable = heightToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
+  const screenType = calcScreenType(widthToUse, heightToUse).type;
   const idealRatio = 1.618; // golden mean!
   const canvasWidth = Math.floor(0.97 * wAvailable) ;
   const canvasHeightRaw = 
-    screenType === 'phoneP' ? hRaw :
+    screenType === 'phoneP' ? heightToUse :
       screenType === 'phoneL'   ? Math.floor(canvasWidth / idealRatio) :
         screenType === 'tabletL'  ?  hAvailable :
-          screenType === 'tabletP'   ? wRaw :
+          screenType === 'tabletP'   ? widthToUse :
             hAvailable;    
   const canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
   return { 
@@ -95,11 +94,15 @@ const calcCanvasDimensions = input => {
 };
 
 const calcGraphContainerDimensions = input => {
-  const { state, win, canvasHeight, canvasWidth } = input;
+  const { 
+    state,     
+    widthToUse,
+    heightToUse, 
+    canvasHeight, 
+    canvasWidth } = input;
 
   const isNarrowScreen = 
-    win.screen.availWidth < state.cssLayerSelectorMediaBreak ||
-    win.innerWidth        < state.cssLayerSelectorMediaBreak;
+  widthToUse < state.cssLayerSelectorMediaBreak ;
   console.log('isNarrowScreen',isNarrowScreen);
 
   let selectorsHeight = 
@@ -124,8 +127,8 @@ const calcGraphContainerDimensions = input => {
 
   const cssGraphFlex = {
     display:   'block',
-    width:     win.screen.availWidth,
-    maxHeight: win.screen.availHeight,
+    width:     widthToUse,
+    maxHeight: heightToUse,
   };
 
   return {
@@ -138,23 +141,42 @@ const calcGraphContainerDimensions = input => {
 const calcDimensions = (state, win=window) => {
   // this runs on mount, on window resize, and when opening and closing selectors
   // if preSets are in focus, reduce the height by 400px or 30% of the screen height
+  const availHeight = 
+    !win.screen ?
+      0 :
+      !isPrimitiveNumber(win.screen.availHeight) ?
+        0:
+        win.screen.availHeight;
+  const availWidth = 
+    !win.screen ?
+      0 :
+      !win.screen.availWidth ?
+        0:
+        win.screen.availWidth;
+  const heightToUse =
+    !isPrimitiveNumber(win.innerHeight) ?
+      availHeight :
+      Math.min(win.innerHeight, availHeight);
+  const widthToUse =
+    !isPrimitiveNumber(win.innerWidth) ?
+      availWidth :
+      Math.min(win.innerWidth, availWidth);
+
   const reduceCanvasHeightBy = 
     state.selectorsInFocus !== 'preSets' ?
       50 :
-      !win.screen ?
-        50 :
-        !win.screen.availHeight ?
-          50 :
-          Math.min(0.3 * win.screen.availHeight, 400) ;
+      Math.min(0.3 * heightToUse, 400) ;
   const {canvasHeight, canvasWidth} = calcCanvasDimensions({
     state,
-    win,
+    widthToUse,
+    heightToUse,
     reduceCanvasHeightBy,
   });
 
   const graphContainerDimensions = calcGraphContainerDimensions({
     state, 
-    win, 
+    widthToUse,
+    heightToUse,
     canvasHeight, 
     canvasWidth
   });
