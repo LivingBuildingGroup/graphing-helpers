@@ -1,7 +1,8 @@
 'use strict';
 
 var _require = require('conjunction-junction'),
-    isPrimitiveNumber = _require.isPrimitiveNumber;
+    isPrimitiveNumber = _require.isPrimitiveNumber,
+    isObjectLiteral = _require.isObjectLiteral;
 
 var calcScreenType = function calcScreenType(w, h) {
   var phoneP_minW = 0;
@@ -54,120 +55,107 @@ var calcScreenType = function calcScreenType(w, h) {
   };
 };
 
-var calcCanvasDimensions = function calcCanvasDimensions(input) {
-  var state = input.state,
-      widthToUse = input.widthToUse,
-      heightToUse = input.heightToUse,
-      reduceCanvasHeightBy = input.reduceCanvasHeightBy;
-  // validate
-
-  var defaultReturn = { canvasWidth: 0, canvasHeight: 0 };
-  if (!widthToUse || !heightToUse) return defaultReturn;
-  // validated
-  var controlsCss = {
-    heightAtTop: 40,
-    marginH: 60, // this is double, since the graph is centered
-    marginTop: state.cssMarginTop + state.cssGraphMarginTop // former is margin of entire contain, latter is for graph itself
-  };
-  var wAvailable = widthToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0);
-  var hAvailable = heightToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop) - controlsCss.marginTop;
-  var screenType = calcScreenType(widthToUse, heightToUse).type;
-  var idealRatio = 1.618; // golden mean!
-  var canvasWidth = Math.floor(0.97 * wAvailable);
-  var canvasHeightRaw = screenType === 'phoneP' ? heightToUse : screenType === 'phoneL' ? Math.floor(canvasWidth / idealRatio) : screenType === 'tabletL' ? hAvailable : screenType === 'tabletP' ? widthToUse : hAvailable;
-  var canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
+var calcMinimumWindowDimensions = function calcMinimumWindowDimensions(win) {
+  var availHeight = !win.screen ? 0 : !isPrimitiveNumber(win.screen.availHeight) ? 0 : win.screen.availHeight;
+  var availWidth = !win.screen ? 0 : !win.screen.availWidth ? 0 : win.screen.availWidth;
+  var heightLowestCommon = !isPrimitiveNumber(win.innerHeight) ? availHeight : Math.min(win.innerHeight, availHeight);
+  var widthLowestCommon = !isPrimitiveNumber(win.innerWidth) ? availWidth : Math.min(win.innerWidth, availWidth);
   return {
-    canvasWidth: canvasWidth,
-    canvasHeight: canvasHeight,
-    testKeys: {
-      screenType: screenType,
-      canvasHeightRaw: canvasHeightRaw,
-      wAvailable: wAvailable,
-      hAvailable: hAvailable
-    }
+    cssWidthOuter: widthLowestCommon,
+    cssHeightOuter: heightLowestCommon
   };
 };
 
-var calcGraphContainerDimensions = function calcGraphContainerDimensions(input) {
-  var state = input.state,
-      widthToUse = input.widthToUse,
-      heightToUse = input.heightToUse,
-      canvasHeight = input.canvasHeight,
-      canvasWidth = input.canvasWidth;
+var calcProportionalDimensions = function calcProportionalDimensions(input) {
+  var width = input.width,
+      height = input.height,
+      cssWidthOuter = input.cssWidthOuter,
+      cssHeightOuter = input.cssHeightOuter;
 
 
-  var isNarrowScreen = widthToUse < state.cssLayerSelectorMediaBreak;
-  console.log('isNarrowScreen', isNarrowScreen);
+  var widthOuter = isPrimitiveNumber(cssWidthOuter) ? cssWidthOuter : 100;
+  var heightOuter = isPrimitiveNumber(cssHeightOuter) ? cssHeightOuter : 100;
 
-  var selectorsHeight = state.selectorsInFocus === 'preSets' ? state.cssPreSetSelectorsHeight : state.selectorsInFocus === 'layers' ? state.cssLayerSelectorsHeight : 0;
+  var w = isObjectLiteral(width) ? width : {};
+  w.bigEnoughScreen = isPrimitiveNumber(w.bigEnoughScreen) ? w.bigEnoughScreen : 1000;
+  w.percentOfScreen = isPrimitiveNumber(w.percentOfScreen) ? w.percentOfScreen : 1;
+  w.maxPctOfBigEnough = isPrimitiveNumber(w.maxPctOfBigEnough) ? w.maxPctOfBigEnough : 1;
+  var h = isObjectLiteral(height) ? height : {};
+  h.bigEnoughScreen = isPrimitiveNumber(h.bigEnoughScreen) ? h.bigEnoughScreen : 1000;
+  h.percentOfScreen = isPrimitiveNumber(h.percentOfScreen) ? h.percentOfScreen : 1;
+  h.maxPctOfBigEnough = isPrimitiveNumber(h.maxPctOfBigEnough) ? h.maxPctOfBigEnough : 1;
 
-  var cssSelectorOuterScrollingContainer = {};
-  if (!isNarrowScreen) {
-    cssSelectorOuterScrollingContainer.maxHeight = selectorsHeight;
-  }
+  var widthRatioDelta = w.maxPctOfBigEnough - w.percentOfScreen;
+  var widthBelowMin = w.bigEnoughScreen - widthOuter;
 
-  var cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
-    height: canvasHeight,
-    width: canvasWidth
+  var heightRatioDelta = h.maxPctOfBigEnough - h.percentOfScreen;
+  var heightBelowMin = h.bigEnoughScreen - heightOuter;
+
+  var w_ = widthOuter >= w.bigEnoughScreen ? w.percentOfScreen * widthOuter : widthOuter + widthBelowMin * widthRatioDelta;
+  var h_ = heightOuter >= h.bigEnoughScreen ? h.percentOfScreen * heightOuter : heightOuter + heightBelowMin * heightRatioDelta;
+  var final = {
+    w: w_,
+    h: h_,
+    testKeys: {
+      input: input,
+      w: w,
+      h: h,
+      widthRatioDelta: widthRatioDelta,
+      widthBelowMin: widthBelowMin,
+      heightRatioDelta: heightRatioDelta,
+      heightBelowMin: heightBelowMin
+    }
   };
-  if (isNarrowScreen) {
-    cssGraphStabilizer.marginTop = 50;
-  }
+  console.log('@@@@@@', final);
 
-  var cssGraphFlex = {
-    display: 'block',
-    width: widthToUse,
-    maxHeight: heightToUse
-  };
-
-  return {
-    cssSelectorOuterScrollingContainer: cssSelectorOuterScrollingContainer,
-    cssGraphFlex: cssGraphFlex,
-    cssGraphStabilizer: cssGraphStabilizer
-  };
+  return final;
 };
 
 var calcDimensions = function calcDimensions(state) {
-  var win = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : window;
+  var cssWidthOuter = state.cssWidthOuter,
+      cssHeightOuter = state.cssHeightOuter,
+      cssWidthControls = state.cssWidthControls,
+      cssHeightFooter = state.cssHeightFooter,
+      cssHeightSelectors = state.cssHeightSelectors;
 
-  // this runs on mount, on window resize, and when opening and closing selectors
-  // if preSets are in focus, reduce the height by 400px or 30% of the screen height
-  var availHeight = !win.screen ? 0 : !isPrimitiveNumber(win.screen.availHeight) ? 0 : win.screen.availHeight;
-  var availWidth = !win.screen ? 0 : !win.screen.availWidth ? 0 : win.screen.availWidth;
-  var heightToUse = !isPrimitiveNumber(win.innerHeight) ? availHeight : Math.min(win.innerHeight, availHeight);
-  var widthToUse = !isPrimitiveNumber(win.innerWidth) ? availWidth : Math.min(win.innerWidth, availWidth);
 
-  var reduceCanvasHeightBy = state.selectorsInFocus !== 'preSets' ? 50 : Math.min(0.3 * heightToUse, 400);
+  var cssDivOuter = {
+    width: cssWidthOuter,
+    height: cssHeightOuter
+  };
+  var cssDivGraph = {
+    width: cssWidthOuter - cssWidthControls,
+    height: cssHeightOuter - cssHeightFooter
+  };
+  var cssDivControls = {
+    width: cssWidthControls,
+    height: cssHeightOuter - cssHeightFooter
+  };
+  var cssDivFooter = {
+    width: cssWidthOuter,
+    height: cssHeightFooter
+  };
+  var cssDivSelectors = {
+    width: cssWidthOuter,
+    height: cssHeightSelectors
+  };
+  var cssCanvasHeight = cssDivGraph.height;
+  var cssCanvasWidth = cssDivGraph.width;
 
-  var _calcCanvasDimensions = calcCanvasDimensions({
-    state: state,
-    widthToUse: widthToUse,
-    heightToUse: heightToUse,
-    reduceCanvasHeightBy: reduceCanvasHeightBy
-  }),
-      canvasHeight = _calcCanvasDimensions.canvasHeight,
-      canvasWidth = _calcCanvasDimensions.canvasWidth;
-
-  var graphContainerDimensions = calcGraphContainerDimensions({
-    state: state,
-    widthToUse: widthToUse,
-    heightToUse: heightToUse,
-    canvasHeight: canvasHeight,
-    canvasWidth: canvasWidth
-  });
-
-  return Object.assign({}, graphContainerDimensions, {
-    cssCanvasHeight: canvasHeight,
-    cssCanvasWidth: canvasWidth,
-    testKeys: {
-      reduceCanvasHeightBy: reduceCanvasHeightBy
-    }
-  });
+  return {
+    cssDivOuter: cssDivOuter,
+    cssDivGraph: cssDivGraph,
+    cssDivControls: cssDivControls,
+    cssDivFooter: cssDivFooter,
+    cssDivSelectors: cssDivSelectors,
+    cssCanvasHeight: cssCanvasHeight,
+    cssCanvasWidth: cssCanvasWidth
+  };
 };
 
 module.exports = {
+  calcMinimumWindowDimensions: calcMinimumWindowDimensions,
   calcScreenType: calcScreenType,
-  calcCanvasDimensions: calcCanvasDimensions,
-  calcGraphContainerDimensions: calcGraphContainerDimensions,
+  calcProportionalDimensions: calcProportionalDimensions,
   calcDimensions: calcDimensions
 };

@@ -1,6 +1,7 @@
 'use strict';
 
-const { isPrimitiveNumber } = require('conjunction-junction');
+const { isPrimitiveNumber,
+  isObjectLiteral } = require('conjunction-junction');
 
 const calcScreenType = (w,h) =>{
   const phoneP_minW   =     0;
@@ -53,94 +54,7 @@ const calcScreenType = (w,h) =>{
   };
 };
 
-const calcCanvasDimensions = input => {
-  const {
-    state,
-    widthToUse,
-    heightToUse,
-    reduceCanvasHeightBy,
-  } = input;
-  // validate
-  const defaultReturn = {canvasWidth: 0, canvasHeight: 0};
-  if(!widthToUse || !heightToUse ) return defaultReturn;
-  // validated
-  const controlsCss = {
-    heightAtTop: 40,
-    marginH: 60, // this is double, since the graph is centered
-    marginTop: state.cssMarginTop + state.cssGraphMarginTop, // former is margin of entire contain, latter is for graph itself
-  };
-  const wAvailable = widthToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? controlsCss.marginH : 0 ) ;
-  const hAvailable = heightToUse - (widthToUse >= state.cssLayerSelectorMediaBreak ? 0 : controlsCss.heightAtTop ) - controlsCss.marginTop ;
-  const screenType = calcScreenType(widthToUse, heightToUse).type;
-  const idealRatio = 1.618; // golden mean!
-  const canvasWidth = Math.floor(0.97 * wAvailable) ;
-  const canvasHeightRaw = 
-    screenType === 'phoneP' ? heightToUse :
-      screenType === 'phoneL'   ? Math.floor(canvasWidth / idealRatio) :
-        screenType === 'tabletL'  ?  hAvailable :
-          screenType === 'tabletP'   ? widthToUse :
-            hAvailable;    
-  const canvasHeight = canvasHeightRaw - reduceCanvasHeightBy;
-  return { 
-    canvasWidth, 
-    canvasHeight, 
-    testKeys: {
-      screenType,
-      canvasHeightRaw,
-      wAvailable,
-      hAvailable,
-    }
-  };
-};
-
-const calcGraphContainerDimensions = input => {
-  const { 
-    state,     
-    widthToUse,
-    heightToUse, 
-    canvasHeight, 
-    canvasWidth } = input;
-
-  const isNarrowScreen = 
-  widthToUse < state.cssLayerSelectorMediaBreak ;
-  console.log('isNarrowScreen',isNarrowScreen);
-
-  let selectorsHeight = 
-    state.selectorsInFocus === 'preSets' ?
-      state.cssPreSetSelectorsHeight :
-      state.selectorsInFocus === 'layers' ?
-        state.cssLayerSelectorsHeight :
-        0 ;
-        
-  const cssSelectorOuterScrollingContainer = {};
-  if(!isNarrowScreen){
-    cssSelectorOuterScrollingContainer.maxHeight = selectorsHeight;
-  }
-
-  const cssGraphStabilizer = { // same dimensions as graph, so hide/show graph doesn't blink
-    height: canvasHeight,
-    width:  canvasWidth,
-  };
-  if(isNarrowScreen){
-    cssGraphStabilizer.marginTop = 50;
-  }
-
-  const cssGraphFlex = {
-    display:   'block',
-    width:     widthToUse,
-    maxHeight: heightToUse,
-  };
-
-  return {
-    cssSelectorOuterScrollingContainer,
-    cssGraphFlex,
-    cssGraphStabilizer,
-  };
-};
-
-const calcDimensions = (state, win=window) => {
-  // this runs on mount, on window resize, and when opening and closing selectors
-  // if preSets are in focus, reduce the height by 400px or 30% of the screen height
+const calcMinimumWindowDimensions = win => {
   const availHeight = 
     !win.screen ?
       0 :
@@ -153,48 +67,118 @@ const calcDimensions = (state, win=window) => {
       !win.screen.availWidth ?
         0:
         win.screen.availWidth;
-  const heightToUse =
+  const heightLowestCommon =
     !isPrimitiveNumber(win.innerHeight) ?
       availHeight :
       Math.min(win.innerHeight, availHeight);
-  const widthToUse =
+  const widthLowestCommon =
     !isPrimitiveNumber(win.innerWidth) ?
       availWidth :
       Math.min(win.innerWidth, availWidth);
+  return {
+    cssWidthOuter: widthLowestCommon,
+    cssHeightOuter: heightLowestCommon,
+  };
+};
 
-  const reduceCanvasHeightBy = 
-    state.selectorsInFocus !== 'preSets' ?
-      50 :
-      Math.min(0.3 * heightToUse, 400) ;
-  const {canvasHeight, canvasWidth} = calcCanvasDimensions({
-    state,
-    widthToUse,
-    heightToUse,
-    reduceCanvasHeightBy,
-  });
+const calcProportionalDimensions = input => {
+  const { 
+    width, 
+    height,
+    cssWidthOuter,
+    cssHeightOuter } = input;
 
-  const graphContainerDimensions = calcGraphContainerDimensions({
-    state, 
-    widthToUse,
-    heightToUse,
-    canvasHeight, 
-    canvasWidth
-  });
+  const widthOuter  = isPrimitiveNumber(cssWidthOuter)  ? cssWidthOuter : 100 ;
+  const heightOuter = isPrimitiveNumber(cssHeightOuter) ? cssHeightOuter : 100 ;
 
-  return Object.assign({},
-    graphContainerDimensions,
-    {
-      cssCanvasHeight: canvasHeight,
-      cssCanvasWidth:  canvasWidth,
-      testKeys: {
-        reduceCanvasHeightBy,
-      }
-    });
+  const w = isObjectLiteral(width) ? width : {} ;
+  w.bigEnoughScreen   = isPrimitiveNumber(w.bigEnoughScreen)   ? w.bigEnoughScreen   : 1000 ;
+  w.percentOfScreen   = isPrimitiveNumber(w.percentOfScreen)   ? w.percentOfScreen   : 1 ;
+  w.maxPctOfBigEnough = isPrimitiveNumber(w.maxPctOfBigEnough) ? w.maxPctOfBigEnough : 1 ;
+  const h = isObjectLiteral(height) ? height : {} ;
+  h.bigEnoughScreen   = isPrimitiveNumber(h.bigEnoughScreen)   ? h.bigEnoughScreen   : 1000 ;
+  h.percentOfScreen   = isPrimitiveNumber(h.percentOfScreen)   ? h.percentOfScreen   : 1 ;
+  h.maxPctOfBigEnough = isPrimitiveNumber(h.maxPctOfBigEnough) ? h.maxPctOfBigEnough : 1 ;
+
+  const widthRatioDelta = w.maxPctOfBigEnough - w.percentOfScreen;
+  const widthBelowMin = w.bigEnoughScreen - widthOuter;
+
+  const heightRatioDelta = h.maxPctOfBigEnough - h.percentOfScreen;
+  const heightBelowMin = h.bigEnoughScreen - heightOuter;
+    
+  const w_  = 
+    widthOuter >= w.bigEnoughScreen ? 
+      w.percentOfScreen * widthOuter :
+      widthOuter + (widthBelowMin * widthRatioDelta) ;
+  const h_ = 
+    heightOuter >= h.bigEnoughScreen ? 
+      h.percentOfScreen * heightOuter :
+      heightOuter + (heightBelowMin * heightRatioDelta) ;
+  const final = {
+    w: w_,
+    h: h_,
+    testKeys: {
+      input,
+      w,
+      h,
+      widthRatioDelta,
+      widthBelowMin,
+      heightRatioDelta,
+      heightBelowMin,
+    }
+  };
+  console.log('@@@@@@', final);
+
+  return final;
+};
+
+
+const calcDimensions = state => {
+  const {
+    cssWidthOuter,
+    cssHeightOuter,
+    cssWidthControls,
+    cssHeightFooter,
+    cssHeightSelectors,
+  } = state;
+
+  const cssDivOuter = {
+    width: cssWidthOuter,
+    height: cssHeightOuter,
+  };
+  const cssDivGraph = {
+    width: cssWidthOuter - cssWidthControls,
+    height: cssHeightOuter - cssHeightFooter,
+  };
+  const cssDivControls = {
+    width: cssWidthControls,
+    height: cssHeightOuter - cssHeightFooter,
+  };
+  const cssDivFooter = {
+    width: cssWidthOuter,
+    height: cssHeightFooter,
+  };
+  const cssDivSelectors = {
+    width: cssWidthOuter,
+    height: cssHeightSelectors,
+  };
+  const cssCanvasHeight = cssDivGraph.height;
+  const cssCanvasWidth  = cssDivGraph.width;
+
+  return {
+    cssDivOuter,
+    cssDivGraph,
+    cssDivControls,
+    cssDivFooter,
+    cssDivSelectors,
+    cssCanvasHeight,
+    cssCanvasWidth,
+  };
 };
 
 module.exports = {
+  calcMinimumWindowDimensions,
   calcScreenType,
-  calcCanvasDimensions,
-  calcGraphContainerDimensions,
+  calcProportionalDimensions,
   calcDimensions,
 };
