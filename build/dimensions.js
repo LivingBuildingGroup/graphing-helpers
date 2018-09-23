@@ -106,8 +106,6 @@ var calcProportionalDimensions = function calcProportionalDimensions(input) {
       heightBelowMin: heightBelowMin
     }
   };
-  console.log('@@@@@@', final);
-
   return final;
 };
 

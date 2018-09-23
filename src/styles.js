@@ -59,6 +59,11 @@ const createStyle = input => {
     pointBackgroundColor:      input.pointBackgroundColor ? 
       `rgba(${input.pointBackgroundColor},1)` : '#fff',
   };
+  for(let key in colors){
+    if (typeof input[key] === typeof colors[key]) {
+      colors[key] = input[key];
+    }
+  }
   return Object.assign({},
     general,
     colors
