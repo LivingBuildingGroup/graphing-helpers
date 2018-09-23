@@ -62,6 +62,11 @@ var createStyle = function createStyle(input) {
     pointHoverBackgroundColor: 'rgba(' + color + ',' + general.opacityPointBackgroundHover + ')',
     pointBackgroundColor: input.pointBackgroundColor ? 'rgba(' + input.pointBackgroundColor + ',1)' : '#fff'
   };
+  for (var _key in colors) {
+    if (_typeof(input[_key]) === _typeof(colors[_key])) {
+      colors[_key] = input[_key];
+    }
+  }
   return Object.assign({}, general, colors);
 };
 
