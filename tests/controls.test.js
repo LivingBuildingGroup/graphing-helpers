@@ -6,7 +6,7 @@ const expect = chai.expect;
 const { 
   formatControlsWithoutPreSets,
   formatPreSetsForControls,
-  formatControls, } = require('../index');
+  formatControls, } = require('..');
 
 describe('pre-set-control', ()=> { 
 

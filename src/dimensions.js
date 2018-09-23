@@ -127,6 +127,7 @@ const calcProportionalDimensions = input => {
       heightBelowMin,
     }
   };
+  console.log('@@@@@@@ final',final);
   return final;
 };
 

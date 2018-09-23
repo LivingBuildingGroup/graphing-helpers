@@ -34,6 +34,12 @@ var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, 
     controlFuncsTop.push(that.handleBackgroundChange);
     controlLabelsTop.push('Toggle white graph background');
   }
+  if (state.yAxisAllow) {
+    controlNamesTop.push('y-Axis');
+    controlIconsTop.push(icons.yAxis);
+    controlFuncsTop.push(that.handleYAxisSelector);
+    controlLabelsTop.push('Toggle Y-Axis settings');
+  }
   if (state.selectorsAllow) {
     controlNamesBot.push('selector');
     controlIconsBot.push(icons.edit);
