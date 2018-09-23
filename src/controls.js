@@ -41,7 +41,7 @@ const formatControlsWithoutPreSets = (state, that) => {
     controlNamesBot.push('selector');
     controlIconsBot.push(icons.edit);
     controlFuncsBot.push(that.toggleSelectorsInFocus);
-    controlLabelsBot.push('Toggle graph editors');
+    controlLabelsBot.push('Toggle graph editors (scroll down to see editors)');
   }
   return {
     controlNamesTop,
