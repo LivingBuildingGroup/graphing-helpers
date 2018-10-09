@@ -994,7 +994,7 @@ describe('graphs', ()=> {
       {
         label: 'two',
         id: 'B',
-        position: 'right',
+        position: 'left',
         cssBackground: 'white',
       }
     ];
@@ -1013,7 +1013,7 @@ describe('graphs', ()=> {
       {
         label: 'two',
         id: 'B',
-        position: 'right',
+        position: 'left',
         cssBackground: 'white',
       }
     ];
@@ -1044,7 +1044,7 @@ describe('graphs', ()=> {
       }, 
       {
         id: 'B', // calculated
-        position: 'right', // calculated
+        position: 'left', // calculated
         type: 'linear',
         display: true,
         gridLines: {
@@ -1081,7 +1081,7 @@ describe('graphs', ()=> {
       {
         label: 'two',
         id: 'B',
-        position: 'right',
+        position: 'left',
         // cssBackground: 'white',
       }
     ];
@@ -1112,7 +1112,7 @@ describe('graphs', ()=> {
       }, 
       {
         id: 'B', // calculated
-        position: 'right', // calculated
+        position: 'left', // calculated
         type: 'linear',
         display: true,
         gridLines: {
@@ -1237,7 +1237,7 @@ describe('graphs', ()=> {
           }, 
           {
             id: 'B', // calculated
-            position: 'right', // calculated
+            position: 'left', // calculated
             type: 'linear',
             display: true,
             gridLines: {
@@ -1819,7 +1819,7 @@ describe('graphs', ()=> {
               pointLabels: {
                 fontSize: 12,
               },
-              position: 'right',
+              position: 'left',
               scaleLabel: {
                 display: true,
                 fontColor: 'white',

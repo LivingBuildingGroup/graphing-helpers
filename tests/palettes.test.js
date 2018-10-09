@@ -590,6 +590,7 @@ describe('palettes', ()=> {
 
   it('createPalette11', () => {
     const expectedResult = [
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -617,6 +618,7 @@ describe('palettes', ()=> {
       '169,  0,  81',
       '254,  0, 254',
       '  0,  0, 254',
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -638,6 +640,7 @@ describe('palettes', ()=> {
 
   it('createPalette13', () => {
     const expectedResult = [
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -667,6 +670,7 @@ describe('palettes', ()=> {
       '169,  0,  81',
       '254,  0, 254',
       '  0,  0, 254',
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -690,6 +694,7 @@ describe('palettes', ()=> {
 
   it('createPalette16', () => {
     const expectedResult = [
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -722,6 +727,7 @@ describe('palettes', ()=> {
       '169,  0,  81',
       '254,  0, 254',
       '  0,  0, 254',
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -748,6 +754,7 @@ describe('palettes', ()=> {
 
   it('createPalette19', () => {
     const expectedResult = [
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -783,6 +790,7 @@ describe('palettes', ()=> {
       '169,  0,  81',
       '254,  0, 254',
       '  0,  0, 254',
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -812,6 +820,7 @@ describe('palettes', ()=> {
 
   it('createPalette23', () => {
     const expectedResult = [
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -851,6 +860,7 @@ describe('palettes', ()=> {
       '169,  0,  81',
       '254,  0, 254',
       '  0,  0, 254',
+      '255 255 255', // white
       '227, 163,  79', // bark8[1]
       ' 79, 190,  64', // fern8[2]
       '186, 173,  26', // corn8[3]
@@ -886,6 +896,7 @@ describe('palettes', ()=> {
 
   it('createNamed', ()=>{
     const expectedResult = { 
+      white: '255 255 255',
       mocha: '227, 163,  79',
       cinnamon: '166, 114,  47',
       chocolate: ' 92,  55,   6',
@@ -915,6 +926,7 @@ describe('palettes', ()=> {
   });
   it('createNamed bright', ()=>{
     const expectedResult = { 
+      white: '255 255 255',
       mocha: '227, 163,  79',
       cinnamon: '166, 114,  47',
       chocolate: ' 92,  55,   6',

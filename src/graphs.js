@@ -47,7 +47,7 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
         !Array.isArray(legendObject[key]) ? 
           'units' :
           typeof legendObject[key][indexUnit] === 'string' ?
-            legendObject[key][indexUnit] :
+            convertCcToSpace(legendObject[key][indexUnit]) :
             'units' ;
     const axisIndex = axesUsed.findIndex(a=>a===yAxisLabel);
     if(axisIndex<0){

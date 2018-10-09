@@ -29,7 +29,7 @@
     "nyc": "^11.2.1"
   },
   "dependencies": {
-    "conjunction-junction": "^3.4.5",
+    "conjunction-junction": "^3.7.0",
     "icon-indexer": "^1.6.0"
   },
   "directories": {

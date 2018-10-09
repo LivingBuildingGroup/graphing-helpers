@@ -38,7 +38,7 @@ describe('pre-set-control', ()=> {
       controlNamesBot:  ['selector'],
       controlIconsBot:  ['edit it'],
       controlFuncsBot:  [that.toggleSelectorsInFocus],
-      controlLabelsBot: ['Toggle graph editors'],
+      controlLabelsBot: ['Toggle graph editors (scroll down to see editors)'],
     };
     const result = formatControlsWithoutPreSets(state, that);
     expect(result).to.deep.equal(expectedResult);
@@ -141,7 +141,7 @@ describe('pre-set-control', ()=> {
       controlNames:  ['close'               ,'print'        ,'background'                   ,'name1'                         ,'name2'                         ,'selector'],
       controlIcons:  ['close it'            ,'print it'     ,'paper it'                     ,'icon1'                         ,'icon2'                         ,'edit it'],
       controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,()=>that.handlePreSetChoice('1'),()=>that.handlePreSetChoice('2'),that.toggleSelectorsInFocus],
-      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','name1'                         ,'name2'                         ,'Toggle graph editors'],
+      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','name1'                         ,'name2'                         ,'Toggle graph editors (scroll down to see editors)'],
     };
     const result = formatControls(state, that);
     expect(result.preSetIds).to.deep.equal(expectedResult.preSetIds);
