@@ -3,7 +3,8 @@
 const { isPrimitiveNumber, 
   isObjectLiteral,
   immutableArrayInsert, 
-  convertCcToSpace }  = require('conjunction-junction');
+  convertCcToSpace,
+  convertScToSpace }  = require('conjunction-junction');
 
 const alpha = ['A','B','C','D','E','F','G','H'];
 
@@ -47,7 +48,7 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
         !Array.isArray(legendObject[key]) ? 
           'units' :
           typeof legendObject[key][indexUnit] === 'string' ?
-            convertCcToSpace(legendObject[key][indexUnit]) :
+            convertCcToSpace(convertScToSpace(legendObject[key][indexUnit])) :
             'units' ;
     const axisIndex = axesUsed.findIndex(a=>a===yAxisLabel);
     if(axisIndex<0){
