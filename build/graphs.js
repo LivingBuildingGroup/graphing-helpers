@@ -40,7 +40,7 @@ var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersArray) {
   var axesUsed = [];
   var yAxisIdArray = [];
   var yAxisArray = layersArray.map(function (key, i) {
-    var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][indexUnit] === 'string' ? convertCcToSpace(convertScToSpace(legendObject[key][indexUnit])) : 'units';
+    var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][indexUnit] === 'string' ? convertScToSpace(legendObject[key][indexUnit]) : 'units';
     var axisIndex = axesUsed.findIndex(function (a) {
       return a === yAxisLabel;
     });
