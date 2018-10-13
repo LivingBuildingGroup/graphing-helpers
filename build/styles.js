@@ -7,7 +7,8 @@ var _require = require('./palettes'),
     createNamed = _require.createNamed;
 
 var _require2 = require('conjunction-junction'),
-    isObjectLiteral = _require2.isObjectLiteral;
+    isObjectLiteral = _require2.isObjectLiteral,
+    generateRandomNumber = _require2.generateRandomNumber;
 
 var createStyle = function createStyle(input) {
   var defaultGeneral = {
@@ -50,7 +51,8 @@ var createStyle = function createStyle(input) {
 
   var color = input.color;
   if (!color) {
-    color = selectPalette(23)[0];
+    var randomNumber = generateRandomNumber(1, 23);
+    color = selectPalette(23)[randomNumber];
   }
   var colors = {
     backgroundColor: 'rgba(' + color + ',' + general.opacityBackground + ')',
@@ -59,14 +61,16 @@ var createStyle = function createStyle(input) {
     hoverBorderColor: 'rgba(' + color + ',' + general.opacityBorderHover + ')',
     pointBorderColor: 'rgba(' + color + ',' + general.opacityPoint + ')',
     pointHoverBorderColor: 'rgba(' + color + ',' + general.opacityPointHover + ')',
-    pointHoverBackgroundColor: 'rgba(' + color + ',' + general.opacityPointBackgroundHover + ')',
-    pointBackgroundColor: input.pointBackgroundColor ? 'rgba(' + input.pointBackgroundColor + ',1)' : '#fff'
+    pointHoverBackgroundColor: 'rgba(' + color + ',' + general.opacityPointBackgroundHover + ')'
   };
+  // this allows user input to override the default of everything being only one color
   for (var _key in colors) {
     if (_typeof(input[_key]) === _typeof(colors[_key])) {
       colors[_key] = input[_key];
     }
   }
+  // pointBackgroundColor is treated separately; it can be explicitly declared, but the default is white, not the same color as everything else
+  colors.pointBackgroundColor = input.pointBackgroundColor ? 'rgba(' + input.pointBackgroundColor + ',1)' : '#fff';
   return Object.assign({}, general, colors);
 };
 
@@ -75,21 +79,24 @@ var createStylesArray = function createStylesArray(layersSelected, styleKey, nam
   var sk = styleKey;
   var nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright');
   var fa = fallbackArray ? fallbackArray : selectPalette(30);
+  var skipper = fallbackArray ? 0 : 1; // skip 0 index of selectPalette because it is white
   var stylesArray =
   // no style key = just pick colors off the array
   !isObjectLiteral(sk) ? layersSelected.map(function (k, i) {
-    return createStyle({ color: fa[i] });
+    var index = Math.min(i + skipper, fa.length - 1); // do not default to white; do not overshoot length due to skipper
+    return createStyle({ color: fa[index] });
   }) :
   // there is a style key
   layersSelected.map(function (k, i) {
+    var index = Math.min(i + skipper, fa.length - 1); // do not default to white; do not overshoot length due to skipper
     // layer is not in key = color from array
-    var style = !sk[k] ? { color: fa[i] } :
+    var style = !sk[k] ? { color: fa[index] } :
     // layer has color and style
     sk[k].color && sk[k].style ? Object.assign({}, sk[k].style,
     // convert named color (string) to rgba as needed
     { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color }) : sk[k].color ?
     // convert named color (string) to rgba as needed
-    { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[i] }) : { color: fa[i] };
+    { color: nc[sk[k].color] ? nc[sk[k].color] : sk[k].color } : sk[k].style ? Object.assign({}, sk[k].style, { color: fa[index] }) : { color: fa[index] };
     return createStyle(style);
   });
   return stylesArray;

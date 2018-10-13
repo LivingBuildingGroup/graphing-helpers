@@ -138,8 +138,8 @@ var calcDimensions = function calcDimensions(state) {
     width: cssWidthOuter,
     height: cssHeightSelectors
   };
-  var cssCanvasHeight = cssDivGraph.height;
   var cssCanvasWidth = cssDivGraph.width;
+  var cssCanvasHeight = cssDivGraph.height;
 
   return {
     cssDivOuter: cssDivOuter,

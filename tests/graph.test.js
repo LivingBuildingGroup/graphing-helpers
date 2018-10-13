@@ -979,7 +979,43 @@ describe('graphs', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it('createYAxesOptions', ()=>{
+  it('createYAxesOptions one explicit Y units another not specified', ()=>{
+    const options = {
+      labels: ['one', 'two'],
+      cssBackground: 'white',
+      yAxisUnitOptions: {
+        one: {
+          min: 3,
+          max: 7,
+          maxTicksLimitY: 4,
+        },
+      }
+    };
+    const expectedResult = [
+      {
+        label: 'one',
+        id: 'A',
+        position: 'left',
+        cssBackground: 'white',
+        min: 3,
+        max: 7,
+        maxTicksLimitY: 4,
+      },
+      {
+        label: 'two',
+        id: 'B',
+        position: 'left',
+        cssBackground: 'white',
+        min: undefined,
+        max: undefined,
+        maxTicksLimitY: undefined,
+      }
+    ];
+    const result = createYAxesOptions(options);
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('createYAxesOptions Y units another not specified', ()=>{
     const options = {
       labels: ['one', 'two'],
       cssBackground: 'white',
@@ -990,12 +1026,59 @@ describe('graphs', ()=> {
         id: 'A',
         position: 'left',
         cssBackground: 'white',
+        min: undefined,
+        max: undefined,
+        maxTicksLimitY: undefined,
       },
       {
         label: 'two',
         id: 'B',
         position: 'left',
         cssBackground: 'white',
+        min: undefined,
+        max: undefined,
+        maxTicksLimitY: undefined,
+      }
+    ];
+    const result = createYAxesOptions(options);
+    expect(result).to.deep.equal(expectedResult);
+  });
+
+  it('createYAxesOptions both Y units specified', ()=>{
+    const options = {
+      labels: ['one', 'two'],
+      cssBackground: 'white',
+      yAxisUnitOptions: {
+        one: {
+          min: 3,
+          max: 7,
+          maxTicksLimitY: 4,
+        },
+        two: {
+          min: 33,
+          max: 77,
+          maxTicksLimitY: 44,
+        },
+      }
+    };
+    const expectedResult = [
+      {
+        label: 'one',
+        id: 'A',
+        position: 'left',
+        cssBackground: 'white',
+        min: 3,
+        max: 7,
+        maxTicksLimitY: 4,
+      },
+      {
+        label: 'two',
+        id: 'B',
+        position: 'left',
+        cssBackground: 'white',
+        min: 33,
+        max: 77,
+        maxTicksLimitY: 44,
       }
     ];
     const result = createYAxesOptions(options);
@@ -1009,12 +1092,18 @@ describe('graphs', ()=> {
         id: 'A',
         position: 'left',
         cssBackground: 'white',
+        min: 33,
+        max: 77,
+        maxTicksLimitY: 44,
       },
       {
         label: 'two',
         id: 'B',
         position: 'left',
         cssBackground: 'white',
+        min: 0,
+        max: undefined,
+        maxTicksLimitY: undefined,
       }
     ];
     const expectedResult = [
@@ -1035,6 +1124,9 @@ describe('graphs', ()=> {
         ticks: {
           display: true,
           fontColor: 'rgb(0, 0, 77)', // calculated
+          min: 33,
+          max: 77,
+          maxTicksLimit: 44,
         },
         scaleLabel: { // labels the entire scale
           display: true,
@@ -1059,6 +1151,9 @@ describe('graphs', ()=> {
         ticks: {
           display: true,
           fontColor: 'rgb(0, 0, 77)', // calculated
+          min: 0,
+          max: undefined,
+          maxTicksLimit: undefined,
         },
         scaleLabel: { // labels the entire scale
           display: true,
@@ -1077,6 +1172,9 @@ describe('graphs', ()=> {
         id: 'A',
         position: 'left',
         // cssBackground: 'white',
+        min: 33,
+        max: 77,
+        maxTicksLimitY: 44,
       },
       {
         label: 'two',
@@ -1103,6 +1201,9 @@ describe('graphs', ()=> {
         ticks: {
           display: true,
           fontColor: 'white', // calculated
+          min: 33,
+          max: 77,
+          maxTicksLimit: 44,
         },
         scaleLabel: { // labels the entire scale
           display: true,
@@ -1127,6 +1228,9 @@ describe('graphs', ()=> {
         ticks: {
           display: true,
           fontColor: 'white', // calculated
+          min: undefined,
+          max: undefined,
+          maxTicksLimit: undefined,
         },
         scaleLabel: { // labels the entire scale
           display: true,
@@ -1166,6 +1270,13 @@ describe('graphs', ()=> {
       minX: 5,                 // start data here, data starts at 0, so 5 would truncate 4 from front
       maxX: 40,                // end data here, e.g. if data goes through 100, we only show 5-40 in this case
       maxTicksLimitX: 20,      // not working 100% of time, if we have 40 ticks, this should show 1 tick every 2 points; this works until the screen gets wider, then the ticks seem to double
+      yAxisUnitOptions: {
+        one: {
+          min: 3,
+          max: 7,
+          maxTicksLimitY: 4,
+        },
+      },
     };
     const expectedResult = {
       responsive: true,
@@ -1228,6 +1339,9 @@ describe('graphs', ()=> {
             ticks: {
               display: true,
               fontColor: 'rgb(0, 0, 77)', // calculated
+              min: 3,
+              max: 7, 
+              maxTicksLimit: 4,
             },
             scaleLabel: { // labels the entire scale
               display: true,
@@ -1252,6 +1366,9 @@ describe('graphs', ()=> {
             ticks: {
               display: true,
               fontColor: 'rgb(0, 0, 77)', // calculated
+              min: undefined,
+              max: undefined, 
+              maxTicksLimit: undefined,
             },
             scaleLabel: { // labels the entire scale
               display: true,
@@ -1261,7 +1378,6 @@ describe('graphs', ()=> {
           }
         ]
       }
-      
     }; 
     const result = createGraphOptions(options);
     expect(result).to.deep.equal(expectedResult);
@@ -1711,6 +1827,13 @@ describe('graphs', ()=> {
       cssBackgroundPrior: 'gray',
       xLabelKey: undefined,
       xLabelStartAt: undefined,
+      yAxisUnitOptions: {
+        lbs: {
+          min: 35,
+          max: 75,
+          maxTicksLimitY: 45,
+        },
+      },
     };
     const expectedResult = {
       graphData: {
@@ -1804,6 +1927,9 @@ describe('graphs', ()=> {
               ticks: {
                 display: true,
                 fontColor: 'white',
+                min: 35,
+                max: 75,
+                maxTicksLimit: 45,
               },
               type: 'linear',
             },
@@ -1828,6 +1954,9 @@ describe('graphs', ()=> {
               ticks: {
                 display: true,
                 fontColor: 'white',
+                min: undefined,
+                max: undefined,
+                maxTicksLimit: undefined,
               },
               type: 'linear',
             },
@@ -1896,7 +2025,6 @@ describe('graphs', ()=> {
       }
     };
     const result = createGraph(input);
-    console.log('result', result);
     expect(result).to.deep.equal(expectedResult);
   });
 

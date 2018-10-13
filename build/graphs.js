@@ -502,7 +502,6 @@ var createYAxesOptions = function createYAxesOptions(options) {
   var subOptions = [];
   if (Array.isArray(labels)) {
     labels.forEach(function (l) {
-      console.log('labels', l);
       var thisOption = isObjectLiteral(_yAxisUnitOptions[l]) ? _yAxisUnitOptions[l] : {};
       var usedIndex = labelsUsed.findIndex(function (u) {
         return u === l;

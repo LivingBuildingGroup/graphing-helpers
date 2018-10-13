@@ -596,7 +596,6 @@ const createYAxesOptions = options => {
   const subOptions = [];
   if(Array.isArray(labels)){
     labels.forEach(l=>{
-      console.log('labels', l);
       const thisOption = isObjectLiteral(_yAxisUnitOptions[l]) ? _yAxisUnitOptions[l] : {} ;
       const usedIndex = labelsUsed.findIndex(u=>u===l);
       let id, position;

@@ -3,7 +3,8 @@
 const { 
   selectPalette,
   createNamed }           = require('./palettes');
-const { isObjectLiteral } = require('conjunction-junction');
+const { isObjectLiteral,
+  generateRandomNumber } = require('conjunction-junction');
 
 const createStyle = input => {
   const defaultGeneral = {
@@ -46,7 +47,8 @@ const createStyle = input => {
 
   let color = input.color;
   if(!color) {
-    color = selectPalette(23)[0];
+    const randomNumber = generateRandomNumber(1, 23);
+    color = selectPalette(23)[randomNumber];
   }
   const colors =  {
     backgroundColor:           `rgba(${color},${general.opacityBackground})`,
@@ -56,14 +58,17 @@ const createStyle = input => {
     pointBorderColor:          `rgba(${color},${general.opacityPoint})`,
     pointHoverBorderColor:     `rgba(${color},${general.opacityPointHover})`,
     pointHoverBackgroundColor: `rgba(${color},${general.opacityPointBackgroundHover})`,
-    pointBackgroundColor:      input.pointBackgroundColor ? 
-      `rgba(${input.pointBackgroundColor},1)` : '#fff',
   };
+  // this allows user input to override the default of everything being only one color
   for(let key in colors){
     if (typeof input[key] === typeof colors[key]) {
       colors[key] = input[key];
     }
   }
+  // pointBackgroundColor is treated separately; it can be explicitly declared, but the default is white, not the same color as everything else
+  colors.pointBackgroundColor = input.pointBackgroundColor ? 
+    `rgba(${input.pointBackgroundColor},1)` : 
+    '#fff';
   return Object.assign({},
     general,
     colors
@@ -75,15 +80,20 @@ const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray)
   const sk = styleKey;
   const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
   const fa = fallbackArray ? fallbackArray : selectPalette(30);
+  const skipper = fallbackArray ? 0 : 1 ; // skip 0 index of selectPalette because it is white
   const stylesArray = 
     // no style key = just pick colors off the array
     !isObjectLiteral(sk) ? 
-      layersSelected.map((k,i)=>createStyle({color:fa[i]})) :
+      layersSelected.map((k,i)=>{
+        const index = Math.min(i + skipper, fa.length-1); // do not default to white; do not overshoot length due to skipper
+        return createStyle({color:fa[index]});
+      }) :
       // there is a style key
       layersSelected.map((k,i)=>{
+        const index = Math.min(i + skipper, fa.length-1); // do not default to white; do not overshoot length due to skipper
         // layer is not in key = color from array
         const style = !sk[k] ?
-          { color: fa[i] } :
+          { color: fa[index] } :
           // layer has color and style
           sk[k].color && sk[k].style ?
             Object.assign({},
@@ -97,9 +107,9 @@ const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray)
               sk[k].style ?
                 Object.assign({},
                   sk[k].style,
-                  { color: fa[i] }
+                  { color: fa[index] }
                 ) :
-                { color: fa[i] } ;
+                { color: fa[index] } ;
         return createStyle(style);
       });
   return stylesArray;

@@ -161,8 +161,8 @@ const calcDimensions = state => {
     width: cssWidthOuter,
     height: cssHeightSelectors,
   };
-  const cssCanvasHeight = cssDivGraph.height;
   const cssCanvasWidth  = cssDivGraph.width;
+  const cssCanvasHeight = cssDivGraph.height;
 
   return {
     cssDivOuter,

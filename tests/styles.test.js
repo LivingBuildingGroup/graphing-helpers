@@ -10,7 +10,7 @@ const {
 describe('styles', ()=> { 
 
   it('createStyle full default', () => {
-    const expectedResult = {
+    const expectedResultDefault = {
       fill:                   true,
       opacityBackground:      0.1, 
       opacityBackgroundHover: 0.4,
@@ -34,7 +34,8 @@ describe('styles', ()=> {
       pointHoverBorderWidth:  2,
       pointRadius:            1,
       pointHitRadius:         10,
-
+    };
+    const expectedResultRandom = {
       backgroundColor:           'rgba(227, 163,  79,0.1)',// opacityBackground}),
       hoverBackgroundColor:      'rgba(227, 163,  79,0.4)',// opacityBackgroundHover})',
       borderColor:               'rgba(227, 163,  79,1)',// opacityBorder})',
@@ -46,7 +47,20 @@ describe('styles', ()=> {
     };
     const input = {};
     const result = createStyle(input);
-    expect(result).to.deep.equal(expectedResult);
+    for(let key in expectedResultDefault){
+      if(result[key] !== expectedResultDefault[key] && !Array.isArray(expectedResultDefault[key])){
+        console.log('expected ', expectedResultDefault[key], 'and received', result[key], 'at createStyle full default');
+      }
+      expect(result[key]).to.deep.equal(expectedResultDefault[key]);
+    }
+    for(let key in expectedResultRandom){
+      if(typeof result[key] !== 'string'){
+        console.log('expected ', result[key], 'to be a string at createStyle full default');
+      }
+      expect(result).to.haveOwnProperty(key);
+      expect(typeof result[key]).to.be.a('string');
+      expect(result[key]).to.not.include('undefined');
+    }
   });
   it('createStyle color only', () => {
     const expectedResult = {
@@ -90,6 +104,10 @@ describe('styles', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
   it('createStyle pointBackground only', () => {
+    const input = {
+      pointBackgroundColor: '254,254,0',
+      color:'227, 163,  79',
+    };
     const expectedResult = {
       fill:                   true,
       opacityBackground:      0.1, 
@@ -123,9 +141,6 @@ describe('styles', ()=> {
       pointHoverBorderColor:     'rgba(227, 163,  79,1)',// opacityPointHover})',
       pointHoverBackgroundColor: 'rgba(227, 163,  79,1)',// opacityPointBackgroundHover})',
       pointBackgroundColor:      'rgba(254,254,0,1)',
-    };
-    const input = {
-      pointBackgroundColor: '254,254,0',
     };
     const result = createStyle(input);
     expect(result).to.deep.equal(expectedResult);
@@ -169,7 +184,7 @@ describe('styles', ()=> {
       pointBackgroundColor:      '#fff',
     };
     for(let key in general){
-      const newValue = 
+      const expectedResult = 
       typeof general[key] === 'number' ?
         999 : 
         typeof general[key] === 'string' ?
@@ -184,12 +199,12 @@ describe('styles', ()=> {
         colors,
         other,
         {
-          [key]: newValue,
+          [key]: expectedResult,
         }
       );
 
       const result = createStyle(input);
-      expect(result[key]).to.deep.equal(newValue);
+      expect(result[key]).to.deep.equal(expectedResult);
     }
 
   });
@@ -259,7 +274,7 @@ describe('styles', ()=> {
     }
 
   });
-  it('createStyle reject any specific color key sent', () => {
+  it('createStyle accepts any specific color key sent', () => {
     // we only accept 1 color key, not individuals; this is to ensure colors process correctly, and this keeps each item to ONE color... which is busy enough for a graph!!!
     const general = {
       fill:                   true,
@@ -309,7 +324,10 @@ describe('styles', ()=> {
       const expectedResult = Object.assign({},
         general,
         colors,
-        other // don't send this as input
+        {
+          [key]: '254,253,33',
+        },
+        other // don't send this as input, #fff is default for pointBackgroundColor
       );
       const result = createStyle(input);
       expect(result).to.deep.equal(expectedResult);
@@ -354,6 +372,7 @@ describe('styles', ()=> {
     const input = {
       borderWidth: ()=>{return 'testing typeof function';},
       pointBorderWidth: ()=>{return 'testing typeof object';},
+      color: '227, 163,  79',
     };
     const result = createStyle(input);
     expect(result).to.deep.equal(expectedResult);

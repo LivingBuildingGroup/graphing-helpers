@@ -8,7 +8,7 @@ const {
   formatPreSetsForControls,
   formatControls, } = require('..');
 
-describe('pre-set-control', ()=> { 
+describe('controls', ()=> { 
 
   it('formatControlsWithoutPreSets all included', () => {
     const state = {
@@ -227,7 +227,7 @@ describe('pre-set-control', ()=> {
       controlNames:  ['close'               ,'print'        ,'background'                   ,'selector'],
       controlIcons:  ['close it'            ,'print it'     ,'paper it'                     ,'edit it'],
       controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,that.toggleSelectorsInFocus],
-      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','Toggle graph editors'],
+      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','Toggle graph editors (scroll down to see editors)'],
     };
     const result = formatControls(state, that);
     expect(result).to.deep.equal(expectedResult);
