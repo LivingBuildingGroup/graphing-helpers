@@ -95,23 +95,36 @@ const correctPrefixOfLayersSelected = state => {
 
 const editOnePreSetStyle = input => {
   // invoked by <GraphWrapper/>
+  if(!isObjectLiteral(input)) return {};
   const { styles, 
     value, 
     layer, 
     property, 
     preSetGlobalPalette } = input;
+  if(!isObjectLiteral(styles))   return {};
+  if(!isObjectLiteral(property)) return styles;
+  if(typeof layer !== 'string')  return styles;
+
   const { type, key } = property;
+  const psgp = Array.isArray(preSetGlobalPalette) ? preSetGlobalPalette : [] ;
 
   const stylesNew = Object.assign({}, styles);
   let v = value;
+  // see pre-set-load.test for column list
+  // type number = opacityBackground, opacityBorder, borderWidth, pointBorderWidth, opacityPoint
+  // property for shade is custom-set in <GraphWrapper/> with type entered as "shade" to recognize that shade has different features than other numeric types (see several lines below)
   if(type === 'number' || type === 'shade'){
     v = parseFloat(v, 10);
+  // type array = borderDash
   } else if (type === 'array'){
     const arr = typeof v === 'string' ? v.split(',') : v ;
     v = arr.map(a=>parseInt(a,10));
+  // type boolean = fill
   } else if (type === 'boolean'){
     v = v === 'true';
   }
+
+  const defaultColor = '80, 80, 80';
 
   const nestedStyle = 
     !stylesNew[layer] ? 
@@ -125,21 +138,21 @@ const editOnePreSetStyle = input => {
     stylesNew[layer] = {
       style: nestedStyle,
       color: v,
-      colorOld: undefined,
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor,
     };
   } else if(type === 'shade' && v === 0){
     nestedStyle.shade = 0;
     stylesNew[layer] = {
       style: nestedStyle,
       color: stylesNew[layer].colorOld,
-      colorOld: undefined,
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor,
     };
   } else if(type === 'shade'){
     nestedStyle.shade = v;
     stylesNew[layer] = {
       style: nestedStyle,
-      color: preSetGlobalPalette[v-1], // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
-      colorOld: stylesNew[layer].color,
+      color: psgp[v-1] ? psgp[v-1] : defaultColor, // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor,
     };
   } else {
     nestedStyle[key] = v;

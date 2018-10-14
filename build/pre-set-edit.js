@@ -60,27 +60,41 @@ var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state
 
 var editOnePreSetStyle = function editOnePreSetStyle(input) {
   // invoked by <GraphWrapper/>
+  if (!isObjectLiteral(input)) return {};
   var styles = input.styles,
       value = input.value,
       layer = input.layer,
       property = input.property,
       preSetGlobalPalette = input.preSetGlobalPalette;
+
+  if (!isObjectLiteral(styles)) return {};
+  if (!isObjectLiteral(property)) return styles;
+  if (typeof layer !== 'string') return styles;
+
   var type = property.type,
       key = property.key;
 
+  var psgp = Array.isArray(preSetGlobalPalette) ? preSetGlobalPalette : [];
 
   var stylesNew = Object.assign({}, styles);
   var v = value;
+  // see pre-set-load.test for column list
+  // type number = opacityBackground, opacityBorder, borderWidth, pointBorderWidth, opacityPoint
+  // property for shade is custom-set in <GraphWrapper/> with type entered as "shade" to recognize that shade has different features than other numeric types (see several lines below)
   if (type === 'number' || type === 'shade') {
     v = parseFloat(v, 10);
+    // type array = borderDash
   } else if (type === 'array') {
     var arr = typeof v === 'string' ? v.split(',') : v;
     v = arr.map(function (a) {
       return parseInt(a, 10);
     });
+    // type boolean = fill
   } else if (type === 'boolean') {
     v = v === 'true';
   }
+
+  var defaultColor = '80, 80, 80';
 
   var nestedStyle = !stylesNew[layer] ? {} : isObjectLiteral(stylesNew[layer].style) ? Object.assign({}, stylesNew[layer].style) : {};
 
@@ -89,21 +103,21 @@ var editOnePreSetStyle = function editOnePreSetStyle(input) {
     stylesNew[layer] = {
       style: nestedStyle,
       color: v,
-      colorOld: undefined
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else if (type === 'shade' && v === 0) {
     nestedStyle.shade = 0;
     stylesNew[layer] = {
       style: nestedStyle,
       color: stylesNew[layer].colorOld,
-      colorOld: undefined
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else if (type === 'shade') {
     nestedStyle.shade = v;
     stylesNew[layer] = {
       style: nestedStyle,
-      color: preSetGlobalPalette[v - 1], // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
-      colorOld: stylesNew[layer].color
+      color: psgp[v - 1] ? psgp[v - 1] : defaultColor, // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
+      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else {
     nestedStyle[key] = v;
@@ -119,19 +133,15 @@ var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(inp
 
   var s = Object.assign({}, styles);
   for (var layer in s) {
-    console.log(' ');
-    console.log('layer', layer);
     if (!isObjectLiteral(s[layer].style)) {
       s[layer].style = {};
     }
-    console.log('shade', layer, s[layer].style.shade);
     if (s[layer].style.shade > 0) {
       var shade = s[layer].style.shade - 1;
       var colorOld = s[layer].color;
       var color = preSetGlobalPalette[shade];
       s[layer].color = color;
       s[layer].colorOld = colorOld;
-      console.log('### color', color, 's[layer].color', s[layer].color);
     }
   }
   return s;
