@@ -3,21 +3,6 @@
 const { isObjectLiteral} = require('conjunction-junction');
 const { unPrefixLayers } = require('./layers');
 
-const applyPreSetGlobalColorToStyles = (styles, preSetGlobalPalette) => {
-  const newStyles = Object.assign({}, styles);
-  let layerToTrigger;
-  for(let layer in styles){
-    if(newStyles[layer].style){
-      if(newStyles[layer].style.shade > 0){
-        layerToTrigger = layer;
-        const shade = newStyles[layer].style.shade - 1;
-        newStyles[layer].color = preSetGlobalPalette[shade];
-      }
-    }
-  }
-  return { styles: newStyles, layerToTrigger };
-};
-
 const prefixStyles = (exStyles, defaults, layersAllUnPrefixed) => {
   // layersAllUnPrefixed MIGHT have prefixes
   // it should ONLY have prefixes we consider minimum, such as platform letters
@@ -108,58 +93,83 @@ const correctPrefixOfLayersSelected = state => {
   return unPrefixLayers(state.layersSelected, prefixesToKeep);
 };
 
-const editOnePreSetStyle = (exStyles, valueRaw, layer, property, preSetGlobalPalette) => {
-  const styles = Object.assign({}, exStyles);
-  let value = valueRaw;
-  if(property.type === 'number'){
-    value = parseFloat(value, 10);
-  } else if (property.type === 'shade'){
-    value = parseInt(value, 10);
-  } else if (property.type === 'array'){
-    const arr = typeof value === 'string' ? value.split(',') : value ;
-    value = arr.map(a=>parseInt(a,10));
-  } else if (property.type === 'boolean'){
-    value = value === 'true';
+const editOnePreSetStyle = input => {
+  // invoked by <GraphWrapper/>
+  const { styles, 
+    value, 
+    layer, 
+    property, 
+    preSetGlobalPalette } = input;
+  const { type, key } = property;
+
+  const stylesNew = Object.assign({}, styles);
+  let v = value;
+  if(type === 'number' || type === 'shade'){
+    v = parseFloat(v, 10);
+  } else if (type === 'array'){
+    const arr = typeof v === 'string' ? v.split(',') : v ;
+    v = arr.map(a=>parseInt(a,10));
+  } else if (type === 'boolean'){
+    v = v === 'true';
   }
 
   const nestedStyle = 
-    !styles[layer] ? 
+    !stylesNew[layer] ? 
       {} :
-      isObjectLiteral(styles[layer].style) ?
-        Object.assign({}, styles[layer].style ) :
+      isObjectLiteral(stylesNew[layer].style) ?
+        Object.assign({}, stylesNew[layer].style ) :
         {} ;
 
-  if(property.type === 'color'){
+  if(type === 'color'){
     nestedStyle.shade = 0;
-    styles[layer] = {
+    stylesNew[layer] = {
       style: nestedStyle,
-      color: value,
+      color: v,
       colorOld: undefined,
     };
-  } else if(property.type === 'shade' && value === 0){
+  } else if(type === 'shade' && v === 0){
     nestedStyle.shade = 0;
-    styles[layer] = {
+    stylesNew[layer] = {
       style: nestedStyle,
-      color: styles[layer].colorOld,
+      color: stylesNew[layer].colorOld,
       colorOld: undefined,
     };
-  } else if(property.type === 'shade'){
-    nestedStyle.shade = value;
-    styles[layer] = {
+  } else if(type === 'shade'){
+    nestedStyle.shade = v;
+    stylesNew[layer] = {
       style: nestedStyle,
-      colorOld: styles[layer].color,
-      color: preSetGlobalPalette[value-1],
+      color: preSetGlobalPalette[v-1], // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
+      colorOld: stylesNew[layer].color,
     };
   } else {
-    nestedStyle[property.key] = value;
-    const newStyle = Object.assign({}, styles[layer], {style: nestedStyle});
-    styles[layer] = newStyle;
+    nestedStyle[key] = v;
+    stylesNew[layer] = Object.assign({}, stylesNew[layer], {style: nestedStyle});
   }
-  return styles;
+  return stylesNew;
+};
+
+const applyPreSetGlobalColorToStyles = input => {
+  // invoked by <GraphWrapper/>
+  const { styles, 
+    preSetGlobalPalette } = input;
+  const s = Object.assign({}, styles);
+  for(let layer in s){
+    if(!isObjectLiteral(s[layer].style)){
+      s[layer].style = {};
+    }
+    if(s[layer].style.shade > 0){
+      const shade = s[layer].style.shade - 1;
+      const colorOld = s[layer].color;
+      const color = preSetGlobalPalette[shade];
+      s[layer].color = color;
+      s[layer].colorOld = colorOld;
+    }
+  }
+  return s;
 };
 
 const formatPreSetToSave = (state, stylesDefault) => {
-  
+  // invoked by <GraphWrapper/>
   const {
     id, 
     name, 

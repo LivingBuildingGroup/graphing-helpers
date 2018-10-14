@@ -8,21 +8,6 @@ var _require = require('conjunction-junction'),
 var _require2 = require('./layers'),
     unPrefixLayers = _require2.unPrefixLayers;
 
-var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(styles, preSetGlobalPalette) {
-  var newStyles = Object.assign({}, styles);
-  var layerToTrigger = void 0;
-  for (var layer in styles) {
-    if (newStyles[layer].style) {
-      if (newStyles[layer].style.shade > 0) {
-        layerToTrigger = layer;
-        var shade = newStyles[layer].style.shade - 1;
-        newStyles[layer].color = preSetGlobalPalette[shade];
-      }
-    }
-  }
-  return { styles: newStyles, layerToTrigger: layerToTrigger };
-};
-
 var prefixStyles = function prefixStyles(exStyles, defaults, layersAllUnPrefixed) {
   // layersAllUnPrefixed MIGHT have prefixes
   // it should ONLY have prefixes we consider minimum, such as platform letters
@@ -73,54 +58,87 @@ var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state
   return unPrefixLayers(state.layersSelected, prefixesToKeep);
 };
 
-var editOnePreSetStyle = function editOnePreSetStyle(exStyles, valueRaw, layer, property, preSetGlobalPalette) {
-  var styles = Object.assign({}, exStyles);
-  var value = valueRaw;
-  if (property.type === 'number') {
-    value = parseFloat(value, 10);
-  } else if (property.type === 'shade') {
-    value = parseInt(value, 10);
-  } else if (property.type === 'array') {
-    var arr = typeof value === 'string' ? value.split(',') : value;
-    value = arr.map(function (a) {
+var editOnePreSetStyle = function editOnePreSetStyle(input) {
+  // invoked by <GraphWrapper/>
+  var styles = input.styles,
+      value = input.value,
+      layer = input.layer,
+      property = input.property,
+      preSetGlobalPalette = input.preSetGlobalPalette;
+  var type = property.type,
+      key = property.key;
+
+
+  var stylesNew = Object.assign({}, styles);
+  var v = value;
+  if (type === 'number' || type === 'shade') {
+    v = parseFloat(v, 10);
+  } else if (type === 'array') {
+    var arr = typeof v === 'string' ? v.split(',') : v;
+    v = arr.map(function (a) {
       return parseInt(a, 10);
     });
-  } else if (property.type === 'boolean') {
-    value = value === 'true';
+  } else if (type === 'boolean') {
+    v = v === 'true';
   }
 
-  var nestedStyle = !styles[layer] ? {} : isObjectLiteral(styles[layer].style) ? Object.assign({}, styles[layer].style) : {};
+  var nestedStyle = !stylesNew[layer] ? {} : isObjectLiteral(stylesNew[layer].style) ? Object.assign({}, stylesNew[layer].style) : {};
 
-  if (property.type === 'color') {
+  if (type === 'color') {
     nestedStyle.shade = 0;
-    styles[layer] = {
+    stylesNew[layer] = {
       style: nestedStyle,
-      color: value,
+      color: v,
       colorOld: undefined
     };
-  } else if (property.type === 'shade' && value === 0) {
+  } else if (type === 'shade' && v === 0) {
     nestedStyle.shade = 0;
-    styles[layer] = {
+    stylesNew[layer] = {
       style: nestedStyle,
-      color: styles[layer].colorOld,
+      color: stylesNew[layer].colorOld,
       colorOld: undefined
     };
-  } else if (property.type === 'shade') {
-    nestedStyle.shade = value;
-    styles[layer] = {
+  } else if (type === 'shade') {
+    nestedStyle.shade = v;
+    stylesNew[layer] = {
       style: nestedStyle,
-      colorOld: styles[layer].color,
-      color: preSetGlobalPalette[value - 1]
+      color: preSetGlobalPalette[v - 1], // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
+      colorOld: stylesNew[layer].color
     };
   } else {
-    nestedStyle[property.key] = value;
-    var newStyle = Object.assign({}, styles[layer], { style: nestedStyle });
-    styles[layer] = newStyle;
+    nestedStyle[key] = v;
+    stylesNew[layer] = Object.assign({}, stylesNew[layer], { style: nestedStyle });
   }
-  return styles;
+  return stylesNew;
+};
+
+var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(input) {
+  // invoked by <GraphWrapper/>
+  var styles = input.styles,
+      preSetGlobalPalette = input.preSetGlobalPalette;
+
+  var s = Object.assign({}, styles);
+  for (var layer in s) {
+    console.log(' ');
+    console.log('layer', layer);
+    if (!isObjectLiteral(s[layer].style)) {
+      s[layer].style = {};
+    }
+    console.log('shade', layer, s[layer].style.shade);
+    if (s[layer].style.shade > 0) {
+      var shade = s[layer].style.shade - 1;
+      var colorOld = s[layer].color;
+      var color = preSetGlobalPalette[shade];
+      s[layer].color = color;
+      s[layer].colorOld = colorOld;
+      console.log('### color', color, 's[layer].color', s[layer].color);
+    }
+  }
+  return s;
 };
 
 var formatPreSetToSave = function formatPreSetToSave(state, stylesDefault) {
+  // invoked by <GraphWrapper/>
   var _parseNameIdIconType = parseNameIdIconType(state),
       id = _parseNameIdIconType.id,
       name = _parseNameIdIconType.name,
