@@ -266,8 +266,8 @@ describe('pre-set-edit', ()=> {
         prefixGroups:    true,
         prefixGroupsSub: false,
       },
-      groups: ['A', 'B'],
-      prefixesGroupsSub: ['52', '48'],
+      prefixesToKeepGroups: ['A', 'B'],
+      prefixesToKeepGroupsSub: ['52', '48'],
     };
     const expectedResult = {
       prefixesToKeep: ['A', 'B'],
@@ -289,8 +289,8 @@ describe('pre-set-edit', ()=> {
         prefixGroups:    true,
         prefixGroupsSub: true,
       },
-      groups: ['A', 'B'],
-      prefixesGroupsSub: ['52'],
+      prefixesToKeepGroups:    ['A', 'B'],
+      prefixesToKeepGroupsSub: ['52'],
     };
     const expectedResult = {
       prefixesToKeep: ['A', 'B', '52'],
@@ -312,8 +312,8 @@ describe('pre-set-edit', ()=> {
         prefixGroups:    false,
         prefixGroupsSub: true,
       },
-      groups: ['A', 'B'],
-      prefixesGroupsSub: ['52', '48'],
+      prefixesToKeepGroups:    ['A', 'B'],
+      prefixesToKeepGroupsSub: ['52', '48'],
     };
     const expectedResult = {
       prefixesToKeep: ['52', '48'],
@@ -846,7 +846,6 @@ describe('pre-set-edit', ()=> {
     const result = editOnePreSetStyle(input);
     expect(result).to.deep.equal(expectedResult);
   });
-
 
   it.skip('formatPreSetToSave', () => {
     const input = {};

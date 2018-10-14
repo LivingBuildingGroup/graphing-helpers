@@ -104,9 +104,9 @@ const correctPrefixOfLayersSelected = state => {
   if(!isObjectLiteral(state)) return defaultReturn;
   const {
     preSetSaveSettings, 
-    prefixesGroupsSub,
-    layersSelected,
-    groups, } = state;
+    prefixesToKeepGroups,
+    prefixesToKeepGroupsSub,
+    layersSelected, } = state;
   if(!Array.isArray(layersSelected))       return defaultReturn;
   defaultReturn.layers = layersSelected;
   if(!isObjectLiteral(preSetSaveSettings)) return defaultReturn;
@@ -115,12 +115,12 @@ const correctPrefixOfLayersSelected = state => {
   const prefixGroupsSub = preSetSaveSettings.prefixGroupsSub;
 
   const prefixesToKeep = 
-    prefixGroups && prefixGroupsSub && Array.isArray(groups) && Array.isArray(prefixesGroupsSub) ?
-      [...groups, ...prefixesGroupsSub] :
+    prefixGroups && prefixGroupsSub && Array.isArray(prefixesToKeepGroups) && Array.isArray(prefixesToKeepGroupsSub) ?
+      [...prefixesToKeepGroups, ...prefixesToKeepGroupsSub] :
       prefixGroups ?
-        groups || null: // null here and below is fallback for consistency in testing, in the edge case that prefixGroups = true, but groups is undefined
+        prefixesToKeepGroups || null: // null here and below is fallback for consistency in testing, in the edge case that prefixesToKeepGroups = true, but groups is undefined
         prefixGroupsSub ?
-          prefixesGroupsSub || null: 
+          prefixesToKeepGroupsSub || null: 
           null ;
   return {
     prefixesToKeep,

@@ -72,9 +72,9 @@ var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state
   };
   if (!isObjectLiteral(state)) return defaultReturn;
   var preSetSaveSettings = state.preSetSaveSettings,
-      prefixesGroupsSub = state.prefixesGroupsSub,
-      layersSelected = state.layersSelected,
-      groups = state.groups;
+      prefixesToKeepGroups = state.prefixesToKeepGroups,
+      prefixesToKeepGroupsSub = state.prefixesToKeepGroupsSub,
+      layersSelected = state.layersSelected;
 
   if (!Array.isArray(layersSelected)) return defaultReturn;
   defaultReturn.layers = layersSelected;
@@ -83,8 +83,8 @@ var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state
   var prefixGroups = preSetSaveSettings.prefixGroups;
   var prefixGroupsSub = preSetSaveSettings.prefixGroupsSub;
 
-  var prefixesToKeep = prefixGroups && prefixGroupsSub && Array.isArray(groups) && Array.isArray(prefixesGroupsSub) ? [].concat(_toConsumableArray(groups), _toConsumableArray(prefixesGroupsSub)) : prefixGroups ? groups || null : // null here and below is fallback for consistency in testing, in the edge case that prefixGroups = true, but groups is undefined
-  prefixGroupsSub ? prefixesGroupsSub || null : null;
+  var prefixesToKeep = prefixGroups && prefixGroupsSub && Array.isArray(prefixesToKeepGroups) && Array.isArray(prefixesToKeepGroupsSub) ? [].concat(_toConsumableArray(prefixesToKeepGroups), _toConsumableArray(prefixesToKeepGroupsSub)) : prefixGroups ? prefixesToKeepGroups || null : // null here and below is fallback for consistency in testing, in the edge case that prefixesToKeepGroups = true, but groups is undefined
+  prefixGroupsSub ? prefixesToKeepGroupsSub || null : null;
   return {
     prefixesToKeep: prefixesToKeep,
     layers: unPrefixLayers(layersSelected, prefixesToKeep)
