@@ -202,8 +202,8 @@ const assignPreSetGroupColors = input => {
   const {
     groups, 
     groupColors, 
-    preSetGlobalPalettes, 
-    preSetGlobalColorOptions } = input;
+    preSetGlobalColorOptions,
+    preSetGlobalPalettes, } = input;
 
   const defaultReturn = {
     newGroupColors: {},
@@ -282,20 +282,20 @@ const assignPreSetGroupColors = input => {
 
 const formatGroupsStyles = input => {
   const {
-    thisPreSet, 
     groupTrue, 
     groups, 
-    groupsSub,
     groupColors, 
+    groupsSub,
     preSetGlobalColorOptions, 
     preSetGlobalPalettes, 
     layersAllPrefixed,
-    layersAllUnPrefixed,
-    styles } = input;
+    styles,
+    thisPreSet,  } = input;
+
+  const isGrouped = groupTrue && Array.isArray(groups);
 
   const defaultObject = {
     stylesAppended:  styles,
-    colorsUsed:     {},
     newGroupColors: {},
     groupDotColors: {},
   };
@@ -305,14 +305,17 @@ const formatGroupsStyles = input => {
   } else if(!isObjectLiteral(thisPreSet.styles)){
     // i.e. no material to read from
     return Object.assign({}, defaultObject, {stylesAppended: {}});
-  } else if((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements'){ 
-    console.log('@ @ @ @ @ @ @ @ @ @', groupTrue, groupTrue, '!Array.isArray(groups)', !Array.isArray(groups), 'thisPreSet.graph', thisPreSet.graph);
-    // do not group OR groups is not an array
-    // AND test_measurements
-    // FIX ABOVE ^^^^^^^^^ DO NOT HARD CODE GRAPH TYPE !!!!!!
+  } else if (!isGrouped && thisPreSet.useOnlyExplicitStylesWhenUngrouped) {
+    // preSets may declare that when not grouped, ONLY explicit styles shall be used
+    // this allows preSets to save specific styles for individual graphs
+    // but when grouped, styles are overwritten by group styles
+    // in either case, layers selected remain the same
+    defaultObject.stylesAppended = Object.assign({},
+      defaultObject.stylesAppended,
+      thisPreSet.styles
+    );
     return defaultObject;
   }
-  
   const {newGroupColors, 
     groupDotColors} = assignPreSetGroupColors({
     groups, 
@@ -322,20 +325,19 @@ const formatGroupsStyles = input => {
   });
 
   const stylesAppended = formatAllStyles({
-    thisPreSet, 
-    styles,
     groups, 
     groupsSub,
     newGroupColors, 
     preSetGlobalPalettes,
     layersAllPrefixed,
-    layersAllUnPrefixed,
+    styles,
+    thisPreSet, 
   });
 
   return {
-    stylesAppended,
     newGroupColors,
     groupDotColors,
+    stylesAppended,
   };
 };
 
@@ -346,18 +348,20 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
   const { 
     groupTrue, 
     groups,
-    groupsSub,
     groupColors, 
-    styles,
+    groupsSub,
     preSetGlobalPalettes, 
     preSetGlobalColorOptions,
-    layersAllUnPrefixed,
     layersAllPrefixed,
+    styles,
   } = state;
-  console.log('styles in formatPreSetToLoad',styles);
   const {
     selectorsRemaining,
-    selectors      } = formatSelectors(thisPreSet, groupTrue, groups);
+    selectors      } = formatSelectors(
+    thisPreSet, 
+    groupTrue, 
+    groups
+  );
   const {
     stylesAppended,
     newGroupColors,
@@ -371,9 +375,7 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     preSetGlobalPalettes, 
     styles,
     layersAllPrefixed,
-    layersAllUnPrefixed,
   });
-  console.log('stylesAppended in formatPreSetToLoad',stylesAppended);
 
   const {
     preSetIconNew,
@@ -383,12 +385,12 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     groupColors:    newGroupColors,
     groupDotColors,
     preSetIdActive: id,
-    layersSelected: selectorsRemaining,
     selector0:      selectors[0],
+    layersSelected: selectorsRemaining,
     styles:         stylesAppended,
     preSetIconNew,        // pre-load for editing
     preSetNameNew,        // pre-load for editing
-    preSetIdPrior:  id,   // this is intended to work like "last selected"
+    // preSetIdPrior:  id,   // this is intended to work like "last selected"
   };
 };
 

@@ -5,7 +5,6 @@ const expect = chai.expect;
 
 const { 
   formatSelectors,
-  // formatAllStylesOneGroup,
   _validateFormatAllStylesInput, // tested as subfunction
   parseGroupsFromLayer,
   selectBestStyleMatch,
@@ -30,7 +29,7 @@ describe('pre-set-load', ()=> {
       type: 'single',
     };
     const groupTrue = false;
-    const groupsRaw = [];
+    const groups = [];
     const expectedResult = {
       selectors: [
         'layer1',
@@ -40,7 +39,7 @@ describe('pre-set-load', ()=> {
         'layer2',
       ],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors single no group one layer only', () => {
@@ -51,14 +50,14 @@ describe('pre-set-load', ()=> {
       type: 'single',
     };
     const groupTrue = false;
-    const groupsRaw = [];
+    const groups = [];
     const expectedResult = {
       selectors: [
         'layer1',
       ],
       selectorsRemaining: [],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors single with group stays single', () => {
@@ -70,7 +69,7 @@ describe('pre-set-load', ()=> {
       type: 'single',
     };
     const groupTrue = true;
-    const groupsRaw = [
+    const groups = [
       'A'
     ];
     const expectedResult = {
@@ -82,7 +81,7 @@ describe('pre-set-load', ()=> {
         'layer2',
       ],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors group with group gets prefixed', () => {
@@ -94,7 +93,7 @@ describe('pre-set-load', ()=> {
       type: 'group',
     };
     const groupTrue = true;
-    const groupsRaw = [
+    const groups = [
       'A'
     ];
     const expectedResult = {
@@ -106,7 +105,7 @@ describe('pre-set-load', ()=> {
         'A__layer2',
       ],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors group with subGroup gets prefixed if groupTrue', () => {
@@ -118,7 +117,7 @@ describe('pre-set-load', ()=> {
       type: 'group',
     };
     const groupTrue = true;
-    const groupsRaw = [
+    const groups = [
       52,
       '53',
     ];
@@ -135,7 +134,7 @@ describe('pre-set-load', ()=> {
         '53__A__layer2',
       ],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors group with subGroup does NOT prefixed if NOT groupTrue', () => {
@@ -147,7 +146,7 @@ describe('pre-set-load', ()=> {
       type: 'group',
     };
     const groupTrue = false;
-    const groupsRaw = [
+    const groups = [
       52,
       '53',
     ];
@@ -160,7 +159,7 @@ describe('pre-set-load', ()=> {
         'A__layer2',
       ],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors empty layersSelected is not Array', () => {
@@ -169,12 +168,12 @@ describe('pre-set-load', ()=> {
       type: 'single',
     };
     const groupTrue = false;
-    const groupsRaw = [];
+    const groups = [];
     const expectedResult = {
       selectors: [''],
       selectorsRemaining: [],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatSelectors empty layersSelected is empty', () => {
@@ -183,12 +182,12 @@ describe('pre-set-load', ()=> {
       type: 'single',
     };
     const groupTrue = false;
-    const groupsRaw = [];
+    const groups = [];
     const expectedResult = {
       selectors: [''],
       selectorsRemaining: [],
     };
-    const result = formatSelectors(thisPreSet, groupTrue, groupsRaw);
+    const result = formatSelectors(thisPreSet, groupTrue, groups);
     expect(result).to.deep.equal(expectedResult);
   });
 
@@ -719,82 +718,95 @@ describe('pre-set-load', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles layersAllPrefixed is not an array', () => {
+    const input = {};
     const expectedResult = {
       message: 'layersAllPrefixed is not an array'
     };
-    const input = {};
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles layersAllPrefixed empty', () => {
-    const expectedResult = {
-      message: 'groups is not an array'
-    };
     const input = {
       layersAllPrefixed: [],
+    };
+    const expectedResult = {
+      message: 'groups is not an array'
     };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles layersAllPrefixed has non-string key', () => {
+    const input = {
+      layersAllPrefixed: ['string', 'string2', {}, 3, 'string'],
+    };
     const expectedResult = {
       // loops all and sends message on LAST non-matching item, vs first
       message: 'layersAllPrefixed item 3 at index 3 is not a string'
     };
-    const input = {
-      layersAllPrefixed: ['string', 'string2', {}, 3, 'string'],
-    };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles layersAllPrefixed has non-string key', () => {
-    const expectedResult = {
-      message: 'groups is not an array'
-    };
     const input = {
       layersAllPrefixed: ['string', 'string2', 'string'],
+    };
+    const expectedResult = {
+      message: 'groups is not an array'
     };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles groupsSub is not an array', () => {
+    const input = {
+      groups: [],
+      layersAllPrefixed: ['string', 'string2', 'string'],
+    };
     const expectedResult = {
       message: 'groupsSub is not an array'
-    };
-    const input = {
-      layersAllPrefixed: ['string', 'string2', 'string'],
-      groups: [],
     };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles thisPreSet is not an object', () => {
-    const expectedResult = {
-      message: 'thisPreSet is not an object'
-    };
     const input = {
-      layersAllPrefixed: ['string', 'string2', 'string'],
       groups: [],
       groupsSub: [],
+      layersAllPrefixed: ['string', 'string2', 'string'],
+    };
+    const expectedResult = {
+      message: 'thisPreSet is not an object'
     };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles styles is not an object', () => {
-    const expectedResult = {
-      message: 'styles is not an object'
-    };
     const input = {
-      layersAllPrefixed: ['string', 'string2', 'string'],
       groups: [],
       groupsSub: [],
+      layersAllPrefixed: ['string', 'string2', 'string'],
       thisPreSet: {},
+    };
+    const expectedResult = {
+      message: 'styles is not an object'
     };
     const result = formatAllStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
   it('formatAllStyles handles variety of input types', () => {
     const input = {
+      groups: ['A', 'B', 'C'],
+      groupsSub: [52, 57],
+      newGroupColors: {
+        C: 'red',
+      },
+      preSetGlobalPalettes: {
+        red: [
+          '253, 253, 253',
+          '254, 0, 0',
+          '33, 33, 33',
+          '44, 44, 44',
+        ]
+      },
       layersAllPrefixed: [
         'layer1', 
         'layer2', 
@@ -808,8 +820,6 @@ describe('pre-set-load', ()=> {
         'C__54__layer4',
         '53__layer6',
       ],
-      groups: ['A', 'B', 'C'],
-      groupsSub: [52, 57],
       styles: {
         layer4: {
           color: '34, 52, 78'
@@ -841,17 +851,6 @@ describe('pre-set-load', ()=> {
           }
         }
       },
-      newGroupColors: {
-        C: 'red',
-      },
-      preSetGlobalPalettes: {
-        red: [
-          '253, 253, 253',
-          '254, 0, 0',
-          '33, 33, 33',
-          '44, 44, 44',
-        ]
-      }
     };
     const expectedResult = {
       // one key for each layer selected
@@ -932,6 +931,9 @@ describe('pre-set-load', ()=> {
   it('assignPreSetGroupColors defaults as type only if groups is empty array', () => {
     const input = {
       groups: [],
+      // groupColors
+      // preSetGlobalColorOptions,
+      // preSetGlobalPalettes
     };
     const expectedResult = {
       testKeys: {
@@ -947,7 +949,11 @@ describe('pre-set-load', ()=> {
   it('assignPreSetGroupColors defaults as type only if only groups is populated', () => {
     const input = {
       groups: ['A'],
+      // groupColors
+      // preSetGlobalColorOptions,
+      // preSetGlobalPalettes
     };
+
     const expectedResult = {
       newGroupColors: {
         A: 'green',
@@ -971,6 +977,8 @@ describe('pre-set-load', ()=> {
       groupColors: {
         A: 'not a named color',
       }
+      // preSetGlobalColorOptions,
+      // preSetGlobalPalettes
     };
     const expectedResult = {
       newGroupColors: {
@@ -998,6 +1006,8 @@ describe('pre-set-load', ()=> {
         A: 'red',
         B: 'blue',
       }
+      // preSetGlobalColorOptions,
+      // preSetGlobalPalettes
     };
     const expectedResult = {
       newGroupColors: {
@@ -1029,6 +1039,7 @@ describe('pre-set-load', ()=> {
         A: 'red',
         B: 'blue',
       },
+      // preSetGlobalColorOptions,
       preSetGlobalPalettes: {
         red: [
           '254, 0, 0',
@@ -1068,15 +1079,6 @@ describe('pre-set-load', ()=> {
         A: 'red',
         B: 'blue',
       },
-      preSetGlobalPalettes: {
-        red: [
-          '254, 0, 0',
-        ],
-        blue: [
-          '0, 254, 0'
-        ],
-        // green is intentionally omitted
-      },
       preSetGlobalColorOptions: [
         'green',
         'yellow',
@@ -1086,6 +1088,15 @@ describe('pre-set-load', ()=> {
         'violet',
         'blue',
       ],
+      preSetGlobalPalettes: {
+        red: [
+          '254, 0, 0',
+        ],
+        blue: [
+          '0, 254, 0'
+        ],
+        // green is intentionally omitted
+      },
     };
     const expectedResult = {
       newGroupColors: {
@@ -1121,15 +1132,6 @@ describe('pre-set-load', ()=> {
         B: 'blue',
         C: 'red',
       },
-      preSetGlobalPalettes: {
-        red: [
-          '254, 0, 0',
-        ],
-        blue: [
-          '0, 254, 0'
-        ],
-        // green is intentionally omitted
-      },
       preSetGlobalColorOptions: [
         'green',
         'yellow',
@@ -1139,6 +1141,15 @@ describe('pre-set-load', ()=> {
         'violet',
         'blue',
       ],
+      preSetGlobalPalettes: {
+        red: [
+          '254, 0, 0',
+        ],
+        blue: [
+          '0, 254, 0'
+        ],
+        // green is intentionally omitted
+      },
     };
     const expectedResult = {
       newGroupColors: {
@@ -1179,15 +1190,6 @@ describe('pre-set-load', ()=> {
         F: 'yellow',
         G: 'red',
       },
-      preSetGlobalPalettes: {
-        red: [
-          '254, 0, 0',
-        ],
-        blue: [
-          '0, 254, 0'
-        ],
-        // omitted colors are patched with preSetGlobalColorOptions
-      },
       preSetGlobalColorOptions: [
         'green',
         'yellow',
@@ -1197,6 +1199,15 @@ describe('pre-set-load', ()=> {
         'violet',
         'blue',
       ],
+      preSetGlobalPalettes: {
+        red: [
+          '254, 0, 0',
+        ],
+        blue: [
+          '0, 254, 0'
+        ],
+        // omitted colors are patched with preSetGlobalColorOptions
+      },
     };
     const expectedResult = {
       newGroupColors: {
@@ -1242,7 +1253,6 @@ describe('pre-set-load', ()=> {
     const input = {};
     const expectedResult = {
       stylesAppended: {},
-      colorsUsed:     {},
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -1255,7 +1265,6 @@ describe('pre-set-load', ()=> {
     };
     const expectedResult = {
       stylesAppended: {},
-      colorsUsed:     {},
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -1270,7 +1279,6 @@ describe('pre-set-load', ()=> {
     };
     const expectedResult = {
       stylesAppended: {},
-      colorsUsed:     {},
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -1285,7 +1293,6 @@ describe('pre-set-load', ()=> {
     };
     const expectedResult = {
       stylesAppended: {},
-      colorsUsed:     {},
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -1293,12 +1300,520 @@ describe('pre-set-load', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it.skip('formatPreSetToLoad', () => {
-    const input = {};
+  const formatGroupStylesInput = {
+    groupTrue: true,
+    groups: ['A', 'B', 'C'],
+    groupColors: {
+      A: 'red',
+      B: 'blue',
+      C: 'red', // this changes to green since A is already red
+    },
+    groupsSub: [52, 57],
+    preSetGlobalColorOptions: [
+      'green',
+      'yellow',
+      'orange',
+      'red',
+      'purple',
+      'violet',
+      'blue',
+    ],
+    // preSetGlobalPalettes: {}, // this defaults if not specified
+    layersAllPrefixed: [
+      'layer1', 
+      'layer2', 
+      'layer3', 
+      'A__layer4', 
+      '57__layer4',
+      'A__57__layer5',
+      'C__layer6',
+      'C__53__layer6',
+      'C__54__layer6',
+      'C__54__layer4',
+      '53__layer6',
+    ],
+    styles: {
+      layer4: {
+        color: '34, 52, 78'
+      },
+      layer5: {
+        color: '44, 46, 67'
+      },
+    },
+    thisPreSet: {
+      styles: {
+        A__52__layer1: {
+          style: {
+            borderColor: '254, 32, 78'
+          },
+        },
+        '52_layer2': {
+          style: {
+            borderDash: [15, 3],
+          }
+        },
+        layer3: {
+          color: '77, 77, 77',
+        },
+        layer6: {
+          style: {
+            shade: 1,
+            borderDashOffset: 0.2,
+          }
+        }
+      }
+    },
+  };
+  const formatGroupStylesExpectedResultGrouped = {
+    newGroupColors: {
+      A: 'red',   // A = red, priority
+      B: 'blue',  // B = blue, priority
+      C: 'green', // C = green, 1st available default
+    },
+    groupDotColors: {
+      A: '254,   0,   0',    // A = red, priority
+      B: '  0,   0, 254',    // B = blue, priority
+      C: '  0, 254,   0' // C = green, 1st available default
+    },
+    stylesAppended: {
+      // one key for each layer selected
+      layer1: { // read from A__52__layer1
+        color: '80, 80, 80', // default bc no color anywhere
+        style: { 
+          //   borderColor: '254, 32, 78' // DELETED bc NO CASCADE!
+        },
+      },
+      layer2: { // read from 52__layer2
+        color: '80, 80, 80', // default bc no color anywhere
+        style: { 
+          //   borderDash: [15, 3],// DELETED bc NO CASCADE!
+        } 
+      },
+      layer3: {
+        color: '77, 77, 77',
+        style: {},
+      },
+      A__layer4: {
+        color: '34, 52, 78',
+        style: {},
+      },
+      '57__layer4': {
+        color: '34, 52, 78',
+        style: {},
+      },
+      A__57__layer5: {
+        color: '44, 46, 67',
+        style: {},
+      },
+      C__layer6: {
+        color: '80, 80, 80', // default bc no color explicitly specified - AND we are not using groups
+        style: {
+          shade: 1,
+          borderDashOffset: 0.2,
+        }
+      },
+      C__53__layer6: {
+        color: '80, 80, 80',
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+      C__54__layer6: {
+        color: '80, 80, 80',
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+      C__54__layer4: {
+        color: '34, 52, 78', // from general styles, group C does not affect it, because no shade
+        style: {},
+      },
+      '53__layer6': {
+        color: '80, 80, 80', // default, none specified
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+    },
+  };
+  it('formatGroupsStyles not grouped', () => {
+    const input = Object.assign({},
+      formatGroupStylesInput,
+      {groupTrue: false}
+    );
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(formatGroupStylesExpectedResultGrouped);
+  });
+  it('formatGroupsStyles grouped', () => {
+    const input = Object.assign({},
+      formatGroupStylesInput,
+      {groupTrue: true}
+    );
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(formatGroupStylesExpectedResultGrouped);
+  });
+  it('formatGroupsStyles explicit only', () => {
+    const thisPreSet = Object.assign({},
+      formatGroupStylesInput.thisPreSet,
+      {
+        useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatGroupStylesInput,
+      {
+        groupTrue: false,
+        thisPreSet,
+      }
+    );
     const expectedResult = {
-      
+      newGroupColors: {},
+      groupDotColors: {},
+      stylesAppended: {
+        // from styles
+        layer4: {
+          color: '34, 52, 78'
+        },
+        layer5: {
+          color: '44, 46, 67'
+        },
+        // from preSet
+        A__52__layer1: {
+          style: {
+            borderColor: '254, 32, 78'
+          },
+        },
+        '52_layer2': {
+          style: {
+            borderDash: [15, 3],
+          }
+        },
+        layer3: {
+          color: '77, 77, 77',
+        },
+        layer6: {
+          style: {
+            shade: 1,
+            borderDashOffset: 0.2,
+          }
+        }
+      },
     };
-    const result = formatPreSetToLoad(input);
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatGroupsStyles group of explicit only', () => {
+    const thisPreSet = Object.assign({},
+      formatGroupStylesInput.thisPreSet,
+      {
+        useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatGroupStylesInput,
+      {
+        groupTrue: true,
+        thisPreSet,
+      }
+    );
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(formatGroupStylesExpectedResultGrouped);
+  });
+
+  const formatPreSetToLoadPreSet = {
+    layersSelected: [
+      'layer1',
+      'layer2',
+    ],
+    type: 'group',
+    styles: {
+      A__52__layer1: {
+        style: {
+          borderColor: '254, 32, 78'
+        },
+      },
+      '52_layer2': {
+        style: {
+          borderDash: [15, 3],
+        }
+      },
+      layer3: {
+        color: '77, 77, 77',
+      },
+      layer6: {
+        style: {
+          shade: 1,
+          borderDashOffset: 0.2,
+        }
+      }
+    }
+  };
+  const formatPreSetToLoadInput = {
+    groupTrue: true,
+    groups: ['A', 'B', 'C'],
+    groupColors: {
+      A: 'red',
+      B: 'blue',
+      C: 'red', // this changes to green since A is already red
+    },
+    groupsSub: [52, 57],
+    // preSetGlobalPalettes: {}, // this defaults if not specified
+    preSetGlobalColorOptions: [
+      'green',
+      'yellow',
+      'orange',
+      'red',
+      'purple',
+      'violet',
+      'blue',
+    ],
+    layersAllPrefixed: [
+      'layer1', 
+      'layer2', 
+      'layer3', 
+      'A__layer4', 
+      '57__layer4',
+      'A__57__layer5',
+      'C__layer6',
+      'C__53__layer6',
+      'C__54__layer6',
+      'C__54__layer4',
+      '53__layer6',
+    ],
+    styles: {
+      layer4: {
+        color: '34, 52, 78'
+      },
+      layer5: {
+        color: '44, 46, 67'
+      },
+    },
+  };
+  const id = 333;
+  const formatPreSetToLoadExpectedResultGrouped = {
+    groupColors: {
+      A: 'red',   // A = red, priority
+      B: 'blue',  // B = blue, priority
+      C: 'green', // C = green, 1st available default
+    },
+    groupDotColors: {
+      A: '254,   0,   0',    // A = red, priority
+      B: '  0,   0, 254',    // B = blue, priority
+      C: '  0, 254,   0' // C = green, 1st available default
+    },
+    preSetIdActive: 333,
+    selector0: 'A__layer1',
+    layersSelected: [
+      'B__layer1',
+      'C__layer1',
+      'A__layer2',
+      'B__layer2',
+      'C__layer2',
+    ],
+    styles: {
+      // one key for each layer selected
+      layer1: { // read from A__52__layer1
+        color: '80, 80, 80', // default bc no color anywhere
+        style: { 
+          //   borderColor: '254, 32, 78' // DELETED bc NO CASCADE!
+        },
+      },
+      layer2: { // read from 52__layer2
+        color: '80, 80, 80', // default bc no color anywhere
+        style: { 
+          //   borderDash: [15, 3],// DELETED bc NO CASCADE!
+        } 
+      },
+      layer3: {
+        color: '77, 77, 77',
+        style: {},
+      },
+      A__layer4: {
+        color: '34, 52, 78',
+        style: {},
+      },
+      '57__layer4': {
+        color: '34, 52, 78',
+        style: {},
+      },
+      A__57__layer5: {
+        color: '44, 46, 67',
+        style: {},
+      },
+      C__layer6: {
+        color: '80, 80, 80', // default bc no color explicitly specified - AND we are not using groups
+        style: {
+          shade: 1,
+          borderDashOffset: 0.2,
+        }
+      },
+      C__53__layer6: {
+        color: '80, 80, 80',
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+      C__54__layer6: {
+        color: '80, 80, 80',
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+      C__54__layer4: {
+        color: '34, 52, 78', // from general styles, group C does not affect it, because no shade
+        style: {},
+      },
+      '53__layer6': {
+        color: '80, 80, 80', // default, none specified
+        style: {
+          shade: 1, // from this preSet
+          borderDashOffset: 0.2, // from this preSet
+        }
+      },
+    },
+    preSetIconNew: null,        // pre-load for editing
+    preSetNameNew: null,        // pre-load for editing
+  };
+  it('formatPreSetToLoad groupTrue = true', () => {
+    const thisPreSet = Object.assign({},
+      formatPreSetToLoadPreSet,
+      {
+        type: 'group',
+        // useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatPreSetToLoadInput,
+      {
+        groupTrue: true,
+        // groups
+      }
+    );
+    const expectedResult = formatPreSetToLoadExpectedResultGrouped;
+    const result = formatPreSetToLoad(input, thisPreSet, id);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatPreSetToLoad groupTrue = false', () => {
+    const thisPreSet = Object.assign({},
+      formatPreSetToLoadPreSet,
+      {
+        type: 'group',
+        // useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatPreSetToLoadInput,
+      {
+        groupTrue: false,
+        // groups
+      }
+    );
+    const expectedResult = Object.assign({},
+      formatPreSetToLoadExpectedResultGrouped,
+      {
+        selector0: 'layer1',
+        layersSelected: [
+          'layer2',
+        ],
+      }
+    );
+    const result = formatPreSetToLoad(input, thisPreSet, id);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatPreSetToLoad type is not group', () => {
+    const thisPreSet = Object.assign({},
+      formatPreSetToLoadPreSet,
+      {
+        type: 'not a group',
+        // useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatPreSetToLoadInput,
+      {
+        groupTrue: true, // preSet is not a group, so this is effectively false
+        // groups
+      }
+    );
+    const expectedResult = Object.assign({},
+      formatPreSetToLoadExpectedResultGrouped,
+      {
+        selector0: 'layer1',
+        layersSelected: [
+          'layer2',
+        ],
+      }
+    );
+    const result = formatPreSetToLoad(input, thisPreSet, id);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatPreSetToLoad explicit only', () => {
+    const thisPreSet = Object.assign({},
+      formatPreSetToLoadPreSet,
+      {
+        type: 'group',
+        useOnlyExplicitStylesWhenUngrouped: true,
+      }
+    );
+    const input = Object.assign({},
+      formatPreSetToLoadInput,
+      {
+        groupTrue: false,
+        // groups
+      }
+    );
+    // results when useOnlyExplicitStylesWhenUngrouped = true
+    // and groupTrue = false (i.e. ungrouped and use explicit when un-grouped)
+    // group colors and dot colors empty
+    // layers not prefixed
+    // styles are simple aggregation of explicit styles
+    const expectedResult = {
+      groupColors: {},
+      groupDotColors: {},
+      preSetIdActive: id,
+      selector0: 'layer1',
+      layersSelected: [
+        'layer2',
+      ],
+      styles: {
+        // from styles
+        layer4: {
+          color: '34, 52, 78'
+        },
+        layer5: {
+          color: '44, 46, 67'
+        },
+        // from preSet
+        A__52__layer1: {
+          style: {
+            borderColor: '254, 32, 78'
+          },
+        },
+        '52_layer2': {
+          style: {
+            borderDash: [15, 3],
+          }
+        },
+        layer3: {
+          color: '77, 77, 77',
+        },
+        layer6: {
+          style: {
+            shade: 1,
+            borderDashOffset: 0.2,
+          }
+        }
+      },
+      preSetIconNew: null,        // pre-load for editing
+      preSetNameNew: null,        // pre-load for editing
+      // preSetIdPrior:  id, 
+    };
+    const result = formatPreSetToLoad(input, thisPreSet, id);
     expect(result).to.deep.equal(expectedResult);
   });
 

@@ -187,8 +187,8 @@ var prioritizeGroups = function prioritizeGroups(groups, groupColors) {
 var assignPreSetGroupColors = function assignPreSetGroupColors(input) {
   var groups = input.groups,
       groupColors = input.groupColors,
-      preSetGlobalPalettes = input.preSetGlobalPalettes,
-      preSetGlobalColorOptions = input.preSetGlobalColorOptions;
+      preSetGlobalColorOptions = input.preSetGlobalColorOptions,
+      preSetGlobalPalettes = input.preSetGlobalPalettes;
 
 
   var defaultReturn = {
@@ -262,21 +262,21 @@ var assignPreSetGroupColors = function assignPreSetGroupColors(input) {
 };
 
 var formatGroupsStyles = function formatGroupsStyles(input) {
-  var thisPreSet = input.thisPreSet,
-      groupTrue = input.groupTrue,
+  var groupTrue = input.groupTrue,
       groups = input.groups,
-      groupsSub = input.groupsSub,
       groupColors = input.groupColors,
+      groupsSub = input.groupsSub,
       preSetGlobalColorOptions = input.preSetGlobalColorOptions,
       preSetGlobalPalettes = input.preSetGlobalPalettes,
       layersAllPrefixed = input.layersAllPrefixed,
-      layersAllUnPrefixed = input.layersAllUnPrefixed,
-      styles = input.styles;
+      styles = input.styles,
+      thisPreSet = input.thisPreSet;
 
+
+  var isGrouped = groupTrue && Array.isArray(groups);
 
   var defaultObject = {
     stylesAppended: styles,
-    colorsUsed: {},
     newGroupColors: {},
     groupDotColors: {}
   };
@@ -286,11 +286,12 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
   } else if (!isObjectLiteral(thisPreSet.styles)) {
     // i.e. no material to read from
     return Object.assign({}, defaultObject, { stylesAppended: {} });
-  } else if ((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements') {
-    console.log('@ @ @ @ @ @ @ @ @ @', groupTrue, groupTrue, '!Array.isArray(groups)', !Array.isArray(groups), 'thisPreSet.graph', thisPreSet.graph);
-    // do not group OR groups is not an array
-    // AND test_measurements
-    // FIX ABOVE ^^^^^^^^^ DO NOT HARD CODE GRAPH TYPE !!!!!!
+  } else if (!isGrouped && thisPreSet.useOnlyExplicitStylesWhenUngrouped) {
+    // preSets may declare that when not grouped, ONLY explicit styles shall be used
+    // this allows preSets to save specific styles for individual graphs
+    // but when grouped, styles are overwritten by group styles
+    // in either case, layers selected remain the same
+    defaultObject.stylesAppended = Object.assign({}, defaultObject.stylesAppended, thisPreSet.styles);
     return defaultObject;
   }
 
@@ -304,20 +305,19 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
       groupDotColors = _assignPreSetGroupCol.groupDotColors;
 
   var stylesAppended = formatAllStyles({
-    thisPreSet: thisPreSet,
-    styles: styles,
     groups: groups,
     groupsSub: groupsSub,
     newGroupColors: newGroupColors,
     preSetGlobalPalettes: preSetGlobalPalettes,
     layersAllPrefixed: layersAllPrefixed,
-    layersAllUnPrefixed: layersAllUnPrefixed
+    styles: styles,
+    thisPreSet: thisPreSet
   });
 
   return {
-    stylesAppended: stylesAppended,
     newGroupColors: newGroupColors,
-    groupDotColors: groupDotColors
+    groupDotColors: groupDotColors,
+    stylesAppended: stylesAppended
   };
 };
 
@@ -327,15 +327,12 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
   // AND NO extra styles from extra prefix combinations
   var groupTrue = state.groupTrue,
       groups = state.groups,
-      groupsSub = state.groupsSub,
       groupColors = state.groupColors,
-      styles = state.styles,
+      groupsSub = state.groupsSub,
       preSetGlobalPalettes = state.preSetGlobalPalettes,
       preSetGlobalColorOptions = state.preSetGlobalColorOptions,
-      layersAllUnPrefixed = state.layersAllUnPrefixed,
-      layersAllPrefixed = state.layersAllPrefixed;
-
-  console.log('styles in formatPreSetToLoad', styles);
+      layersAllPrefixed = state.layersAllPrefixed,
+      styles = state.styles;
 
   var _formatSelectors = formatSelectors(thisPreSet, groupTrue, groups),
       selectorsRemaining = _formatSelectors.selectorsRemaining,
@@ -350,14 +347,11 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
     preSetGlobalColorOptions: preSetGlobalColorOptions,
     preSetGlobalPalettes: preSetGlobalPalettes,
     styles: styles,
-    layersAllPrefixed: layersAllPrefixed,
-    layersAllUnPrefixed: layersAllUnPrefixed
+    layersAllPrefixed: layersAllPrefixed
   }),
       stylesAppended = _formatGroupsStyles.stylesAppended,
       newGroupColors = _formatGroupsStyles.newGroupColors,
       groupDotColors = _formatGroupsStyles.groupDotColors;
-
-  console.log('stylesAppended in formatPreSetToLoad', stylesAppended);
 
   var _formatIcons = formatIcons(thisPreSet),
       preSetIconNew = _formatIcons.preSetIconNew,
@@ -367,12 +361,12 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
     groupColors: newGroupColors,
     groupDotColors: groupDotColors,
     preSetIdActive: id,
-    layersSelected: selectorsRemaining,
     selector0: selectors[0],
+    layersSelected: selectorsRemaining,
     styles: stylesAppended,
     preSetIconNew: preSetIconNew, // pre-load for editing
-    preSetNameNew: preSetNameNew, // pre-load for editing
-    preSetIdPrior: id // this is intended to work like "last selected"
+    preSetNameNew: preSetNameNew // pre-load for editing
+    // preSetIdPrior:  id,   // this is intended to work like "last selected"
   };
 };
 
