@@ -115,6 +115,8 @@ describe('layers', ()=> {
     const layers = [
       'A__layer1',
       'layer2',
+      'A__52__layer7',
+      'A__53__layer7',
       '52__A__layer3',
       '53__B__layer4',
       '53__B__layer3',
@@ -127,8 +129,10 @@ describe('layers', ()=> {
       '53__B__layer3',
       '53__B__layer4',
       '53__rain',
+      'A__53__layer7',
       'A__layer1',
       'A__layer3',
+      'A__layer7',
       'A__rain',
       'layer2',
       'rain',
@@ -154,6 +158,19 @@ describe('layers', ()=> {
       'layer3',
       'layer4',
       'rain',
+    ];
+    const result = unPrefixLayers(layers, prefixesToKeep);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('unPrefixLayers removes only subgroups listed', () => {
+    const layers = [
+      'A__52__layer1',
+      'B__48__layer2',
+    ];
+    const prefixesToKeep = ['A', 'B', 52];
+    const expectedResult = [
+      'A__52__layer1',
+      'B__layer2',
     ];
     const result = unPrefixLayers(layers, prefixesToKeep);
     expect(result).to.deep.equal(expectedResult);

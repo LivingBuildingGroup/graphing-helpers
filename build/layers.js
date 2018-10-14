@@ -10,12 +10,10 @@ var unPrefixLayers = function unPrefixLayers(layers, prefixesToKeep) {
   var newLayerObj = {};
   layers.forEach(function (l) {
     var lSplit = l.split('__');
-    // ADJUST THIS SO IT PICKS UP ANY COMBO OF PREFIXES
-    // RIGHT NOW IT IS PICKING UP A__B, BUT NOT A__X__B
-    var lSlice = lSplit.filter(function (l, i) {
-      return pre2K.includes(l) || pre2K.includes(parseInt(l, 10)) || i === lSplit.length - 1;
+    var lFiltered = lSplit.filter(function (l, i) {
+      return pre2K.includes(l) || pre2K.includes('' + l) || pre2K.includes(parseInt(l, 10)) || i === lSplit.length - 1; // always return the last segment
     });
-    var lJoin = lSlice.join('__');
+    var lJoin = lFiltered.join('__');
     newLayerObj[lJoin] = true;
   });
   var newLayers = [];

@@ -11,14 +11,13 @@ const unPrefixLayers = (layers, prefixesToKeep) => {
   const newLayerObj = {};
   layers.forEach(l=>{
     const lSplit = l.split('__');
-    // ADJUST THIS SO IT PICKS UP ANY COMBO OF PREFIXES
-    // RIGHT NOW IT IS PICKING UP A__B, BUT NOT A__X__B
-    const lSlice = lSplit.filter((l,i)=>{
+    const lFiltered = lSplit.filter((l,i)=>{
       return pre2K.includes(l) ||
+        pre2K.includes(`${l}`) ||
         pre2K.includes(parseInt(l,10)) ||
-        i === lSplit.length-1;
+        i === lSplit.length-1; // always return the last segment
     });
-    const lJoin = lSlice.join('__');
+    const lJoin = lFiltered.join('__');
     newLayerObj[lJoin] = true;
   });
   const newLayers = [];

@@ -42,21 +42,287 @@ describe('pre-set-edit', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it.skip('parseNameIdIconType', () => {
+  it('parseNameIdIconType default return on state not an object', () => {
+    const state = 'not an object';
     const expectedResult = {
-      
+      id: undefined, 
+      name: 'preset', 
+      icon: 'puzzle', 
+      type: 'single',
     };
-    const input = {};
-    const result = parseNameIdIconType(input);
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType most common new options', () => {
+    const state = {
+      preSetSaveType: 'new', 
+      preSets: {
+        '33' : {
+          name: 'preSet33',
+          icon: 'snake',
+        }
+      },
+      preSetIdActive: 44,
+      preSetNameNew: 'newName',
+      preSetIconOptions: ['cat','dog','rabbit'],
+      preSetIconNew: 'beaver',
+      preSetGroupEditMode: true,
+    };
+    const expectedResult = {
+      id:   null,      // b/c preSetSaveType = new
+      name: 'newName', // b/c new and specified
+      icon: 'beaver',  // b/c specified 
+      type: 'group'    // b/c preSetGroupEditMode = true
+    };
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType new default options', () => {
+    const state = {
+      preSetSaveType: 'new', 
+      preSets: {
+        '33' : {
+          name: 'preSet33',
+          icon: 'snake',
+        }
+      },
+      preSetIdActive: 44,
+      // preSetNameNew: 'newName',
+      preSetIconOptions: ['cat','dog','rabbit'],
+      // preSetIconNew: ,
+      preSetGroupEditMode: false,
+    };
+    const expectedResult = {
+      id:   null,      // b/c preSetSaveType = new
+      name: 'preset',  // b/c new and NOT specified
+      icon: 'cat',     // b/c NOT specified 
+      type: 'single'   // b/c preSetGroupEditMode = false
+    };
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType re-save existing options', () => {
+    const state = {
+      preSetSaveType: 'NOT new', 
+      preSets: {
+        '33' : {
+          name: 'preSet33',
+          icon: 'snake',
+        }
+      },
+      preSetIdActive: 33,
+      // preSetNameNew: 'newName',
+      preSetIconOptions: ['cat','dog','rabbit'],
+      // preSetIconNew: ,
+      preSetGroupEditMode: false,
+    };
+    const expectedResult = {
+      id:   33,        // b/c preSetSaveType = new
+      name: 'preSet33',// b/c existing and specified
+      icon: 'snake',   // b/c existing and specified 
+      type: 'single'   // b/c preSetGroupEditMode = false
+    };
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType re-save with updates', () => {
+    const state = {
+      preSetSaveType: 'NOT new', 
+      preSets: {
+        '33' : {
+          name: 'preSet33',
+          icon: 'snake',
+        }
+      },
+      preSetIdActive: 33,
+      preSetNameNew: 'NEW!',
+      preSetIconOptions: ['cat','dog','rabbit'],
+      preSetIconNew: 'banana',
+      preSetGroupEditMode: false,
+    };
+    const expectedResult = {
+      id:   33,        // b/c preSetSaveType = new
+      name: 'NEW!',    // b/c specified
+      icon: 'banana',  // b/c specified 
+      type: 'single'   // b/c preSetGroupEditMode = false
+    };
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType re-save default options', () => {
+    const state = {
+      preSetSaveType: 'NOT new', 
+      preSets: {
+        // '33' : {
+        //   name: 'preSet33',
+        //   icon: 'snake',
+        // }
+      },
+      preSetIdActive: 33,
+      // preSetNameNew: 'newName',
+      preSetIconOptions: ['cat','dog','rabbit'],
+      // preSetIconNew: ,
+      preSetGroupEditMode: false,
+    };
+    const expectedResult = {
+      id:   33,        // b/c preSetSaveType = new
+      name: 'preset',  // b/c existing but NOT specified
+      icon: 'cat',     // b/c existing but NOT specified 
+      type: 'single'   // b/c preSetGroupEditMode = false
+    };
+    const result = parseNameIdIconType(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseNameIdIconType new save default options', () => {
+    const state = {
+      preSetSaveType: 'new', 
+      preSets: {
+        // '33' : {
+        //   name: 'preSet33',
+        //   icon: 'snake',
+        // }
+      },
+      preSetIdActive: 33,
+      // preSetNameNew: 'newName',
+      // preSetIconOptions: ['cat','dog','rabbit'],
+      // preSetIconNew: ,
+      preSetGroupEditMode: true,
+    };
+    const expectedResult = {
+      id:   null,      // b/c preSetSaveType = new
+      name: 'preset',  // b/c existing but NOT specified
+      icon: 'puzzle',  // b/c NOT specified 
+      type: 'group'    // b/c preSetGroupEditMode = true
+    };
+    const result = parseNameIdIconType(state);
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it.skip('correctPrefixOfLayersSelected', () => {
+  it('correctPrefixOfLayersSelected empty array if no state', () => {
+    const state = 'not an object';
     const expectedResult = {
-      
+      prefixesToKeep: null,
+      layers: [],
     };
-    const input = {};
-    const result = correctPrefixOfLayersSelected(input);
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected empty array if layersSelected not an array', () => {
+    const state = {
+      layersSelected: 'not an array'
+    };
+    const expectedResult = {
+      prefixesToKeep: null,
+      layers: [],
+    };
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected returns layersSelected if preSetSaveSettings not an object', () => {
+    const state = {
+      layersSelected: [
+        'layer1',
+        'layer2',
+      ]
+    };
+    const expectedResult = {
+      prefixesToKeep: null,
+      layers: [
+        'layer1',
+        'layer2',
+      ],
+    };
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected unprefixes all layers if groups not provided, EVEN if both prefixes settings are true', () => {
+    const state = {
+      layersSelected: [
+        'A__layer1',
+        'B__layer2',
+      ],
+      preSetSaveSettings: {
+        prefixGroups:    true,
+        prefixGroupsSub: true,
+      }
+    };
+    const expectedResult = {
+      prefixesToKeep: null,
+      layers: [
+        'layer1',
+        'layer2',
+      ],
+    };
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected removes subPrefixes but keeps groups', () => {
+    const state = {
+      layersSelected: [
+        'A__52__layer1',
+        'B__48__layer2',
+      ],
+      preSetSaveSettings: {
+        prefixGroups:    true,
+        prefixGroupsSub: false,
+      },
+      groups: ['A', 'B'],
+      prefixesGroupsSub: ['52', '48'],
+    };
+    const expectedResult = {
+      prefixesToKeep: ['A', 'B'],
+      layers: [ // sorted
+        'A__layer1',
+        'B__layer2',
+      ],
+    };
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected removes subPrefixes ONLY if listed', () => {
+    const state = {
+      layersSelected: [
+        'A__52__layer1',
+        'B__48__layer2',
+      ],
+      preSetSaveSettings: {
+        prefixGroups:    true,
+        prefixGroupsSub: true,
+      },
+      groups: ['A', 'B'],
+      prefixesGroupsSub: ['52'],
+    };
+    const expectedResult = {
+      prefixesToKeep: ['A', 'B', '52'],
+      layers: [ // sorted
+        'A__52__layer1',
+        'B__layer2',
+      ],
+    };
+    const result = correctPrefixOfLayersSelected(state);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('correctPrefixOfLayersSelected removes group prefixes but keeps subs', () => {
+    const state = {
+      layersSelected: [
+        'A__52__layer1',
+        'B__48__layer2',
+      ],
+      preSetSaveSettings: {
+        prefixGroups:    false,
+        prefixGroupsSub: true,
+      },
+      groups: ['A', 'B'],
+      prefixesGroupsSub: ['52', '48'],
+    };
+    const expectedResult = {
+      prefixesToKeep: ['52', '48'],
+      layers: [ // sorted
+        '48__layer2',
+        '52__layer1',
+      ],
+    };
+    const result = correctPrefixOfLayersSelected(state);
     expect(result).to.deep.equal(expectedResult);
   });
 

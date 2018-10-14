@@ -37,34 +37,54 @@ const prefixStyles = (exStyles, defaults, layersAllUnPrefixed) => {
 };
 
 const parseNameIdIconType = state => {
+  const defaultReturn = {
+    id: undefined, 
+    name: 'preset', 
+    icon: 'puzzle', 
+    type: 'single',
+  };
+  if(!isObjectLiteral(state)) return defaultReturn;
+  const {
+    preSetSaveType, 
+    preSets,
+    preSetIdActive,
+    preSetNameNew,
+    preSetIconOptions,
+    preSetIconNew,
+    preSetGroupEditMode} = state;
+
   const id = 
-    state.preSetSaveType === 'new' ?
+    preSetSaveType === 'new' ?
       null :
-      state.preSetIdActive ;
+      preSetIdActive ;
   const name =
-    state.preSetSaveType === 'new' ?
-      state.preSetNameNew :
-      state.preSetNameNew ? 
-        state.preSetNameNew :
-        !state.preSets[id] ?
-          'new preset' :
-          state.preSets[id].name ;
+    preSetSaveType === 'new' && preSetNameNew ?
+      preSetNameNew :
+      preSetSaveType === 'new' ?
+        defaultReturn.name :
+        preSetNameNew ? 
+          preSetNameNew :
+          !preSets[id] ?
+            defaultReturn.name :
+            preSets[id].name ?
+              preSets[id].name :
+              defaultReturn.name ;
+  // this is only for type checking below
+  const thisPreSet = isObjectLiteral(preSets[id]) ? preSets[id] : {} ;
   // preSetIconOptions should always be populated in state, but to prevent a type error, we do this:
-  const preSetIconOptions = Array.isArray(state.preSetIconOptions) ? state.preSetIconOptions : [''] ;
+  const iconOptions = Array.isArray(preSetIconOptions) ? preSetIconOptions : [defaultReturn.icon] ;
   const icon = 
-    // new icon is whatever is in state if new or editing
-    // ideally this will always trigger, if state always assigns preSetIconNew as the existing or requires a default
-    state.preSetIconNew ? 
-      state.preSetIconNew:
-      // nothing in state as new
-      // use icon for this preset
-      state.preSets[id].icon ?
-        state.preSets[id].icon :
-        preSetIconOptions[0] ;
+    preSetIconNew ?         // ideally this will always be true, if state always assigns preSetIconNew as the existing or requires a default
+    preSetIconNew:
+      thisPreSet.icon ?     // nothing in state as new
+      thisPreSet.icon :
+        iconOptions[0] ?    // should only be false if preSetIconOptions is an array, but is empty or first value is falsey
+        iconOptions[0] :
+          defaultReturn.icon ;
   const type = 
-    state.preSetGroupEditMode ?
+    preSetGroupEditMode ?
       'group' : 
-      'single' ;
+      defaultReturn.type ;
     
   return {
     id, 
@@ -77,20 +97,35 @@ const parseNameIdIconType = state => {
 const correctPrefixOfLayersSelected = state => {
   // state.layersSelected is expected to have the maximum amount of prefix
   // i.e. we may strip off prefixes, but we won't add them
-  if (state.preSetSaveSettings.prefixGroups &&
-    state.preSetSaveSettings.prefixGroupsSub){
-    return state.layersSelected;
-  } 
+  const defaultReturn = {
+    prefixesToKeep: null,
+    layers: [],
+  };
+  if(!isObjectLiteral(state)) return defaultReturn;
+  const {
+    preSetSaveSettings, 
+    prefixesGroupsSub,
+    layersSelected,
+    groups, } = state;
+  if(!Array.isArray(layersSelected))       return defaultReturn;
+  defaultReturn.layers = layersSelected;
+  if(!isObjectLiteral(preSetSaveSettings)) return defaultReturn;
+
+  const prefixGroups    = preSetSaveSettings.prefixGroups;
+  const prefixGroupsSub = preSetSaveSettings.prefixGroupsSub;
+
   const prefixesToKeep = 
-    state.preSetSaveSettings.prefixGroups &&
-    state.preSetSaveSettings.prefixGroupsSub ?
-      [...state.groups, ...state.prefixGroupsSub] : 
-      state.preSetSaveSettings.prefixGroups ?
-        state.groups :
-        state.preSetSaveSettings.prefixGroupsSub ?
-          state.prefixGroupsSub : 
+    prefixGroups && prefixGroupsSub && Array.isArray(groups) && Array.isArray(prefixesGroupsSub) ?
+      [...groups, ...prefixesGroupsSub] :
+      prefixGroups ?
+        groups || null: // null here and below is fallback for consistency in testing, in the edge case that prefixGroups = true, but groups is undefined
+        prefixGroupsSub ?
+          prefixesGroupsSub || null: 
           null ;
-  return unPrefixLayers(state.layersSelected, prefixesToKeep);
+  return {
+    prefixesToKeep,
+    layers: unPrefixLayers(layersSelected, prefixesToKeep)
+  };
 };
 
 const editOnePreSetStyle = input => {
@@ -189,22 +224,23 @@ const formatPreSetToSave = (state, stylesDefault) => {
     icon, 
     type } = parseNameIdIconType(state);
     
-  const layersSelected = correctPrefixOfLayersSelected(state);
+  // smartly remove prefixes; i.e. if we selected 'A__layer1', but we are not using 'A' as a prefix, pare down to 'layer1
+  const layersSelected = correctPrefixOfLayersSelected(state).layers; // get layers, not any test keys
 
-  const styles = prefixStyles(
-    state.styles, 
-    stylesDefault, 
-    state.layersAllUnPrefixed
-  );
+  // const styles = prefixStyles(
+  //   state.styles, 
+  //   stylesDefault, 
+  //   state.layersAllUnPrefixed
+  // );
 
   return {
     id,
     name,
     icon,
     type,
-    graph: state.graphName,
-    styles,
     layersSelected,
+    graph: state.graphName,
+    styles: state.styles,
     preSetSaveSettings: state.preSetSaveSettings,
   };
 };
