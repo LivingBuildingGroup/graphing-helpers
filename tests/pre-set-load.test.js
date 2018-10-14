@@ -923,7 +923,6 @@ describe('pre-set-load', ()=> {
   it('assignPreSetGroupColors defaults as type only if no input', () => {
     const input = {};
     const expectedResult = {
-      colorsUsed    : {},
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -935,7 +934,10 @@ describe('pre-set-load', ()=> {
       groups: [],
     };
     const expectedResult = {
-      colorsUsed    : {},
+      testKeys: {
+        colorsUsed  : {},
+        gcPriority  : {}
+      },
       newGroupColors: {},
       groupDotColors: {},
     };
@@ -947,15 +949,18 @@ describe('pre-set-load', ()=> {
       groups: ['A'],
     };
     const expectedResult = {
-      colorsUsed    : {
-        green: true, // index 0 of default presetGlobalPalettes
-      },
       newGroupColors: {
         A: 'green',
       },
       groupDotColors: {
         A: '  0, 254,   0',
       },
+      testKeys: {
+        colorsUsed    : {
+          green: true, // index 0 of default presetGlobalPalettes
+        },
+        gcPriority: {},
+      }
     };
     const result = assignPreSetGroupColors(input);
     expect(result).to.deep.equal(expectedResult);
@@ -968,15 +973,20 @@ describe('pre-set-load', ()=> {
       }
     };
     const expectedResult = {
-      colorsUsed: {
-        'not a named color': true,
-      },
       newGroupColors: {
         A: 'not a named color',
       },
       groupDotColors: {
         A: '80, 80, 80',
       },
+      testKeys: {
+        colorsUsed: {
+          'not a named color': true,
+        },
+        gcPriority: {
+          'not a named color': 'A',
+        },
+      }
     };
     const result = assignPreSetGroupColors(input);
     expect(result).to.deep.equal(expectedResult);
@@ -990,10 +1000,6 @@ describe('pre-set-load', ()=> {
       }
     };
     const expectedResult = {
-      colorsUsed: {
-        red: true,
-        blue: true,
-      },
       newGroupColors: {
         A: 'red',
         B: 'blue',
@@ -1002,6 +1008,16 @@ describe('pre-set-load', ()=> {
         A: '254,   0,   0',
         B: '  0,   0, 254',
       },
+      testKeys: {
+        colorsUsed: {
+          red: true,
+          blue: true,
+        },
+        gcPriority: {
+          red: 'A',
+          blue: 'B',
+        },
+      }
     };
     const result = assignPreSetGroupColors(input);
     expect(result).to.deep.equal(expectedResult);
@@ -1023,10 +1039,6 @@ describe('pre-set-load', ()=> {
       }
     };
     const expectedResult = {
-      colorsUsed: {
-        red: true,
-        blue: true,
-      },
       newGroupColors: {
         A: 'red',
         B: 'blue',
@@ -1035,11 +1047,21 @@ describe('pre-set-load', ()=> {
         A: '254, 0, 0',
         B: '0, 254, 0',
       },
+      testKeys: {
+        colorsUsed: {
+          red: true,
+          blue: true,
+        },
+        gcPriority: {
+          red: 'A',
+          blue: 'B',
+        },
+      },
     };
     const result = assignPreSetGroupColors(input);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('assignPreSetGroupColors uses preSetGlobalPalettes + defaults', () => {
+  it('assignPreSetGroupColors uses preSetGlobalPalettes + defaults applies color to group', () => {
     const input = {
       groups: ['A', 'B', 'C'],
       groupColors: {
@@ -1066,11 +1088,6 @@ describe('pre-set-load', ()=> {
       ],
     };
     const expectedResult = {
-      colorsUsed: {
-        red: true,
-        blue: true,
-        green: true,
-      },
       newGroupColors: {
         A: 'red',
         B: 'blue',
@@ -1081,25 +1098,206 @@ describe('pre-set-load', ()=> {
         B: '0, 254, 0',
         C: '  0, 254,   0' // defaults correctly, because though not explicitly declared, it does not conflict with the default
       },
+      testKeys: {
+        colorsUsed: {
+          red: true,
+          blue: true,
+          green: true,
+        },
+        gcPriority: {
+          red: 'A',
+          blue: 'B',
+        },
+      },
+    };
+    const result = assignPreSetGroupColors(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('assignPreSetGroupColors resolves duplicate group colors', () => {
+    const input = {
+      groups: ['A', 'B', 'C'],
+      groupColors: {
+        A: 'red',
+        B: 'blue',
+        C: 'red',
+      },
+      preSetGlobalPalettes: {
+        red: [
+          '254, 0, 0',
+        ],
+        blue: [
+          '0, 254, 0'
+        ],
+        // green is intentionally omitted
+      },
+      preSetGlobalColorOptions: [
+        'green',
+        'yellow',
+        'orange',
+        'red',
+        'purple',
+        'violet',
+        'blue',
+      ],
+    };
+    const expectedResult = {
+      newGroupColors: {
+        A: 'red',
+        B: 'blue',
+        C: 'green',
+      },
+      groupDotColors: {
+        A: '254, 0, 0',
+        B: '0, 254, 0',
+        C: '  0, 254,   0' // defaults correctly, because though not explicitly declared, it does not conflict with the default
+      },
+      testKeys: {
+        colorsUsed: {
+          red: true,
+          blue: true,
+          green: true,
+        },
+        gcPriority: {
+          red: 'A',
+          blue: 'B',
+          // green: 'C', // not a priority, because not REQUESTED! 
+        },
+      }
+    };
+    const result = assignPreSetGroupColors(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('assignPreSetGroupColors resolves many duplicate group colors', () => {
+    const input = {
+      groups: ['A','B','C','D','E','F','G'],
+      groupColors: {
+        A: 'red',
+        B: 'blue',
+        C: 'red',
+        D: 'red',
+        E: 'red',
+        F: 'yellow',
+        G: 'red',
+      },
+      preSetGlobalPalettes: {
+        red: [
+          '254, 0, 0',
+        ],
+        blue: [
+          '0, 254, 0'
+        ],
+        // omitted colors are patched with preSetGlobalColorOptions
+      },
+      preSetGlobalColorOptions: [
+        'green',
+        'yellow',
+        'orange',
+        'red',
+        'purple',
+        'violet',
+        'blue',
+      ],
+    };
+    const expectedResult = {
+      newGroupColors: {
+        A: 'red',    // requested and priority
+        B: 'blue',   // requested and priority
+        C: 'green',  // requested red, but not priority and already used
+        D: 'orange', // requested red, but not priority and already used
+        E: 'purple', // requested red, but not priority and already used
+        F: 'yellow', // requested and priority
+        G: 'violet', // requested red, but not priority and already used
+      },
+      groupDotColors: {
+        A: '254, 0, 0',     // red, requested and priority
+        B: '0, 254, 0',     // blue, requested and priority
+        C: '  0, 254,   0', // green = 1st available default
+        D: '254, 128,   0', // orange = 2nd available default
+        E: '169,   0,  81', // purple = 3rd available default
+        F: '254, 254,   0', // yellow (requested and priority)
+        G: '254,   0, 254', // violet = 4th available default
+      },
+      testKeys: {
+        colorsUsed: {
+          red:    true,
+          blue:   true,
+          green:  true,
+          yellow: true,
+          orange: true,
+          purple: true,
+          violet: true,
+        },
+        gcPriority: {
+          red: 'A',
+          blue: 'B',
+          yellow: 'F',
+        },
+      },
     };
     const result = assignPreSetGroupColors(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
-  it.skip('formatGroupsStyles', () => {
+  it('formatGroupsStyles default type only if no input', () => {
     const input = {};
     const expectedResult = {
-      
+      stylesAppended: {},
+      colorsUsed:     {},
+      newGroupColors: {},
+      groupDotColors: {},
+    };
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatGroupsStyles default type only if thisPreSet has no styles', () => {
+    const input = {
+      thisPreSet: 'not an object',
+    };
+    const expectedResult = {
+      stylesAppended: {},
+      colorsUsed:     {},
+      newGroupColors: {},
+      groupDotColors: {},
+    };
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatGroupsStyles default type only if thisPreSet styles not an object', () => {
+    const input = {
+      thisPreSet: {
+        styles: 'not an object',
+      },
+    };
+    const expectedResult = {
+      stylesAppended: {},
+      colorsUsed:     {},
+      newGroupColors: {},
+      groupDotColors: {},
+    };
+    const result = formatGroupsStyles(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('formatGroupsStyles default type only if thisPreSet styles not an object', () => {
+    const input = {
+      thisPreSet: {
+        styles: 'not an object',
+      },
+    };
+    const expectedResult = {
+      stylesAppended: {},
+      colorsUsed:     {},
+      newGroupColors: {},
+      groupDotColors: {},
     };
     const result = formatGroupsStyles(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
   it.skip('formatPreSetToLoad', () => {
+    const input = {};
     const expectedResult = {
       
     };
-    const input = {};
     const result = formatPreSetToLoad(input);
     expect(result).to.deep.equal(expectedResult);
   });

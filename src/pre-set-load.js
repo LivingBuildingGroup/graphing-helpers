@@ -167,6 +167,37 @@ const formatAllStyles = input => {
   return theseStyles;
 };
 
+const prioritizeGroups = (groups, groupColors) => {
+  const gc = isObjectLiteral(groupColors) ? groupColors : {} ;
+  
+  // list priorities
+  // in the event of conflicts, the first request in the ordered array 'groups' is given first priority
+  // if group color not already used
+  const gcPriority = {};
+  groups.forEach(g=>{
+    if(gc[g] && !gcPriority[gc[g]]){
+      gcPriority[gc[g]] = g; 
+    }
+  });
+
+  // sort groups according to priority
+  const groups1 = [];
+  const groups2 = [];
+  groups.forEach(g=>{
+    if(gcPriority[gc[g]] === g){
+      groups1.push(g);
+    } else {
+      groups2.push(g);
+    }
+  });
+  
+  return {
+    groupsPrioritized: [...groups1, ...groups2],
+    gc,
+    gcPriority,
+  };
+};
+
 const assignPreSetGroupColors = input => {
   const {
     groups, 
@@ -175,13 +206,11 @@ const assignPreSetGroupColors = input => {
     preSetGlobalColorOptions } = input;
 
   const defaultReturn = {
-    colorsUsed    : {},
     newGroupColors: {},
     groupDotColors: {},
   };
   if(!Array.isArray(groups)) return defaultReturn;
   
-  const gc = isObjectLiteral(groupColors) ? groupColors : {} ;
   const psgpFromUser = isObjectLiteral(preSetGlobalPalettes) ? preSetGlobalPalettes : {} ;
   const psgp = Object.assign({}, createPreSetGlobalPalettes(), psgpFromUser );
   const psgco = Array.isArray(preSetGlobalColorOptions) ? preSetGlobalColorOptions : listBright() ;
@@ -191,30 +220,44 @@ const assignPreSetGroupColors = input => {
   const newGroupColors = {};
   const groupDotColors = {};
 
-  groups.forEach(group=>{
-    // THIS DOES NOT SEEM TO resolve duplicates
+  const {gc, 
+    gcPriority, 
+    groupsPrioritized } = prioritizeGroups(groups, groupColors);
+
+  const _useSpecifiedColor = _group => {
+    // LOCAL MUTATING FUNCTION
+    colorsUsed[gc[_group]] = true;
+    newGroupColors[_group] = gc[_group];
+    groupDotColors[_group] = 
+      Array.isArray(psgp[newGroupColors[_group]]) ? 
+        psgp[newGroupColors[_group]][0] : 
+        defaultColor;
+  };
+
+  const _useDefaultColor = (_group, _color) => {
+    // LOCAL MUTATING FUNCTION
+    if(!colorsUsed[_color]){
+      colorsUsed[_color]     = true;
+      newGroupColors[_group] = _color;
+      groupDotColors[_group] = 
+        Array.isArray(psgp[newGroupColors[_group]]) ? 
+          psgp[newGroupColors[_group]][0] : 
+          defaultColor;
+    }
+  };
+
+  // these run in priority order, so we don't need to check for priority during the loop
+  groupsPrioritized.forEach(group=>{
     // if we did supply a group color
     if(gc[group]){
-      // if group color not already used
+      // prioritized fill up colors used first
       if(!colorsUsed[gc[group]]){
-        colorsUsed[gc[group]] = true;
-        newGroupColors[group] = gc[group];
-        groupDotColors[group] = 
-          Array.isArray(psgp[newGroupColors[group]]) ? 
-            psgp[newGroupColors[group]][0] : 
-            defaultColor;
-      // else if group color is used
+        _useSpecifiedColor(group);
+      // else if group color is already used (priority is used first)
       } else {
         psgco.forEach(color=>{
           if(!newGroupColors[group]){
-            if(!colorsUsed[color]){
-              colorsUsed[color]     = true;
-              newGroupColors[group] = color;
-              groupDotColors[group] = 
-                Array.isArray(psgp[newGroupColors[group]]) ? 
-                  psgp[newGroupColors[group]][0] : 
-                  '80, 80, 80';
-            }
+            _useDefaultColor(group, color);
           }
         });
       }
@@ -222,20 +265,16 @@ const assignPreSetGroupColors = input => {
     } else {
       psgco.forEach(color=>{
         if(!newGroupColors[group]){
-          if(!colorsUsed[color]){
-            colorsUsed[color]     = true;
-            newGroupColors[group] = color;
-            groupDotColors[group] = 
-              Array.isArray(psgp[newGroupColors[group]]) ? 
-                psgp[newGroupColors[group]][0] : 
-                defaultColor;
-          }
+          _useDefaultColor(group, color);
         }
       });
     }
   });
   return {
-    colorsUsed,
+    testKeys: {
+      gcPriority,
+      colorsUsed,
+    },
     newGroupColors,
     groupDotColors,
   };
@@ -260,11 +299,16 @@ const formatGroupsStyles = input => {
     newGroupColors: {},
     groupDotColors: {},
   };
-
-  if(!isObjectLiteral(thisPreSet.styles)){
+  if(!isObjectLiteral(thisPreSet)){
     // i.e. no material to read from
-    return Object.assign({}, defaultObject, {styles: {}});
+    return Object.assign({}, defaultObject, {stylesAppended: {}});
+  } else if(!isObjectLiteral(thisPreSet.styles)){
+    // i.e. no material to read from
+    return Object.assign({}, defaultObject, {stylesAppended: {}});
   } else if((!groupTrue || !Array.isArray(groups)) && thisPreSet.graph === 'test_measurements'){ 
+    console.log('@ @ @ @ @ @ @ @ @ @', groupTrue, groupTrue, '!Array.isArray(groups)', !Array.isArray(groups), 'thisPreSet.graph', thisPreSet.graph);
+    // do not group OR groups is not an array
+    // AND test_measurements
     // FIX ABOVE ^^^^^^^^^ DO NOT HARD CODE GRAPH TYPE !!!!!!
     return defaultObject;
   }
