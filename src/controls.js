@@ -40,8 +40,8 @@ const formatControlsWithoutPreSets = (state, that) => {
   if(state.selectorsAllow){
     controlNamesBot.push('selector');
     controlIconsBot.push(icons.edit);
-    controlFuncsBot.push(that.toggleSelectorsInFocus);
-    controlLabelsBot.push('Toggle graph editors (scroll down to see editors)');
+    controlFuncsBot.push(that.toggleSelectorsPopover);
+    controlLabelsBot.push('Open graph customization options');
   }
   return {
     controlNamesTop,
@@ -76,7 +76,7 @@ const formatPreSetsForControls = (preSets, that) => {
     return preSets[id].icon;
   });
   const preSetFuncs = preSetIds.map(id=>{
-    return ()=>that.handlePreSetChoice(id);
+    return ()=>that.handlePreSetSelect(id);
   });
   return {
     preSetIds,

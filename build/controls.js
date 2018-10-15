@@ -43,8 +43,8 @@ var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, 
   if (state.selectorsAllow) {
     controlNamesBot.push('selector');
     controlIconsBot.push(icons.edit);
-    controlFuncsBot.push(that.toggleSelectorsInFocus);
-    controlLabelsBot.push('Toggle graph editors (scroll down to see editors)');
+    controlFuncsBot.push(that.toggleSelectorsPopover);
+    controlLabelsBot.push('Open graph customization options');
   }
   return {
     controlNamesTop: controlNamesTop,
@@ -80,7 +80,7 @@ var formatPreSetsForControls = function formatPreSetsForControls(preSets, that) 
   });
   var preSetFuncs = preSetIds.map(function (id) {
     return function () {
-      return that.handlePreSetChoice(id);
+      return that.handlePreSetSelect(id);
     };
   });
   return {

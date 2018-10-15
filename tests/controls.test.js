@@ -27,7 +27,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
     };
     const printText = 'Print the graph on letter size landscape (allow a few seconds for the graph to render before print preview starts).';
     const expectedResult = {
@@ -37,8 +37,8 @@ describe('controls', ()=> {
       controlLabelsTop: ['Close the graph'     ,printText      ,'Toggle white graph background'],
       controlNamesBot:  ['selector'],
       controlIconsBot:  ['edit it'],
-      controlFuncsBot:  [that.toggleSelectorsInFocus],
-      controlLabelsBot: ['Toggle graph editors (scroll down to see editors)'],
+      controlFuncsBot:  [that.toggleSelectorsPopover],
+      controlLabelsBot: ['Open graph customization options'],
     };
     const result = formatControlsWithoutPreSets(state, that);
     expect(result).to.deep.equal(expectedResult);
@@ -60,7 +60,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
     };
     const expectedResult = {
       controlNamesTop:  [],
@@ -132,7 +132,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
       handlePreSetChoice: ()=>{},
     };
     const printText = 'Print the graph on letter size landscape (allow a few seconds for the graph to render before print preview starts).';
@@ -140,8 +140,8 @@ describe('controls', ()=> {
       preSetIds:        ['1','2'],
       controlNames:  ['close'               ,'print'        ,'background'                   ,'name1'                         ,'name2'                         ,'selector'],
       controlIcons:  ['close it'            ,'print it'     ,'paper it'                     ,'icon1'                         ,'icon2'                         ,'edit it'],
-      controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,()=>that.handlePreSetChoice('1'),()=>that.handlePreSetChoice('2'),that.toggleSelectorsInFocus],
-      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','name1'                         ,'name2'                         ,'Toggle graph editors (scroll down to see editors)'],
+      controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,()=>that.handlePreSetChoice('1'),()=>that.handlePreSetChoice('2'),that.toggleSelectorsPopover],
+      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','name1'                         ,'name2'                         ,'Open graph customization options'],
     };
     const result = formatControls(state, that);
     expect(result.preSetIds).to.deep.equal(expectedResult.preSetIds);
@@ -182,7 +182,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
       handlePreSetChoice: ()=>{},
     };
     const expectedResult = {
@@ -218,7 +218,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
       handlePreSetChoice: ()=>{},
     };
     const printText = 'Print the graph on letter size landscape (allow a few seconds for the graph to render before print preview starts).';
@@ -226,8 +226,8 @@ describe('controls', ()=> {
       preSetIds:     [],
       controlNames:  ['close'               ,'print'        ,'background'                   ,'selector'],
       controlIcons:  ['close it'            ,'print it'     ,'paper it'                     ,'edit it'],
-      controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,that.toggleSelectorsInFocus],
-      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','Toggle graph editors (scroll down to see editors)'],
+      controlFuncs:  [state.handleCloseGraph,that.printGraph,that.handleBackgroundChange    ,that.toggleSelectorsPopover],
+      controlLabels: ['Close the graph'     ,printText      ,'Toggle white graph background','Open graph customization options'],
     };
     const result = formatControls(state, that);
     expect(result).to.deep.equal(expectedResult);
@@ -249,7 +249,7 @@ describe('controls', ()=> {
     const that = {
       printGraph: () => {return 2;},
       handleBackgroundChange: () => {return 3;},
-      toggleSelectorsInFocus: () => {return 4;},
+      toggleSelectorsPopover: () => {return 4;},
       handlePreSetChoice: ()=>{},
     };
     const expectedResult = {

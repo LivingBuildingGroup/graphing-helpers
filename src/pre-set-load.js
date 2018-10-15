@@ -342,9 +342,6 @@ const formatGroupsStyles = input => {
 };
 
 const formatPreSetToLoad = (state, thisPreSet, id) => {
-  // this is adding extra prefixes
-  // edit this to add ALL possible styles, hydrating from defaults
-  // AND NO extra styles from extra prefix combinations
   const { 
     groupTrue, 
     groups,
@@ -390,7 +387,6 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     styles:         stylesAppended,
     preSetIconNew,        // pre-load for editing
     preSetNameNew,        // pre-load for editing
-    // preSetIdPrior:  id,   // this is intended to work like "last selected"
   };
 };
 

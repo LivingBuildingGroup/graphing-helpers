@@ -82,7 +82,9 @@ const correctPrefixOfLayersSelected = state => {
   const prefixGroupsSub = preSetSaveSettings.prefixGroupsSub;
 
   const prefixesToKeep = 
-    prefixGroups && prefixGroupsSub && Array.isArray(prefixesToKeepGroups) && Array.isArray(prefixesToKeepGroupsSub) ?
+    prefixGroups && prefixGroupsSub && 
+    Array.isArray(prefixesToKeepGroups) && 
+    Array.isArray(prefixesToKeepGroupsSub) ?
       [...prefixesToKeepGroups, ...prefixesToKeepGroupsSub] :
       prefixGroups ?
         prefixesToKeepGroups || null: // null here and below is fallback for consistency in testing, in the edge case that prefixesToKeepGroups = true, but groups is undefined

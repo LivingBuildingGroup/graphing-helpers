@@ -1,24 +1,5 @@
 'use strict';
 
-// const listAllLayersUnPrefixed = (oneUnit, layersRawPrefixCount) => {
-//   // I think this is abandoned.  I don't think we are using it anymore.
-//   const layersUsed = {};
-//   for(let layer in oneUnit){
-//     if(layersRawPrefixCount === 0){
-//       layersUsed[layer] = true;
-//     } else {
-//       const unPrefix = layer.split('__');
-//       layersUsed[unPrefix[unPrefix.length-1]] = true;
-//     }
-//   }
-//   const layers = [];
-//   for(let layer in layersUsed){
-//     layers.push(layer);
-//   }
-//   layers.sort();
-//   return layers;
-// };
-
 var createLayerSelectorObject = function createLayerSelectorObject(input) {
   var data = input.data,
       units = input.units,
@@ -67,6 +48,5 @@ var createLayerSelectorObject = function createLayerSelectorObject(input) {
 };
 
 module.exports = {
-  // listAllLayersUnPrefixed,
   createLayerSelectorObject: createLayerSelectorObject
 };
