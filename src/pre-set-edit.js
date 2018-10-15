@@ -3,39 +3,6 @@
 const { isObjectLiteral} = require('conjunction-junction');
 const { unPrefixLayers } = require('./layers');
 
-const prefixStyles = (exStyles, defaults, layersAllUnPrefixed) => {
-  // layersAllUnPrefixed MIGHT have prefixes
-  // it should ONLY have prefixes we consider minimum, such as platform letters
-  // or if saving a "single" specific preSet, it might include full prefixes.
-  console.log('layersAllUnPrefixed', layersAllUnPrefixed);
-  // layersAllUnPrefixed should be all possible layers, un-prefixed for groups
-  // remove styles not included in layersAllUnPrefixed
-  const newStyles = {};
-  layersAllUnPrefixed.forEach(l=>{
-    console.log('l',l);
-    const lSplit =
-      l.includes('__') ?
-        l.split('__') : 
-        l ;
-    const lUnprefixed =
-      Array.isArray(lSplit) ?
-        lSplit[lSplit.length-1] :
-        l;
-    newStyles[l] =
-      isObjectLiteral(exStyles[l]) ?
-        exStyles[l] :
-        isObjectLiteral(defaults[l]) ?
-          defaults[l] :
-          isObjectLiteral(exStyles[lUnprefixed]) ?
-            exStyles[lUnprefixed] :
-            isObjectLiteral(defaults[lUnprefixed]) ?
-              defaults[lUnprefixed] :
-              { color: 'tan' };
-  });
-  console.log('newStyles', newStyles);
-  return newStyles;
-};
-
 const parseNameIdIconType = state => {
   const defaultReturn = {
     id: undefined, 
@@ -227,12 +194,6 @@ const formatPreSetToSave = (state, stylesDefault) => {
   // smartly remove prefixes; i.e. if we selected 'A__layer1', but we are not using 'A' as a prefix, pare down to 'layer1
   const layersSelected = correctPrefixOfLayersSelected(state).layers; // get layers, not any test keys
 
-  // const styles = prefixStyles(
-  //   state.styles, 
-  //   stylesDefault, 
-  //   state.layersAllUnPrefixed
-  // );
-
   return {
     id,
     name,
@@ -247,7 +208,6 @@ const formatPreSetToSave = (state, stylesDefault) => {
 
 module.exports = {
   applyPreSetGlobalColorToStyles,
-  prefixStyles,
   parseNameIdIconType,
   correctPrefixOfLayersSelected,
   editOnePreSetStyle,

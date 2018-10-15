@@ -5,42 +5,12 @@ const expect = chai.expect;
 
 const { 
   applyPreSetGlobalColorToStyles,
-  prefixStyles,
   parseNameIdIconType,
   correctPrefixOfLayersSelected,
   editOnePreSetStyle,
   formatPreSetToSave,} = require('../index');
 
 describe('pre-set-edit', ()=> { 
-
-  it.skip('prefixStyles', () => {
-    // I AM NOT SURE WE NEED THIS!!!!
-    const exStyles = {
-      rain_lbs: {
-        color: 'blue',
-        style: {
-          borderDash: [10,10],
-        },
-      },
-      rain_gals: {
-        color: 'green',
-        style: {
-          fill: false,
-        },
-      },
-    };
-    const defaults = {
-
-    };
-    const layersAllUnPrefixed = [
-
-    ];
-    const expectedResult = {
-      
-    };
-    const result = prefixStyles(exStyles, defaults, layersAllUnPrefixed);
-    expect(result).to.deep.equal(expectedResult);
-  });
 
   it('parseNameIdIconType default return on state not an object', () => {
     const state = 'not an object';

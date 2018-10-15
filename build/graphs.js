@@ -168,7 +168,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
   var longestArray = arraysOfDataObjects[indexOfLongestArray];
 
   // validated, all arrays are present, and 1 label per array
-  var dataObjectsArray = longestArray.map(function (x) {
+  var dataObjectsArray = longestArray.map(function () {
     return {};
   });
 
@@ -190,10 +190,8 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
     });
   });
 
-  // const dataLabelArray = [];
   return {
     dataObjectsArray: dataObjectsArray,
-    // dataLabelArray,
     indexOfLongestArray: indexOfLongestArray,
     longestArrayLength: longestArrayLength
   };

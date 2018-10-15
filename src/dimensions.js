@@ -1,7 +1,8 @@
 'use strict';
 
 const { isPrimitiveNumber,
-  isObjectLiteral } = require('conjunction-junction');
+  isObjectLiteral,
+  precisionRound } = require('conjunction-junction');
 
 const calcScreenType = (w,h) =>{
   const phoneP_minW   =     0;
@@ -55,26 +56,28 @@ const calcScreenType = (w,h) =>{
 };
 
 const calcMinimumWindowDimensions = win => {
+  const availWidth = 
+  !win.screen ?
+    win.innerWidth :
+    !win.screen.availWidth ?
+      win.innerWidth:
+      win.screen.availWidth;
   const availHeight = 
     !win.screen ?
-      0 :
+      win.innerHeight :
       !isPrimitiveNumber(win.screen.availHeight) ?
-        0:
+        win.innerHeight:
         win.screen.availHeight;
-  const availWidth = 
-    !win.screen ?
-      0 :
-      !win.screen.availWidth ?
-        0:
-        win.screen.availWidth;
-  const heightLowestCommon =
-    !isPrimitiveNumber(win.innerHeight) ?
-      availHeight :
-      Math.min(win.innerHeight, availHeight);
+
   const widthLowestCommon =
     !isPrimitiveNumber(win.innerWidth) ?
       availWidth :
       Math.min(win.innerWidth, availWidth);
+  const heightLowestCommon =
+    !isPrimitiveNumber(win.innerHeight) ?
+      availHeight :
+      Math.min(win.innerHeight, availHeight);
+
   return {
     cssWidthOuter: widthLowestCommon,
     cssHeightOuter: heightLowestCommon,
@@ -82,6 +85,11 @@ const calcMinimumWindowDimensions = win => {
 };
 
 const calcProportionalDimensions = input => {
+  const defaultReturn = {
+    w: 100,
+    h: 100,
+  };
+  if(!isObjectLiteral(input)) return defaultReturn;
   const { 
     width, 
     height,
@@ -100,11 +108,11 @@ const calcProportionalDimensions = input => {
   h.percentOfScreen   = isPrimitiveNumber(h.percentOfScreen)   ? h.percentOfScreen   : 1 ;
   h.maxPctOfBigEnough = isPrimitiveNumber(h.maxPctOfBigEnough) ? h.maxPctOfBigEnough : 1 ;
 
-  const widthRatioDelta = w.maxPctOfBigEnough - w.percentOfScreen;
-  const widthBelowMin = w.bigEnoughScreen - widthOuter;
+  const widthRatioDelta  = w.maxPctOfBigEnough - w.percentOfScreen;
+  const widthBelowMin    = w.bigEnoughScreen - widthOuter;
 
   const heightRatioDelta = h.maxPctOfBigEnough - h.percentOfScreen;
-  const heightBelowMin = h.bigEnoughScreen - heightOuter;
+  const heightBelowMin   = h.bigEnoughScreen - heightOuter;
     
   const w_  = 
     widthOuter >= w.bigEnoughScreen ? 
@@ -115,22 +123,20 @@ const calcProportionalDimensions = input => {
       h.percentOfScreen * heightOuter :
       heightOuter + (heightBelowMin * heightRatioDelta) ;
   const final = {
-    w: w_,
-    h: h_,
     testKeys: {
-      input,
-      w,
-      h,
       widthRatioDelta,
       widthBelowMin,
       heightRatioDelta,
       heightBelowMin,
-    }
+    },
+    w: precisionRound(w_, 2),
+    h: precisionRound(h_, 2),
   };
-  console.log('@@@@@@@ final',final);
+  for (let key in final.testKeys){
+    final.testKeys[key] = precisionRound(final.testKeys[key], 2);
+  }
   return final;
 };
-
 
 const calcDimensions = state => {
   const {

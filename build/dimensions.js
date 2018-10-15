@@ -2,7 +2,8 @@
 
 var _require = require('conjunction-junction'),
     isPrimitiveNumber = _require.isPrimitiveNumber,
-    isObjectLiteral = _require.isObjectLiteral;
+    isObjectLiteral = _require.isObjectLiteral,
+    precisionRound = _require.precisionRound;
 
 var calcScreenType = function calcScreenType(w, h) {
   var phoneP_minW = 0;
@@ -56,10 +57,12 @@ var calcScreenType = function calcScreenType(w, h) {
 };
 
 var calcMinimumWindowDimensions = function calcMinimumWindowDimensions(win) {
-  var availHeight = !win.screen ? 0 : !isPrimitiveNumber(win.screen.availHeight) ? 0 : win.screen.availHeight;
-  var availWidth = !win.screen ? 0 : !win.screen.availWidth ? 0 : win.screen.availWidth;
-  var heightLowestCommon = !isPrimitiveNumber(win.innerHeight) ? availHeight : Math.min(win.innerHeight, availHeight);
+  var availWidth = !win.screen ? win.innerWidth : !win.screen.availWidth ? win.innerWidth : win.screen.availWidth;
+  var availHeight = !win.screen ? win.innerHeight : !isPrimitiveNumber(win.screen.availHeight) ? win.innerHeight : win.screen.availHeight;
+
   var widthLowestCommon = !isPrimitiveNumber(win.innerWidth) ? availWidth : Math.min(win.innerWidth, availWidth);
+  var heightLowestCommon = !isPrimitiveNumber(win.innerHeight) ? availHeight : Math.min(win.innerHeight, availHeight);
+
   return {
     cssWidthOuter: widthLowestCommon,
     cssHeightOuter: heightLowestCommon
@@ -67,6 +70,11 @@ var calcMinimumWindowDimensions = function calcMinimumWindowDimensions(win) {
 };
 
 var calcProportionalDimensions = function calcProportionalDimensions(input) {
+  var defaultReturn = {
+    w: 100,
+    h: 100
+  };
+  if (!isObjectLiteral(input)) return defaultReturn;
   var width = input.width,
       height = input.height,
       cssWidthOuter = input.cssWidthOuter,
@@ -94,19 +102,18 @@ var calcProportionalDimensions = function calcProportionalDimensions(input) {
   var w_ = widthOuter >= w.bigEnoughScreen ? w.percentOfScreen * widthOuter : widthOuter + widthBelowMin * widthRatioDelta;
   var h_ = heightOuter >= h.bigEnoughScreen ? h.percentOfScreen * heightOuter : heightOuter + heightBelowMin * heightRatioDelta;
   var final = {
-    w: w_,
-    h: h_,
     testKeys: {
-      input: input,
-      w: w,
-      h: h,
       widthRatioDelta: widthRatioDelta,
       widthBelowMin: widthBelowMin,
       heightRatioDelta: heightRatioDelta,
       heightBelowMin: heightBelowMin
-    }
+    },
+    w: precisionRound(w_, 2),
+    h: precisionRound(h_, 2)
   };
-  console.log('@@@@@@@ final', final);
+  for (var key in final.testKeys) {
+    final.testKeys[key] = precisionRound(final.testKeys[key], 2);
+  }
   return final;
 };
 

@@ -33,6 +33,41 @@ const {
 
 describe('graphs', ()=> { 
 
+  it('parseDataArraysByKeys default if dataObjectsArray not an array', () => {
+    const dataObjectsArray = 'not an array';
+    const layersArray = [
+      'key1', 'key3'
+    ];
+    const expectedResult = [
+      []
+    ];
+    const result = parseDataArraysByKeys(dataObjectsArray, layersArray);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataArraysByKeys default if layersArray not an array', () => {
+    const dataObjectsArray = [
+      {
+        key1: 1,
+        key2: 3,
+        key3: 5,
+        key5: 3.5,
+        keyX: 7,
+      },
+      {
+        key1: 15,
+        key2: 36,
+        key3: 52,
+        key5: 3.8,
+        keyX: 71,
+      },
+    ];
+    const layersArray = 'not an array';
+    const expectedResult = [
+      []
+    ];
+    const result = parseDataArraysByKeys(dataObjectsArray, layersArray);
+    expect(result).to.deep.equal(expectedResult);
+  });
   it('parseDataArraysByKeys', () => {
     const dataObjectsArray = [
       {
@@ -141,8 +176,104 @@ describe('graphs', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
+  it('parseDataType1To0 defaults if dataType1Processed not an array', () => {
+    const dataType1Processed = 'not an array';
+    const layersArray = [
+      'key1', 'key3'
+    ];
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw:  [[]],
+      dataLabelArray:[],
+      yAxisArray:    [],
+      yAxisIdArray:  [],
+    };
+    const result = parseDataType1To0(
+      dataType1Processed, 
+      legendObject, 
+      layersArray);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType1To0 defaults if layersArray not an array', () => {
+    const dataType1Processed = [
+      {
+        key1: 1,
+        key2: 3,
+        key3: 5,
+        key5: 3.5,
+        keyX: 7,
+      },
+      {
+        key1: 15,
+        key2: 36,
+        key3: 52,
+        key5: 3.8,
+        keyX: 71,
+      },
+    ];
+    const layersArray = 'not an array';
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw:  [[]],
+      dataLabelArray:[],
+      yAxisArray:    [],
+      yAxisIdArray:  [],
+    };
+    const result = parseDataType1To0(
+      dataType1Processed, 
+      legendObject, 
+      layersArray);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType1To0 defaults if legendObject not an object', () => {
+    const dataType1Processed = [
+      {
+        key1: 1,
+        key2: 3,
+        key3: 5,
+        key5: 3.5,
+        keyX: 7,
+      },
+      {
+        key1: 15,
+        key2: 36,
+        key3: 52,
+        key5: 3.8,
+        keyX: 71,
+      },
+    ];
+    const layersArray = [
+      'key1', 'key3'
+    ];
+    const legendObject = 'not an object';
+    const expectedResult = {
+      dataType0Raw:  [[]],
+      dataLabelArray:[],
+      yAxisArray:    [],
+      yAxisIdArray:  [],
+    };
+    const result = parseDataType1To0(
+      dataType1Processed, 
+      legendObject, 
+      layersArray);
+    expect(result).to.deep.equal(expectedResult);
+  });
   it('parseDataType1To0', () => {
-    const dataObjectsArray = [
+    const dataType1Processed = [
       {
         key1: 1,
         key2: 3,
@@ -185,12 +316,312 @@ describe('graphs', ()=> {
       ],
     };
     const result = parseDataType1To0(
-      dataObjectsArray, 
+      dataType1Processed, 
       legendObject, 
       layersArray);
     expect(result).to.deep.equal(expectedResult);
   });
 
+  it('parseDataType2To0 default if arraysOfDataObjects not an array', () => {
+    const arraysOfDataObjects = [
+      [ // test 1
+        {
+          key1: 1,
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15,
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const layersArrayRaw = [
+      'key1', 'key3'
+    ];
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw: [
+        [1,   15], // test1 key1
+        [5,   52], // test1 key3
+        [11, 151], // test7 key1
+        [51, 521], // test7 key3
+      ],
+      dataLabelArray: [
+        'test1 the first key', 'test1 banana',
+        'test7 the first key', 'test7 banana',
+      ],
+      yAxisArray: [
+        'lbs', 'cubits',
+      ],
+      yAxisIdArray: [
+        'A', 'B',
+      ],
+      layersArray: [
+        'test1key1', 'test1key3',
+        'test7key1', 'test7key3',
+      ],
+    };
+    const result = parseDataType2To0(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      legendObject, 
+      layersArrayRaw);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To0 default if layerArrayRaw not an array', () => {
+    const arraysOfDataObjects = [
+      [ // test 1
+        {
+          key1: 1,
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15,
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const layersArrayRaw = 'not an array';
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw: [[]],
+      dataLabelArray:  [],
+      yAxisArray:  [],
+      yAxisIdArray:[],
+    };
+    const result = parseDataType2To0(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      legendObject, 
+      layersArrayRaw);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To0 default if arraysOfDataObjects[0] not an array', () => {
+    const arraysOfDataObjects = [
+      'not an array',
+      [ // test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const layersArrayRaw = [
+      'key1', 'key3'
+    ];
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw: [[]],
+      dataLabelArray:  [],
+      yAxisArray:  [],
+      yAxisIdArray:[],
+    };
+    const result = parseDataType2To0(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      legendObject, 
+      layersArrayRaw);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To0 default if arrayOfDataGroups not an array', () => {
+    const arraysOfDataObjects = [
+      [ // test 1
+        {
+          key1: 1,
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15,
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = 'not an array';
+    const layersArrayRaw = [
+      'key1', 'key3'
+    ];
+    const legendObject = {
+      //     label           , Y axis
+      key1: ['1st K', 'the first key' , 'lbs'       ],
+      key2: ['2nd K', 'the second key', 'ft'        ],
+      key3: ['Ban'  , 'banana'        , 'cubits'    ],
+      key4: ['N/A'  , 'not used'      , 'nanometers'],
+      key5: ['M'    , 'decimals'      , 'meters'    ],
+    };
+    const expectedResult = {
+      dataType0Raw: [[]],
+      dataLabelArray:  [],
+      yAxisArray:  [],
+      yAxisIdArray:[],
+    };
+    const result = parseDataType2To0(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      legendObject, 
+      layersArrayRaw);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To0 default if legendObject not an object', () => {
+    const arraysOfDataObjects = [
+      [ // test 1
+        {
+          key1: 1,
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15,
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const layersArrayRaw = [
+      'key1', 'key3'
+    ];
+    const legendObject = 'not an object';
+    const expectedResult = {
+      dataType0Raw: [[]],
+      dataLabelArray:  [],
+      yAxisArray:  [],
+      yAxisIdArray:[],
+    };
+    const result = parseDataType2To0(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      legendObject, 
+      layersArrayRaw);
+    expect(result).to.deep.equal(expectedResult);
+  });
   it('parseDataType2To0', () => {
     const arraysOfDataObjects = [
       [ // test 1
@@ -270,6 +701,332 @@ describe('graphs', ()=> {
     expect(result).to.deep.equal(expectedResult);
   });
 
+  it('parseDataType2To1 default if arraysOfDataObjects not an array', () => {
+    const arraysOfDataObjects = 'not an array';
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const expectedResult = {
+      dataObjectsArray: [],
+      dataLabelArray:  [],
+      message: 'invalid data types',
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To1 default if arraysOfDataObjects not an array', () => {
+    const arraysOfDataObjects = [
+      [ // group 0 = test 1
+        // this is longest array
+        {
+          key1: 1,  // pt 0
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15, // pt 1
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // group 1 = test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = 'not an array';
+    const expectedResult = {
+      dataObjectsArray: [],
+      dataLabelArray:  [],
+      message: 'invalid data types',
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To1 errs if arrays different lengths', () => {
+    const arraysOfDataObjects = [
+      [ // group 0 = test 1
+        // this is longest array
+        {
+          key1: 1,  // pt 0
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15, // pt 1
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      [ // group 1 = test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = ['a shorter array'];
+    const expectedResult = {
+      dataObjectsArray: [],
+      dataLabelArray:  [],
+      message: `we found ${arrayOfDataGroups.length} labels and ${arraysOfDataObjects.length} arrays.`,
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To1 errs if arraysOfDataObjects is array of other than arrays', () => {
+    const arraysOfDataObjects = [
+      [ // group 0 = test 1
+        // this is longest array
+        {
+          key1: 1,  // pt 0
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15, // pt 1
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+      ],
+      'not an array', // ERR IS HERE !
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+  
+    const expectedResult = {
+      dataObjectsArray: [],
+      dataLabelArray:  [],
+      message: 'expected a subarray, but found none',
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To1 errs if arraysOfDataObjects has varying lengths', () => {
+    const arraysOfDataObjects = [
+      [ // group 0 = test 1
+        // this is longest array
+        {
+          key1: 1,  // pt 0
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15, // pt 1
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+        {
+          key1: 156, // pt 2
+          key2: 366,
+          key3: 526,
+          key5: 3.86,
+          keyX: 716,
+        },
+      ],
+      [ // group 1 = test 7
+        {
+          key1: 11,
+          key2: 31,
+          key3: 51,
+          key5: 3.51,
+          keyX: 71,
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const expectedResult = {
+      dataObjectsArray: [
+        {
+          test1__key1: 1,
+          test1__key2: 3,
+          test1__key3: 5,
+          test1__key5: 3.5,
+          test1__keyX: 7,
+  
+          test7__key1: 11,
+          test7__key2: 31,
+          test7__key3: 51,
+          test7__key5: 3.51,
+          test7__keyX: 71,
+        },
+        {
+          test1__key1: 15,
+          test1__key2: 36,
+          test1__key3: 52,
+          test1__key5: 3.8,
+          test1__keyX: 71,
+  
+          test7__key1: 151,
+          test7__key2: 361,
+          test7__key3: 521,
+          test7__key5: 3.81,
+          test7__keyX: 711,
+        },
+        {
+          test1__key1: 156, // TEST 1 HAS 3 IN ITS ARRAY, TEST 2 HAS ONLY 2
+          test1__key2: 366,
+          test1__key3: 526,
+          test1__key5: 3.86,
+          test1__keyX: 716,
+        },
+      ],
+      indexOfLongestArray: 0,
+      longestArrayLength: 3,
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('parseDataType2To1 errs if keys to skip', () => {
+    const keysSkip = ['key2', 'keyX', 'keyKeyKey'];
+    const arraysOfDataObjects = [
+      [ // group 0 = test 1
+        // this is longest array
+        {
+          key1: 1,  // pt 0
+          key2: 3,
+          key3: 5,
+          key5: 3.5,
+          keyX: 7,
+        },
+        {
+          key1: 15, // pt 1
+          key2: 36,
+          key3: 52,
+          key5: 3.8,
+          keyX: 71,
+        },
+        {
+          key1: 156, // pt 2
+          key2: 366,
+          key3: 526,
+          key5: 3.86,
+          keyX: 716,
+        },
+      ],
+      [ // group 1 = test 7
+        {
+          key1: 11,
+          key2: 31, // keep this; it is last occurrence of key2
+          key3: 51,
+          key5: 3.51,
+          keyX: 71, // keep this; it is last occurrence of keyX
+        },
+        {
+          key1: 151,
+          key2: 361,
+          key3: 521,
+          key5: 3.81,
+          keyX: 711,
+        },
+      ]
+    ];
+    const arrayOfDataGroups = [
+      'test1', 'test7'
+    ];
+    const expectedResult = {
+      dataObjectsArray: [
+        {
+          test1__key1: 1,
+          // test1__key2: 3,
+          test1__key3: 5,
+          test1__key5: 3.5,
+          // test1__keyX: 7,
+  
+          test7__key1: 11,
+          key2: 31,
+          test7__key3: 51,
+          test7__key5: 3.51,
+          keyX: 71,
+        },
+        {
+          test1__key1: 15,
+          // test1__key2: 36,
+          test1__key3: 52,
+          test1__key5: 3.8,
+          // test1__keyX: 71,
+  
+          test7__key1: 151,
+          key2: 361,
+          test7__key3: 521,
+          test7__key5: 3.81,
+          keyX: 711,
+        },
+        {
+          test1__key1: 156, // TEST 1 HAS 3 IN ITS ARRAY, TEST 2 HAS ONLY 2
+          key2: 366,
+          test1__key3: 526,
+          test1__key5: 3.86,
+          keyX: 716,
+        },
+      ],
+      indexOfLongestArray: 0,
+      longestArrayLength: 3,
+    };
+    const result = parseDataType2To1(
+      arraysOfDataObjects, 
+      arrayOfDataGroups,
+      keysSkip);
+    expect(result).to.deep.equal(expectedResult);
+  });
   it('parseDataType2To1', () => {
     const arraysOfDataObjects = [
       [ // group 0 = test 1
@@ -338,10 +1095,6 @@ describe('graphs', ()=> {
           test7__keyX: 711,
         },
       ],
-      // dataLabelArray: [
-      //   'test1 the first key', 'test1 banana',
-      //   'test7 the first key', 'test7 banana',
-      // ],
       indexOfLongestArray: 0,
       longestArrayLength: 2,
     };

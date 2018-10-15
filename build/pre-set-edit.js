@@ -8,24 +8,6 @@ var _require = require('conjunction-junction'),
 var _require2 = require('./layers'),
     unPrefixLayers = _require2.unPrefixLayers;
 
-var prefixStyles = function prefixStyles(exStyles, defaults, layersAllUnPrefixed) {
-  // layersAllUnPrefixed MIGHT have prefixes
-  // it should ONLY have prefixes we consider minimum, such as platform letters
-  // or if saving a "single" specific preSet, it might include full prefixes.
-  console.log('layersAllUnPrefixed', layersAllUnPrefixed);
-  // layersAllUnPrefixed should be all possible layers, un-prefixed for groups
-  // remove styles not included in layersAllUnPrefixed
-  var newStyles = {};
-  layersAllUnPrefixed.forEach(function (l) {
-    console.log('l', l);
-    var lSplit = l.includes('__') ? l.split('__') : l;
-    var lUnprefixed = Array.isArray(lSplit) ? lSplit[lSplit.length - 1] : l;
-    newStyles[l] = isObjectLiteral(exStyles[l]) ? exStyles[l] : isObjectLiteral(defaults[l]) ? defaults[l] : isObjectLiteral(exStyles[lUnprefixed]) ? exStyles[lUnprefixed] : isObjectLiteral(defaults[lUnprefixed]) ? defaults[lUnprefixed] : { color: 'tan' };
-  });
-  console.log('newStyles', newStyles);
-  return newStyles;
-};
-
 var parseNameIdIconType = function parseNameIdIconType(state) {
   var defaultReturn = {
     id: undefined,
@@ -193,12 +175,6 @@ var formatPreSetToSave = function formatPreSetToSave(state, stylesDefault) {
 
   var layersSelected = correctPrefixOfLayersSelected(state).layers; // get layers, not any test keys
 
-  // const styles = prefixStyles(
-  //   state.styles, 
-  //   stylesDefault, 
-  //   state.layersAllUnPrefixed
-  // );
-
   return {
     id: id,
     name: name,
@@ -213,7 +189,6 @@ var formatPreSetToSave = function formatPreSetToSave(state, stylesDefault) {
 
 module.exports = {
   applyPreSetGlobalColorToStyles: applyPreSetGlobalColorToStyles,
-  prefixStyles: prefixStyles,
   parseNameIdIconType: parseNameIdIconType,
   correctPrefixOfLayersSelected: correctPrefixOfLayersSelected,
   editOnePreSetStyle: editOnePreSetStyle,

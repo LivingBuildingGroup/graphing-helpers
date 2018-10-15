@@ -4,18 +4,27 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const { 
-  calcMinimumWindowDimensions,
   calcScreenType,
+  calcMinimumWindowDimensions,
   calcProportionalDimensions,
   calcDimensions,
 } = require('../index');
 
 describe('dimensions', ()=> { 
 
-  it('calcMinimumWindowDimensions', () => {
-
+  it('calcScreenType phoneP w001 h001',()=>{
+    const w = 1;
+    const h = 1;
+    const expectedResult = {
+      type: 'phoneP',
+      testKeys: {
+        heightRanges: ['phoneP'],
+        widthRanges:  ['phoneP'],
+      }
+    };
+    const result = calcScreenType(w,h);
+    expect(result).to.deep.equal(expectedResult);
   });
-
   it('calcScreenType phoneP w320 h700',()=>{
     const w = 320;
     const h = 700;
@@ -81,9 +90,247 @@ describe('dimensions', ()=> {
     const result = calcScreenType(w,h);
     expect(result).to.deep.equal(expectedResult);
   });
+  it('calcScreenType desktop w100000 h1000000 (min)',()=>{
+    const w = 100000;
+    const h = 100000;
+    const expectedResult = {
+      type: 'desktop',
+      testKeys: {
+        heightRanges: ['desktop'],
+        widthRanges:  ['desktop'],
+      }
+    };
+    const result = calcScreenType(w,h);
+    expect(result).to.deep.equal(expectedResult);
+  });
 
-  it('calcProportionalDimensions', () => {
+  it('calcMinimumWindowDimensions inner is smaller', () => {
+    const win = {
+      screen: {
+        availWidth:  200,
+        availHeight: 100,
+      },
+      innerWidth:  25,
+      innerHeight: 50,
+    };
+    const expectedResult = {
+      cssWidthOuter: 25,
+      cssHeightOuter: 50,
+    };
+    const result = calcMinimumWindowDimensions(win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcMinimumWindowDimensions screen is smaller', () => {
+    const win = {
+      screen: {
+        availWidth:  50,
+        availHeight: 25,
+      },
+      innerWidth:  200,
+      innerHeight: 100,
+    };
+    const expectedResult = {
+      cssWidthOuter: 50,
+      cssHeightOuter: 25,
+    };
+    const result = calcMinimumWindowDimensions(win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcMinimumWindowDimensions no inners', () => {
+    const win = {
+      screen: {
+        availWidth:  50,
+        availHeight: 25,
+      },
+      // innerWidth:  200,
+      // innerHeight: 100,
+    };
+    const expectedResult = {
+      cssWidthOuter: 50,
+      cssHeightOuter: 25,
+    };
+    const result = calcMinimumWindowDimensions(win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcMinimumWindowDimensions no screen', () => {
+    const win = {
+      // screen: {
+      // },
+      innerWidth:  200,
+      innerHeight: 100,
+    };
+    const expectedResult = {
+      cssWidthOuter: 200,
+      cssHeightOuter: 100,
+    };
+    const result = calcMinimumWindowDimensions(win);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcMinimumWindowDimensions no screen keys', () => {
+    const win = {
+      screen: {
+        // availWidth:  50,
+        // availHeight: 25,
+      },
+      innerWidth:  200,
+      innerHeight: 100,
+    };
+    const expectedResult = {
+      cssWidthOuter: 200,
+      cssHeightOuter: 100,
+    };
+    const result = calcMinimumWindowDimensions(win);
+    expect(result).to.deep.equal(expectedResult);
+  });
 
+  it('calcProportionalDimensions default on input not an object', () => {
+    const input = 'not an object';
+    const expectedResult = {
+      w: 100,
+      h: 100,
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcProportionalDimensions undersized width and height', () => {
+    const input = { 
+      width: {
+        bigEnoughScreen:   900,  // defaults to 1000
+        percentOfScreen:   0.80, // defaults to 1 
+        maxPctOfBigEnough: 1.1,  // defaults to 1
+      }, 
+      height: {
+        bigEnoughScreen:   500,  // defaults to 1000
+        percentOfScreen:   0.70, // defaults to 1 
+        maxPctOfBigEnough: 1.2,  // defaults to 1
+      }, 
+      cssWidthOuter:  150,       // defaults to 100 
+      cssHeightOuter: 140,       // defaults to 100
+    };
+    const expectedResult = {
+      testKeys: {
+        widthRatioDelta:  0.3, // 1.1 - 0.8,
+        widthBelowMin:    750, // 900 - 150,
+        heightRatioDelta: 0.5, // 1.2 - 0.7,
+        heightBelowMin:   360, // 500 - 140,
+      },
+      w: 150 + (750 * 0.3), // below big enough, so width  + % of ratio
+      h: 140 + (360 * 0.5), // below big enough, so height + % of ratio
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcProportionalDimensions undersized width, not height', () => {
+    const input = { 
+      width: {
+        bigEnoughScreen:   900,  // defaults to 1000
+        percentOfScreen:   0.80, // defaults to 1 
+        maxPctOfBigEnough: 1.1,  // defaults to 1
+      }, 
+      height: {
+        bigEnoughScreen:   500,  // defaults to 1000
+        percentOfScreen:   0.70, // defaults to 1 
+        maxPctOfBigEnough: 1.2,  // defaults to 1
+      }, 
+      cssWidthOuter:  150,       // defaults to 100 
+      cssHeightOuter: 600,       // defaults to 100
+    };
+    const expectedResult = {
+      testKeys: {
+        widthRatioDelta:  0.3, // 1.1 - 0.8,
+        widthBelowMin:    750, // 900 - 150,
+        heightRatioDelta: 0.5, // 1.2 - 0.7,
+        heightBelowMin:  -100, // 500 - 600,
+      },
+      w: 150 + (750 * 0.3), // below big enough, so width  + % of ratio
+      h: 600 * 0.7,         // big enough, so height * %
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcProportionalDimensions undersized height not width', () => {
+    const input = { 
+      width: {
+        bigEnoughScreen:   900,  // defaults to 1000
+        percentOfScreen:   0.80, // defaults to 1 
+        maxPctOfBigEnough: 1.1,  // defaults to 1
+      }, 
+      height: {
+        bigEnoughScreen:   500,  // defaults to 1000
+        percentOfScreen:   0.70, // defaults to 1 
+        maxPctOfBigEnough: 1.2,  // defaults to 1
+      }, 
+      cssWidthOuter:  1100,      // defaults to 100 
+      cssHeightOuter: 140,       // defaults to 100
+    };
+    const expectedResult = {
+      testKeys: {
+        widthRatioDelta:  0.3, // 1.1 - 0.8,
+        widthBelowMin:   -200, // 900 - 1100,
+        heightRatioDelta: 0.5, // 1.2 - 0.7,
+        heightBelowMin:   360, // 500 - 140,
+      },
+      w: 1100 * 0.8, // big enough, so width * %
+      h: 140 + (360 * 0.5), // below big enough, so height + % of ratio
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcProportionalDimensions all big enough', () => {
+    const input = { 
+      width: {
+        bigEnoughScreen:   900,  // defaults to 1000
+        percentOfScreen:   0.80, // defaults to 1 
+        maxPctOfBigEnough: 1.1,  // defaults to 1
+      }, 
+      height: {
+        bigEnoughScreen:   500,  // defaults to 1000
+        percentOfScreen:   0.70, // defaults to 1 
+        maxPctOfBigEnough: 1.2,  // defaults to 1
+      }, 
+      cssWidthOuter:  1100,      // defaults to 100 
+      cssHeightOuter: 600,       // defaults to 100
+    };
+    const expectedResult = {
+      testKeys: {
+        widthRatioDelta:  0.3, // 1.1 - 0.8,
+        widthBelowMin:   -200, // 900 - 1100,
+        heightRatioDelta: 0.5, // 1.2 - 0.7,
+        heightBelowMin:  -100, // 500 - 600,
+      },
+      w: 1100 * 0.8,           // big enough, so width  * %
+      h: 600 * 0.7,            // big enough, so height * %
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
+  });
+  it('calcProportionalDimensions all default', () => {
+    const input = { 
+      width: {
+        // bigEnoughScreen:   900,  // defaults to 1000
+        // percentOfScreen:   0.80, // defaults to 1 
+        // maxPctOfBigEnough: 1.1,  // defaults to 1
+      }, 
+      height: {
+        // bigEnoughScreen:   500,  // defaults to 1000
+        // percentOfScreen:   0.70, // defaults to 1 
+        // maxPctOfBigEnough: 1.2,  // defaults to 1
+      }, 
+      // cssWidthOuter:  1100,      // defaults to 100 
+      // cssHeightOuter: 140,       // defaults to 100
+    };
+    const expectedResult = {
+      testKeys: {
+        widthRatioDelta:  0,   // 100 - 100,
+        widthBelowMin:    900, // 1000 - 100
+        heightRatioDelta: 0,   // 100 - 100,
+        heightBelowMin:   900, // 1000 - 100
+      },
+      w: 100, // default
+      h: 100, // default
+    };
+    const result = calcProportionalDimensions(input);
+    expect(result).to.deep.equal(expectedResult);
   });
 
   it('calcDimensions',()=>{
@@ -121,7 +368,5 @@ describe('dimensions', ()=> {
     const result = calcDimensions(state);
     expect(result).to.deep.equal(expectedResult);
   });
-
-
 
 });

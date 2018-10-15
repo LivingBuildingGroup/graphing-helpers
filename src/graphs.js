@@ -183,7 +183,7 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => 
   const longestArray = arraysOfDataObjects[indexOfLongestArray];
 
   // validated, all arrays are present, and 1 label per array
-  const dataObjectsArray = longestArray.map(x=>{
+  const dataObjectsArray = longestArray.map(()=>{
     return {};
   });
 
@@ -205,10 +205,8 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => 
     });
   });
 
-  // const dataLabelArray = [];
   return {
     dataObjectsArray,
-    // dataLabelArray,
     indexOfLongestArray,
     longestArrayLength,
   };
