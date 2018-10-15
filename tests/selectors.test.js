@@ -5,77 +5,76 @@ const expect = chai.expect;
 
 const { 
   listAllLayersUnPrefixed,
-  // finalizeSelectorObject,
   createLayerSelectorObject } = require('../index');
 
 describe('selectors', ()=> { 
 
-  it('listAllLayersUnPrefixed prefix count = 0, no prefixes', () => {
-    const oneUnit = {
-      layer1: 3,
-      layer2: 4,
-    };
-    const layersRawPrefixCount = 0;
-    const expectedResult = [
-      'layer1',
-      'layer2',
-    ];
-    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('listAllLayersUnPrefixed prefix count = 1, no prefixes', () => {
-    const oneUnit = {
-      layer1: 3,
-      layer2: 4,
-    };
-    const layersRawPrefixCount = 0;
-    const expectedResult = [
-      'layer1',
-      'layer2',
-    ];
-    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('listAllLayersUnPrefixed prefix count = 0, with prefixes', () => {
-    const oneUnit = {
-      A__layer1: 3,
-      B__layer2: 4,
-    };
-    const layersRawPrefixCount = 0;
-    const expectedResult = [
-      'A__layer1',
-      'B__layer2',
-    ];
-    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
-    const oneUnit = {
-      A__layer1: 3,
-      B__layer2: 4,
-    };
-    const layersRawPrefixCount = 1;
-    const expectedResult = [
-      'layer1',
-      'layer2',
-    ];
-    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
-    const oneUnit = {
-      '52__B__layer2': 4,
-      '53__B__layer2': 5,
-      '52__A__layer1': 3,
-    };
-    const layersRawPrefixCount = 1;
-    const expectedResult = [
-      'layer1',
-      'layer2',
-    ];
-    const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
-    expect(result).to.deep.equal(expectedResult);
-  });
+  // it('listAllLayersUnPrefixed prefix count = 0, no prefixes', () => {
+  //   const oneUnit = {
+  //     layer1: 3,
+  //     layer2: 4,
+  //   };
+  //   const layersRawPrefixCount = 0;
+  //   const expectedResult = [
+  //     'layer1',
+  //     'layer2',
+  //   ];
+  //   const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+  //   expect(result).to.deep.equal(expectedResult);
+  // });
+  // it('listAllLayersUnPrefixed prefix count = 1, no prefixes', () => {
+  //   const oneUnit = {
+  //     layer1: 3,
+  //     layer2: 4,
+  //   };
+  //   const layersRawPrefixCount = 0;
+  //   const expectedResult = [
+  //     'layer1',
+  //     'layer2',
+  //   ];
+  //   const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+  //   expect(result).to.deep.equal(expectedResult);
+  // });
+  // it('listAllLayersUnPrefixed prefix count = 0, with prefixes', () => {
+  //   const oneUnit = {
+  //     A__layer1: 3,
+  //     B__layer2: 4,
+  //   };
+  //   const layersRawPrefixCount = 0;
+  //   const expectedResult = [
+  //     'A__layer1',
+  //     'B__layer2',
+  //   ];
+  //   const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+  //   expect(result).to.deep.equal(expectedResult);
+  // });
+  // it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
+  //   const oneUnit = {
+  //     A__layer1: 3,
+  //     B__layer2: 4,
+  //   };
+  //   const layersRawPrefixCount = 1;
+  //   const expectedResult = [
+  //     'layer1',
+  //     'layer2',
+  //   ];
+  //   const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+  //   expect(result).to.deep.equal(expectedResult);
+  // });
+  // it('listAllLayersUnPrefixed prefix count = 1, with prefixes', () => {
+  //   const oneUnit = {
+  //     '52__B__layer2': 4,
+  //     '53__B__layer2': 5,
+  //     '52__A__layer1': 3,
+  //   };
+  //   const layersRawPrefixCount = 1;
+  //   const expectedResult = [
+  //     'layer1',
+  //     'layer2',
+  //   ];
+  //   const result = listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount);
+  //   expect(result).to.deep.equal(expectedResult);
+  // });
 
   it('createLayerSelectorObject again', () => {
     const input = {

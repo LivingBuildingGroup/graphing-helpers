@@ -1,23 +1,23 @@
 'use strict';
 
-var listAllLayersUnPrefixed = function listAllLayersUnPrefixed(oneUnit, layersRawPrefixCount) {
-  // I think this is abandoned.  I don't think we are using it anymore.
-  var layersUsed = {};
-  for (var layer in oneUnit) {
-    if (layersRawPrefixCount === 0) {
-      layersUsed[layer] = true;
-    } else {
-      var unPrefix = layer.split('__');
-      layersUsed[unPrefix[unPrefix.length - 1]] = true;
-    }
-  }
-  var layers = [];
-  for (var _layer in layersUsed) {
-    layers.push(_layer);
-  }
-  layers.sort();
-  return layers;
-};
+// const listAllLayersUnPrefixed = (oneUnit, layersRawPrefixCount) => {
+//   // I think this is abandoned.  I don't think we are using it anymore.
+//   const layersUsed = {};
+//   for(let layer in oneUnit){
+//     if(layersRawPrefixCount === 0){
+//       layersUsed[layer] = true;
+//     } else {
+//       const unPrefix = layer.split('__');
+//       layersUsed[unPrefix[unPrefix.length-1]] = true;
+//     }
+//   }
+//   const layers = [];
+//   for(let layer in layersUsed){
+//     layers.push(layer);
+//   }
+//   layers.sort();
+//   return layers;
+// };
 
 var createLayerSelectorObject = function createLayerSelectorObject(input) {
   var data = input.data,
@@ -67,6 +67,6 @@ var createLayerSelectorObject = function createLayerSelectorObject(input) {
 };
 
 module.exports = {
-  listAllLayersUnPrefixed: listAllLayersUnPrefixed,
+  // listAllLayersUnPrefixed,
   createLayerSelectorObject: createLayerSelectorObject
 };
