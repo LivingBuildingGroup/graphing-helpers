@@ -3,7 +3,7 @@
 const { isObjectLiteral } = require('conjunction-junction');
 
 const formatControlsWithoutPreSets = (state, that) => {
-  const icons = state.iconsMain;
+  const icons = state.icons;
   
   const controlNamesTop = [];
   const controlIconsTop = [];
@@ -15,7 +15,7 @@ const formatControlsWithoutPreSets = (state, that) => {
   const controlLabelsBot= [];
   if(state.closeAllow && typeof state.handleCloseGraph === 'function'){
     controlNamesTop.push('close');
-    controlIconsTop.push(icons.close);
+    controlIconsTop.push(icons.times);
     controlFuncsTop.push(state.handleCloseGraph);
     controlLabelsTop.push('Close the graph');
   }
@@ -27,13 +27,13 @@ const formatControlsWithoutPreSets = (state, that) => {
   }
   if(state.backgroundAllow){
     controlNamesTop.push('background');
-    controlIconsTop.push(icons.paper);
+    controlIconsTop.push(icons.palette_solid);
     controlFuncsTop.push(that.handleBackgroundChange);
     controlLabelsTop.push('Toggle white graph background');
   }
   if(state.yAxisAllow){
     controlNamesTop.push('y-Axis');
-    controlIconsTop.push(icons.yAxis);
+    controlIconsTop.push(icons.arrows_alt_v);
     controlFuncsTop.push(that.handleYAxisSelector);
     controlLabelsTop.push('Toggle Y-Axis settings');
   }
@@ -55,7 +55,7 @@ const formatControlsWithoutPreSets = (state, that) => {
   };
 };
 
-const formatPreSetsForControls = (preSets, that) => {
+const formatPreSetsForControls = (preSets, icons, that) => {
   if(!isObjectLiteral(preSets)) {
     return { 
       preSetIds  : [],
@@ -73,7 +73,7 @@ const formatPreSetsForControls = (preSets, that) => {
     return preSets[id].name;
   });
   const preSetIcons = preSetIds.map(id=>{
-    return preSets[id].icon;
+    return icons[preSets[id].icon];
   });
   const preSetFuncs = preSetIds.map(id=>{
     return ()=>that.handlePreSetSelect(id);
@@ -103,7 +103,7 @@ const formatControls = (state, that) => {
     preSetNames,
     preSetIcons,
     preSetFuncs,
-  } = formatPreSetsForControls(state.preSets, that);
+  } = formatPreSetsForControls(state.preSets, state.icons, that);
 
   const controlNames = [
     ...controlNamesTop, 

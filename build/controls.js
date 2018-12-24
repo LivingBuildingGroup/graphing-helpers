@@ -6,7 +6,7 @@ var _require = require('conjunction-junction'),
     isObjectLiteral = _require.isObjectLiteral;
 
 var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, that) {
-  var icons = state.iconsMain;
+  var icons = state.icons;
 
   var controlNamesTop = [];
   var controlIconsTop = [];
@@ -18,7 +18,7 @@ var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, 
   var controlLabelsBot = [];
   if (state.closeAllow && typeof state.handleCloseGraph === 'function') {
     controlNamesTop.push('close');
-    controlIconsTop.push(icons.close);
+    controlIconsTop.push(icons.times);
     controlFuncsTop.push(state.handleCloseGraph);
     controlLabelsTop.push('Close the graph');
   }
@@ -30,13 +30,13 @@ var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, 
   }
   if (state.backgroundAllow) {
     controlNamesTop.push('background');
-    controlIconsTop.push(icons.paper);
+    controlIconsTop.push(icons.palette_solid);
     controlFuncsTop.push(that.handleBackgroundChange);
     controlLabelsTop.push('Toggle white graph background');
   }
   if (state.yAxisAllow) {
     controlNamesTop.push('y-Axis');
-    controlIconsTop.push(icons.yAxis);
+    controlIconsTop.push(icons.arrows_alt_v);
     controlFuncsTop.push(that.handleYAxisSelector);
     controlLabelsTop.push('Toggle Y-Axis settings');
   }
@@ -58,7 +58,7 @@ var formatControlsWithoutPreSets = function formatControlsWithoutPreSets(state, 
   };
 };
 
-var formatPreSetsForControls = function formatPreSetsForControls(preSets, that) {
+var formatPreSetsForControls = function formatPreSetsForControls(preSets, icons, that) {
   if (!isObjectLiteral(preSets)) {
     return {
       preSetIds: [],
@@ -76,7 +76,7 @@ var formatPreSetsForControls = function formatPreSetsForControls(preSets, that) 
     return preSets[id].name;
   });
   var preSetIcons = preSetIds.map(function (id) {
-    return preSets[id].icon;
+    return icons[preSets[id].icon];
   });
   var preSetFuncs = preSetIds.map(function (id) {
     return function () {
@@ -102,7 +102,7 @@ var formatControls = function formatControls(state, that) {
       controlFuncsBot = _formatControlsWithou.controlFuncsBot,
       controlLabelsBot = _formatControlsWithou.controlLabelsBot;
 
-  var _formatPreSetsForCont = formatPreSetsForControls(state.preSets, that),
+  var _formatPreSetsForCont = formatPreSetsForControls(state.preSets, state.icons, that),
       preSetIds = _formatPreSetsForCont.preSetIds,
       preSetNames = _formatPreSetsForCont.preSetNames,
       preSetIcons = _formatPreSetsForCont.preSetIcons,
