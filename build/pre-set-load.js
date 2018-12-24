@@ -351,7 +351,7 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
       groupDotColors = _formatGroupsStyles.groupDotColors;
 
   var _formatIcons = formatIcons(thisPreSet),
-      preSetIconNew = _formatIcons.preSetIconNew,
+      preSetIconNameNew = _formatIcons.preSetIconNameNew,
       preSetNameNew = _formatIcons.preSetNameNew;
 
   return {
@@ -361,7 +361,7 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
     selector0: selectors[0],
     layersSelected: selectorsRemaining,
     styles: stylesAppended,
-    preSetIconNew: preSetIconNew, // pre-load for editing
+    preSetIconNameNew: preSetIconNameNew, // pre-load for editing
     preSetNameNew: preSetNameNew // pre-load for editing
   };
 };
@@ -370,7 +370,7 @@ var formatIcons = function formatIcons(thisPreSet) {
   var icon = !thisPreSet.icon ? null : thisPreSet.icon;
   var name = !thisPreSet.name ? null : thisPreSet.name;
   return {
-    preSetIconNew: icon,
+    preSetIconNameNew: icon,
     preSetNameNew: name
   };
 };

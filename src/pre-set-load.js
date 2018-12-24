@@ -375,7 +375,7 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
   });
 
   const {
-    preSetIconNew,
+     preSetIconNameNew,
     preSetNameNew  } = formatIcons(thisPreSet); 
 
   return {
@@ -385,7 +385,7 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     selector0:      selectors[0],
     layersSelected: selectorsRemaining,
     styles:         stylesAppended,
-    preSetIconNew,        // pre-load for editing
+    preSetIconNameNew,    // pre-load for editing
     preSetNameNew,        // pre-load for editing
   };
 };
@@ -398,7 +398,7 @@ const formatIcons = thisPreSet => {
     !thisPreSet.name ? null :
       thisPreSet.name ;
   return {
-    preSetIconNew: icon,
+    preSetIconNameNew: icon,
     preSetNameNew: name,
   };
 };
