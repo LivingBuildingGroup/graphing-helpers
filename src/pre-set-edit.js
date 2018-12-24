@@ -7,7 +7,7 @@ const parseNameIdIconType = state => {
   const defaultReturn = {
     id: undefined, 
     name: 'preset', 
-    icon: 'puzzle', 
+    icon: 'frown', 
     type: 'single',
   };
   if(!isObjectLiteral(state)) return defaultReturn;
@@ -17,8 +17,8 @@ const parseNameIdIconType = state => {
     preSetIdActive,
     preSetNameNew,
     preSetIconOptions,
-    preSetIconNew,
-    preSetGroupEditMode} = state;
+    preSetIconNameNew,
+    preSetGroupEditMode } = state;
 
   const id = 
     preSetSaveType === 'new' ?
@@ -41,13 +41,13 @@ const parseNameIdIconType = state => {
   // preSetIconOptions should always be populated in state, but to prevent a type error, we do this:
   const iconOptions = Array.isArray(preSetIconOptions) ? preSetIconOptions : [defaultReturn.icon] ;
   const icon = 
-    preSetIconNew ?         // ideally this will always be true, if state always assigns preSetIconNew as the existing or requires a default
-    preSetIconNew:
-      thisPreSet.icon ?     // nothing in state as new
-      thisPreSet.icon :
-        iconOptions[0] ?    // should only be false if preSetIconOptions is an array, but is empty or first value is falsey
-        iconOptions[0] :
-          defaultReturn.icon ;
+     preSetIconNameNew ?         // ideally this will always be true, if state always assigns  preSetIconNameNew as the existing or requires a default
+       preSetIconNameNew:
+       thisPreSet.icon ?     // nothing in state as new
+         thisPreSet.icon :
+         iconOptions[0] ?    // should only be false if preSetIconOptions is an array, but is empty or first value is falsey
+           iconOptions[0] :
+           defaultReturn.icon ;
   const type = 
     preSetGroupEditMode ?
       'group' : 
@@ -185,7 +185,7 @@ const applyPreSetGlobalColorToStyles = input => {
   return s;
 };
 
-const formatPreSetToSave = (state, stylesDefault) => {
+const formatPreSetToSave = state => {
   // invoked by <GraphWrapper/>
   const {
     id, 

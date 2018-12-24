@@ -12,7 +12,7 @@ var parseNameIdIconType = function parseNameIdIconType(state) {
   var defaultReturn = {
     id: undefined,
     name: 'preset',
-    icon: 'puzzle',
+    icon: 'frown',
     type: 'single'
   };
   if (!isObjectLiteral(state)) return defaultReturn;
@@ -21,7 +21,7 @@ var parseNameIdIconType = function parseNameIdIconType(state) {
       preSetIdActive = state.preSetIdActive,
       preSetNameNew = state.preSetNameNew,
       preSetIconOptions = state.preSetIconOptions,
-      preSetIconNew = state.preSetIconNew,
+      preSetIconNameNew = state.preSetIconNameNew,
       preSetGroupEditMode = state.preSetGroupEditMode;
 
 
@@ -31,8 +31,8 @@ var parseNameIdIconType = function parseNameIdIconType(state) {
   var thisPreSet = isObjectLiteral(preSets[id]) ? preSets[id] : {};
   // preSetIconOptions should always be populated in state, but to prevent a type error, we do this:
   var iconOptions = Array.isArray(preSetIconOptions) ? preSetIconOptions : [defaultReturn.icon];
-  var icon = preSetIconNew ? // ideally this will always be true, if state always assigns preSetIconNew as the existing or requires a default
-  preSetIconNew : thisPreSet.icon ? // nothing in state as new
+  var icon = preSetIconNameNew ? // ideally this will always be true, if state always assigns  preSetIconNameNew as the existing or requires a default
+  preSetIconNameNew : thisPreSet.icon ? // nothing in state as new
   thisPreSet.icon : iconOptions[0] ? // should only be false if preSetIconOptions is an array, but is empty or first value is falsey
   iconOptions[0] : defaultReturn.icon;
   var type = preSetGroupEditMode ? 'group' : defaultReturn.type;
@@ -162,7 +162,7 @@ var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(inp
   return s;
 };
 
-var formatPreSetToSave = function formatPreSetToSave(state, stylesDefault) {
+var formatPreSetToSave = function formatPreSetToSave(state) {
   // invoked by <GraphWrapper/>
   var _parseNameIdIconType = parseNameIdIconType(state),
       id = _parseNameIdIconType.id,
