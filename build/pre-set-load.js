@@ -459,10 +459,7 @@ var createPreSetGlobalPalettes = function createPreSetGlobalPalettes() {
   return preSetGlobalPalettes;
 };
 
-var selectDefaultPreSet = function selectDefaultPreSet(state) {
-  var preSets = state.preSets,
-      graphName = state.graphName;
-
+var selectDefaultPreSet = function selectDefaultPreSet(preSets, graphName) {
   var preSetIdActive = void 0;
   for (var id in preSets) {
     if (preSets[id].graph === graphName && preSets[id].def) {

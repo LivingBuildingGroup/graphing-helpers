@@ -375,7 +375,7 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
   });
 
   const {
-     preSetIconNameNew,
+    preSetIconNameNew,
     preSetNameNew  } = formatIcons(thisPreSet); 
 
   return {
@@ -496,8 +496,7 @@ const createPreSetGlobalPalettes = () => {
   return preSetGlobalPalettes;
 };
 
-const selectDefaultPreSet = state => {
-  const {preSets, graphName} = state;
+const selectDefaultPreSet = (preSets, graphName) => {
   let preSetIdActive;
   for(let id in preSets){
     if(preSets[id].graph === graphName && preSets[id].def){
