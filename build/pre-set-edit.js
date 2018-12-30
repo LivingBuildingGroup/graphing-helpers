@@ -8,43 +8,6 @@ var _require = require('conjunction-junction'),
 var _require2 = require('./layers'),
     unPrefixLayers = _require2.unPrefixLayers;
 
-var parseNameIdIconType = function parseNameIdIconType(state) {
-  var defaultReturn = {
-    id: undefined,
-    name: 'preset',
-    icon: 'frown',
-    type: 'single'
-  };
-  if (!isObjectLiteral(state)) return defaultReturn;
-  var preSetSaveType = state.preSetSaveType,
-      preSets = state.preSets,
-      preSetIdActive = state.preSetIdActive,
-      preSetNameNew = state.preSetNameNew,
-      preSetIconOptions = state.preSetIconOptions,
-      preSetIconNameNew = state.preSetIconNameNew,
-      preSetGroupEditMode = state.preSetGroupEditMode;
-
-
-  var id = preSetSaveType === 'new' ? null : preSetIdActive;
-  var name = preSetSaveType === 'new' && preSetNameNew ? preSetNameNew : preSetSaveType === 'new' ? defaultReturn.name : preSetNameNew ? preSetNameNew : !preSets[id] ? defaultReturn.name : preSets[id].name ? preSets[id].name : defaultReturn.name;
-  // this is only for type checking below
-  var thisPreSet = isObjectLiteral(preSets[id]) ? preSets[id] : {};
-  // preSetIconOptions should always be populated in state, but to prevent a type error, we do this:
-  var iconOptions = Array.isArray(preSetIconOptions) ? preSetIconOptions : [defaultReturn.icon];
-  var icon = preSetIconNameNew ? // ideally this will always be true, if state always assigns  preSetIconNameNew as the existing or requires a default
-  preSetIconNameNew : thisPreSet.icon ? // nothing in state as new
-  thisPreSet.icon : iconOptions[0] ? // should only be false if preSetIconOptions is an array, but is empty or first value is falsey
-  iconOptions[0] : defaultReturn.icon;
-  var type = preSetGroupEditMode ? 'group' : defaultReturn.type;
-
-  return {
-    id: id,
-    name: name,
-    icon: icon,
-    type: type
-  };
-};
-
 var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state) {
   // state.layersSelected is expected to have the maximum amount of prefix
   // i.e. we may strip off prefixes, but we won't add them
@@ -118,21 +81,21 @@ var editOnePreSetStyle = function editOnePreSetStyle(input) {
     stylesNew[layer] = {
       style: nestedStyle,
       color: v,
-      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
+      colorOld: stylesNew[layer] && stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else if (type === 'shade' && v === 0) {
     nestedStyle.shade = 0;
     stylesNew[layer] = {
       style: nestedStyle,
       color: stylesNew[layer].colorOld,
-      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
+      colorOld: stylesNew[layer] && stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else if (type === 'shade') {
     nestedStyle.shade = v;
     stylesNew[layer] = {
       style: nestedStyle,
       color: psgp[v - 1] ? psgp[v - 1] : defaultColor, // preSetGlobalPalette is 1-indexed for the user, so subtract 1, since it is actually 0-indexed
-      colorOld: stylesNew[layer].color ? stylesNew[layer].color : defaultColor
+      colorOld: stylesNew[layer] && stylesNew[layer].color ? stylesNew[layer].color : defaultColor
     };
   } else {
     nestedStyle[key] = v;
@@ -162,35 +125,8 @@ var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(inp
   return s;
 };
 
-var formatPreSetToSave = function formatPreSetToSave(state) {
-  // invoked by <GraphWrapper/>
-  var _parseNameIdIconType = parseNameIdIconType(state),
-      id = _parseNameIdIconType.id,
-      name = _parseNameIdIconType.name,
-      icon = _parseNameIdIconType.icon,
-      type = _parseNameIdIconType.type;
-
-  // smartly remove prefixes; i.e. if we selected 'A__layer1', but we are not using 'A' as a prefix, pare down to 'layer1
-
-
-  var layersSelected = correctPrefixOfLayersSelected(state).layers; // get layers, not any test keys
-
-  return {
-    id: id,
-    name: name,
-    icon: icon,
-    type: type,
-    layersSelected: layersSelected,
-    graph: state.graphName,
-    styles: state.styles,
-    preSetSaveSettings: state.preSetSaveSettings
-  };
-};
-
 module.exports = {
   applyPreSetGlobalColorToStyles: applyPreSetGlobalColorToStyles,
-  parseNameIdIconType: parseNameIdIconType,
   correctPrefixOfLayersSelected: correctPrefixOfLayersSelected,
-  editOnePreSetStyle: editOnePreSetStyle,
-  formatPreSetToSave: formatPreSetToSave
+  editOnePreSetStyle: editOnePreSetStyle
 };
