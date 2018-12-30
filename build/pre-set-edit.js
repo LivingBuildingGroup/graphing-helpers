@@ -36,6 +36,23 @@ var correctPrefixOfLayersSelected = function correctPrefixOfLayersSelected(state
   };
 };
 
+var _parseValue = function _parseValue(type, value) {
+  var v = value;
+  if (type === 'number' || type === 'shade') {
+    v = parseFloat(value, 10);
+    // type array = borderDash
+  } else if (type === 'array') {
+    var arr = typeof value === 'string' ? value.split(',') : Array.isArray(value) ? value : [];
+    v = arr.map(function (a) {
+      return parseInt(a, 10);
+    });
+    // type boolean = fill
+  } else if (type === 'boolean') {
+    v = value === 'true';
+  }
+  return v;
+};
+
 var editOnePreSetStyle = function editOnePreSetStyle(input) {
   // invoked by <GraphWrapper/>
   if (!isObjectLiteral(input)) return {};
@@ -55,22 +72,20 @@ var editOnePreSetStyle = function editOnePreSetStyle(input) {
   var psgp = Array.isArray(preSetGlobalPalette) ? preSetGlobalPalette : [];
 
   var stylesNew = Object.assign({}, styles);
-  var v = value;
+  var v = _parseValue(type, value);
   // see pre-set-load.test for column list
   // type number = opacityBackground, opacityBorder, borderWidth, pointBorderWidth, opacityPoint
   // property for shade is custom-set in <GraphWrapper/> with type entered as "shade" to recognize that shade has different features than other numeric types (see several lines below)
-  if (type === 'number' || type === 'shade') {
-    v = parseFloat(v, 10);
-    // type array = borderDash
-  } else if (type === 'array') {
-    var arr = typeof v === 'string' ? v.split(',') : v;
-    v = arr.map(function (a) {
-      return parseInt(a, 10);
-    });
-    // type boolean = fill
-  } else if (type === 'boolean') {
-    v = v === 'true';
-  }
+  // if(type === 'number' || type === 'shade'){
+  //   v = parseFloat(v, 10);
+  // // type array = borderDash
+  // } else if (type === 'array'){
+  //   const arr = typeof v === 'string' ? v.split(',') : v ;
+  //   v = arr.map(a=>parseInt(a,10));
+  // // type boolean = fill
+  // } else if (type === 'boolean'){
+  //   v = v === 'true';
+  // }
 
   var defaultColor = '80, 80, 80';
 

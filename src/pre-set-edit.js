@@ -39,6 +39,21 @@ const correctPrefixOfLayersSelected = state => {
   };
 };
 
+const _parseValue = (type, value) => {
+  let v = value;
+  if(type === 'number' || type === 'shade'){
+    v = parseFloat(value, 10);
+  // type array = borderDash
+  } else if (type === 'array'){
+    const arr = typeof value === 'string' ? value.split(',') : Array.isArray(value) ? value : [] ;
+    v = arr.map(a=>parseInt(a,10));
+  // type boolean = fill
+  } else if (type === 'boolean'){
+    v = value === 'true';
+  }
+  return v;
+};
+
 const editOnePreSetStyle = input => {
   // invoked by <GraphWrapper/>
   if(!isObjectLiteral(input)) return {};
@@ -55,20 +70,20 @@ const editOnePreSetStyle = input => {
   const psgp = Array.isArray(preSetGlobalPalette) ? preSetGlobalPalette : [] ;
 
   const stylesNew = Object.assign({}, styles);
-  let v = value;
+  const v = _parseValue(type, value);
   // see pre-set-load.test for column list
   // type number = opacityBackground, opacityBorder, borderWidth, pointBorderWidth, opacityPoint
   // property for shade is custom-set in <GraphWrapper/> with type entered as "shade" to recognize that shade has different features than other numeric types (see several lines below)
-  if(type === 'number' || type === 'shade'){
-    v = parseFloat(v, 10);
-  // type array = borderDash
-  } else if (type === 'array'){
-    const arr = typeof v === 'string' ? v.split(',') : v ;
-    v = arr.map(a=>parseInt(a,10));
-  // type boolean = fill
-  } else if (type === 'boolean'){
-    v = v === 'true';
-  }
+  // if(type === 'number' || type === 'shade'){
+  //   v = parseFloat(v, 10);
+  // // type array = borderDash
+  // } else if (type === 'array'){
+  //   const arr = typeof v === 'string' ? v.split(',') : v ;
+  //   v = arr.map(a=>parseInt(a,10));
+  // // type boolean = fill
+  // } else if (type === 'boolean'){
+  //   v = v === 'true';
+  // }
 
   const defaultColor = '80, 80, 80';
 
@@ -117,10 +132,10 @@ const applyPreSetGlobalColorToStyles = input => {
       s[layer].style = {};
     }
     if(s[layer].style.shade > 0){
-      const shade = s[layer].style.shade - 1;
-      const colorOld = s[layer].color;
-      const color = preSetGlobalPalette[shade];
-      s[layer].color = color;
+      const shade       = s[layer].style.shade - 1;
+      const colorOld    = s[layer].color;
+      const color       = preSetGlobalPalette[shade];
+      s[layer].color    = color;
       s[layer].colorOld = colorOld;
     }
   }
