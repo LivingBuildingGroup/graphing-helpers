@@ -341,7 +341,7 @@ const formatGroupsStyles = input => {
   };
 };
 
-const formatPreSetToLoad = (state, thisPreSet, id) => {
+const extractSettingsFromPreSet = (state, thisPreSet, id) => {
   const { 
     groupTrue, 
     groups,
@@ -374,9 +374,23 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     layersAllPrefixed,
   });
 
-  const {
-    preSetIconNameNew,
-    preSetNameNew  } = formatIcons(thisPreSet); 
+  // const {
+  //   preSetIconNameNew,
+  //   preSetNameNew  } = formatIcons(thisPreSet); 
+
+  // this prefixes as determined by state, i.e. parent
+  // this does not allow individual presets to decide what to prefix (see above)
+  const prefixesToKeepGroups =
+      !Array.isArray(state.groups) ? [] :
+        !state.preSetSaveSettings ? [] :
+          !state.preSetSaveSettings.prefixGroups ? [] :
+            state.groups ;
+
+  const prefixesToKeepGroupsSub =
+      !Array.isArray(state.groupsSub) ? [] :
+        !state.preSetSaveSettings ? [] :
+          !state.preSetSaveSettings.prefixGroupsSub ? [] :
+            state.groupsSub ;
 
   return {
     groupColors:    newGroupColors,
@@ -385,25 +399,27 @@ const formatPreSetToLoad = (state, thisPreSet, id) => {
     selector0:      selectors[0],
     layersSelected: selectorsRemaining,
     styles:         stylesAppended,
-    preSetIconNameNew,    // pre-load for editing
-    preSetNameNew,        // pre-load for editing
+    prefixesToKeepGroups,
+    prefixesToKeepGroupsSub,
+    // preSetIconNameNew,    // pre-load for editing
+    // preSetNameNew,        // pre-load for editing
   };
 };
 
-const formatIcons = thisPreSet => {
-  const icon =
-    !thisPreSet.icon ? null :
-      thisPreSet.icon ;
-  const name =
-    !thisPreSet.name ? null :
-      thisPreSet.name ;
-  return {
-    preSetIconNameNew: icon,
-    preSetNameNew: name,
-  };
-};
+// const formatIcons = thisPreSet => {
+//   const icon =
+//     !thisPreSet.icon ? null :
+//       thisPreSet.icon ;
+//   const name =
+//     !thisPreSet.name ? null :
+//       thisPreSet.name ;
+//   return {
+//     preSetIconNameNew: icon,
+//     preSetNameNew: name,
+//   };
+// };
 
-const formatPreSetColumns = cssStyleColorsNamed => {
+const formatPreSetSelectorColumns = cssStyleColorsNamed => {
   // this is only the names of the colors to use for selectors
   const cssStyleColorsNamedArray = [];
   for(let key in cssStyleColorsNamed){
@@ -524,9 +540,9 @@ module.exports = {
   formatAllStyles,
   assignPreSetGroupColors,
   formatGroupsStyles,
-  formatPreSetToLoad,
-  formatIcons,
-  formatPreSetColumns,
+  extractSettingsFromPreSet,
+  // formatIcons,
+  formatPreSetSelectorColumns,
   createPreSetGlobalPalettes,
   selectDefaultPreSet,
 };

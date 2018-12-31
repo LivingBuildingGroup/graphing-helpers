@@ -321,7 +321,7 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
   };
 };
 
-var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
+var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPreSet, id) {
   var groupTrue = state.groupTrue,
       groups = state.groups,
       groupColors = state.groupColors,
@@ -350,9 +350,17 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
       newGroupColors = _formatGroupsStyles.newGroupColors,
       groupDotColors = _formatGroupsStyles.groupDotColors;
 
-  var _formatIcons = formatIcons(thisPreSet),
-      preSetIconNameNew = _formatIcons.preSetIconNameNew,
-      preSetNameNew = _formatIcons.preSetNameNew;
+  // const {
+  //   preSetIconNameNew,
+  //   preSetNameNew  } = formatIcons(thisPreSet); 
+
+  // this prefixes as determined by state, i.e. parent
+  // this does not allow individual presets to decide what to prefix (see above)
+
+
+  var prefixesToKeepGroups = !Array.isArray(state.groups) ? [] : !state.preSetSaveSettings ? [] : !state.preSetSaveSettings.prefixGroups ? [] : state.groups;
+
+  var prefixesToKeepGroupsSub = !Array.isArray(state.groupsSub) ? [] : !state.preSetSaveSettings ? [] : !state.preSetSaveSettings.prefixGroupsSub ? [] : state.groupsSub;
 
   return {
     groupColors: newGroupColors,
@@ -361,21 +369,27 @@ var formatPreSetToLoad = function formatPreSetToLoad(state, thisPreSet, id) {
     selector0: selectors[0],
     layersSelected: selectorsRemaining,
     styles: stylesAppended,
-    preSetIconNameNew: preSetIconNameNew, // pre-load for editing
-    preSetNameNew: preSetNameNew // pre-load for editing
+    prefixesToKeepGroups: prefixesToKeepGroups,
+    prefixesToKeepGroupsSub: prefixesToKeepGroupsSub
+    // preSetIconNameNew,    // pre-load for editing
+    // preSetNameNew,        // pre-load for editing
   };
 };
 
-var formatIcons = function formatIcons(thisPreSet) {
-  var icon = !thisPreSet.icon ? null : thisPreSet.icon;
-  var name = !thisPreSet.name ? null : thisPreSet.name;
-  return {
-    preSetIconNameNew: icon,
-    preSetNameNew: name
-  };
-};
+// const formatIcons = thisPreSet => {
+//   const icon =
+//     !thisPreSet.icon ? null :
+//       thisPreSet.icon ;
+//   const name =
+//     !thisPreSet.name ? null :
+//       thisPreSet.name ;
+//   return {
+//     preSetIconNameNew: icon,
+//     preSetNameNew: name,
+//   };
+// };
 
-var formatPreSetColumns = function formatPreSetColumns(cssStyleColorsNamed) {
+var formatPreSetSelectorColumns = function formatPreSetSelectorColumns(cssStyleColorsNamed) {
   // this is only the names of the colors to use for selectors
   var cssStyleColorsNamedArray = [];
   for (var key in cssStyleColorsNamed) {
@@ -466,8 +480,8 @@ var selectDefaultPreSet = function selectDefaultPreSet(preSets, graphName) {
       preSetIdActive = id;
     }
   }
-  // worst case, no default and id list didn't load yet
   if (preSetIdActive) return preSetIdActive;
+  // worst case, no default and id list didn't load yet
 
   for (var _id in preSets) {
     if (preSets[_id].graph === graphName) {
@@ -487,9 +501,9 @@ module.exports = {
   formatAllStyles: formatAllStyles,
   assignPreSetGroupColors: assignPreSetGroupColors,
   formatGroupsStyles: formatGroupsStyles,
-  formatPreSetToLoad: formatPreSetToLoad,
-  formatIcons: formatIcons,
-  formatPreSetColumns: formatPreSetColumns,
+  extractSettingsFromPreSet: extractSettingsFromPreSet,
+  // formatIcons,
+  formatPreSetSelectorColumns: formatPreSetSelectorColumns,
   createPreSetGlobalPalettes: createPreSetGlobalPalettes,
   selectDefaultPreSet: selectDefaultPreSet
 };
