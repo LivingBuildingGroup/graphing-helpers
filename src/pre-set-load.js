@@ -503,8 +503,8 @@ const selectDefaultPreSet = (preSets, graphName) => {
       preSetIdActive = id;
     }
   }
-  // worst case, no default and id list didn't load yet
   if(preSetIdActive) return preSetIdActive;
+  // worst case, no default and id list didn't load yet
 
   for(let id in preSets){
     if(preSets[id].graph === graphName){

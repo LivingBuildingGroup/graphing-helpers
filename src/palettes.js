@@ -107,7 +107,7 @@ const createFern8 = pos => {
     ' 38, 119,  31',
     ' 24,  93,  19',
     ' 13,  75,  11',
-    ' 92,  55,   6',
+    '  7,  63,   5',
   ];
   if(isPrimitiveNumber(pos)){
     addBright(arr, 'fern8', pos);
