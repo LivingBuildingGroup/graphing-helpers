@@ -311,6 +311,15 @@ var createNamed = function createNamed(option) {
   return namedColors;
 };
 
+var createPreSetGlobalPalettes = function createPreSetGlobalPalettes() {
+  var colors = listBright();
+  var preSetGlobalPalettes = {};
+  colors.forEach(function (color) {
+    preSetGlobalPalettes[color] = createMonoChrome(color);
+  });
+  return preSetGlobalPalettes;
+};
+
 module.exports = {
   general14: general14,
   createBright7: createBright7,
@@ -331,5 +340,6 @@ module.exports = {
   createPalette19: createPalette19,
   createPalette23: createPalette23,
   selectPalette: selectPalette,
-  createNamed: createNamed
+  createNamed: createNamed,
+  createPreSetGlobalPalettes: createPreSetGlobalPalettes
 };

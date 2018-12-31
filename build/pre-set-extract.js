@@ -5,7 +5,7 @@ var _require = require('conjunction-junction'),
 
 var _require2 = require('./palettes'),
     listBright = _require2.listBright,
-    createMonoChrome = _require2.createMonoChrome;
+    createPreSetGlobalPalettes = _require2.createPreSetGlobalPalettes;
 
 var formatSelectors = function formatSelectors(thisPreSet, groupTrue, groupsRaw) {
   var groups = Array.isArray(groupsRaw) ? groupsRaw : [];
@@ -272,7 +272,9 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
       styles = input.styles,
       thisPreSet = input.thisPreSet;
 
-
+  console.log('styles as input to formatGroupsStyles', styles);
+  console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
+  // START BACK HERE --- STYLES ARE DEFAULTING TO EMPTY !!!!
   var isGrouped = groupTrue && Array.isArray(groups);
 
   var defaultObject = {
@@ -331,6 +333,8 @@ var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPr
       layersAllPrefixed = state.layersAllPrefixed,
       styles = state.styles;
 
+  console.log('state in extractSettingsFromPreSet', state);
+
   var _formatSelectors = formatSelectors(thisPreSet, groupTrue, groups),
       selectorsRemaining = _formatSelectors.selectorsRemaining,
       selectors = _formatSelectors.selectors;
@@ -350,10 +354,6 @@ var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPr
       newGroupColors = _formatGroupsStyles.newGroupColors,
       groupDotColors = _formatGroupsStyles.groupDotColors;
 
-  // const {
-  //   preSetIconNameNew,
-  //   preSetNameNew  } = formatIcons(thisPreSet); 
-
   // this prefixes as determined by state, i.e. parent
   // this does not allow individual presets to decide what to prefix (see above)
 
@@ -371,106 +371,7 @@ var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPr
     styles: stylesAppended,
     prefixesToKeepGroups: prefixesToKeepGroups,
     prefixesToKeepGroupsSub: prefixesToKeepGroupsSub
-    // preSetIconNameNew,    // pre-load for editing
-    // preSetNameNew,        // pre-load for editing
   };
-};
-
-// const formatIcons = thisPreSet => {
-//   const icon =
-//     !thisPreSet.icon ? null :
-//       thisPreSet.icon ;
-//   const name =
-//     !thisPreSet.name ? null :
-//       thisPreSet.name ;
-//   return {
-//     preSetIconNameNew: icon,
-//     preSetNameNew: name,
-//   };
-// };
-
-var formatPreSetSelectorColumns = function formatPreSetSelectorColumns(cssStyleColorsNamed) {
-  // this is only the names of the colors to use for selectors
-  var cssStyleColorsNamedArray = [];
-  for (var key in cssStyleColorsNamed) {
-    cssStyleColorsNamedArray.push(key);
-  }
-  cssStyleColorsNamedArray.sort();
-  var preSetColumns = [{
-    key: 'color',
-    label: 'color',
-    type: 'color',
-    optionLabels: cssStyleColorsNamedArray,
-    optionValues: cssStyleColorsNamedArray,
-    defaultValue: 'red'
-  }, {
-    key: 'fill',
-    label: 'fill',
-    type: 'boolean',
-    optionLabels: ['true', 'false'],
-    optionValues: ['true', 'false'],
-    defaultValue: 'true'
-  }, {
-    key: 'opacityBackground',
-    label: 'fill opacity',
-    type: 'number',
-    step: 0.1,
-    min: 0,
-    max: 1,
-    defaultValue: 0.1
-  }, {
-    key: 'opacityBorder',
-    label: 'line opacity',
-    type: 'number',
-    step: 0.1,
-    min: 0,
-    max: 1,
-    defaultValue: 1
-  }, {
-    key: 'borderWidth',
-    label: 'line weight',
-    type: 'number',
-    step: 0.1,
-    min: 1,
-    max: 10,
-    defaultValue: 1
-  }, {
-    key: 'borderDash',
-    label: 'line type',
-    type: 'array',
-    optionLabels: ['solid', 'medium dashes', 'long dashes and gaps', 'medium dashes, short gaps', 'short dashes, long gaps', 'long dashes, short gaps'],
-    optionValues: ['', '10,10', '20,20', '10,5', '5,20', '20, 5'],
-    defaultValue: ''
-  }, {
-    key: 'pointBorderWidth',
-    label: 'point size',
-    type: 'number',
-    step: 0.1,
-    min: 1,
-    max: 10,
-    defaultValue: 1
-  }, {
-    key: 'opacityPoint',
-    label: 'point opacity',
-    type: 'number',
-    step: 0.1,
-    min: 0,
-    max: 1,
-    defaultValue: 1
-  }];
-  return {
-    preSetColumns: preSetColumns,
-    cssStyleColorsNamedArray: cssStyleColorsNamedArray
-  };
-};
-
-var createPreSetGlobalPalettes = function createPreSetGlobalPalettes() {
-  var colors = listBright();
-  var preSetGlobalPalettes = {};
-  colors.forEach(function (color) {
-    preSetGlobalPalettes[color] = createMonoChrome(color);
-  });
-  return preSetGlobalPalettes;
 };
 
 var selectDefaultPreSet = function selectDefaultPreSet(preSets, graphName) {
@@ -502,8 +403,5 @@ module.exports = {
   assignPreSetGroupColors: assignPreSetGroupColors,
   formatGroupsStyles: formatGroupsStyles,
   extractSettingsFromPreSet: extractSettingsFromPreSet,
-  // formatIcons,
-  formatPreSetSelectorColumns: formatPreSetSelectorColumns,
-  createPreSetGlobalPalettes: createPreSetGlobalPalettes,
   selectDefaultPreSet: selectDefaultPreSet
 };

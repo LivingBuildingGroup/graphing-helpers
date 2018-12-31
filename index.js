@@ -8,7 +8,8 @@ const palettes   = require('./build/palettes');
 const layers     = require('./build/layers');
 const controls   = require('./build/controls');
 const preSetEdit = require('./build/pre-set-edit');
-const preSetLoad = require('./build/pre-set-load');
+const preSetExtr = require('./build/pre-set-extract');
+const preSetSel  = require('./build/pre-set-selectors');
 
 module.exports = Object.assign({},
   graphs,
@@ -19,5 +20,6 @@ module.exports = Object.assign({},
   layers,
   controls,
   preSetEdit,
-  preSetLoad
+  preSetExtr,
+  preSetSel
 );

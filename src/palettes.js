@@ -477,6 +477,15 @@ const createNamed = option => {
   return namedColors;
 };
 
+const createPreSetGlobalPalettes = () => {
+  const colors = listBright();
+  const preSetGlobalPalettes = {};
+  colors.forEach(color=>{
+    preSetGlobalPalettes[color] = createMonoChrome(color);
+  });
+  return preSetGlobalPalettes;
+};
+
 module.exports = {
   general14,
   createBright7,
@@ -498,4 +507,5 @@ module.exports = {
   createPalette23,
   selectPalette,
   createNamed,
+  createPreSetGlobalPalettes
 };
