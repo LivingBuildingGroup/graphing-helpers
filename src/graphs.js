@@ -12,6 +12,8 @@ const indexAbbrev = 0;
 const indexLabel  = 1;
 const indexUnit   = 2;
 
+const { createLayerSelectors } = require('./layers');
+
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
 const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
@@ -880,6 +882,22 @@ const createGraph = input => {
   };
 };
 
+const createGraphInfoOnGroupOrMount = state => {
+  const newState = Object.assign({},
+    state,
+    {
+      dataType: 1,
+      dataType1Processed: parseDataType1(state)
+    }
+  );
+  const layerSelectors = createLayerSelectors(newState);
+  const newState2 = Object.assign({},
+    newState,
+    layerSelectors
+  );
+  return newState2;
+};
+
 module.exports = { 
   // data
   parseDataArraysByKeys,
@@ -907,4 +925,6 @@ module.exports = {
   createGraphOptions,
   checkForGraphRefresh,
   createGraph,
+
+  createGraphInfoOnGroupOrMount,
 };

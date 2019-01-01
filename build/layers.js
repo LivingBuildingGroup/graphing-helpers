@@ -3,7 +3,10 @@
 var _require = require('conjunction-junction'),
     addAllItemsToArray = _require.addAllItemsToArray,
     removeAllItemsFromArray = _require.removeAllItemsFromArray,
-    isObjectLiteral = _require.isObjectLiteral;
+    isObjectLiteral = _require.isObjectLiteral,
+    immutableArraySplice = _require.immutableArraySplice,
+    immutableArrayInsert = _require.immutableArrayInsert,
+    subArrayByKey = _require.subArrayByKey;
 
 var unPrefixLayers = function unPrefixLayers(layers, prefixesToKeep) {
   var pre2K = Array.isArray(prefixesToKeep) ? prefixesToKeep : [];
@@ -88,9 +91,134 @@ var toggleLayerGroup = function toggleLayerGroup(state, groupOfLayers) {
   return layersSelected;
 };
 
+var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
+  var data = input.data,
+      units = input.units,
+      abbrevs = input.abbrevs,
+      labels = input.labels;
+
+  // always receiving dataType1Processed
+
+  var oneUnit = data[0];
+
+  var legendObject = {};
+  var layersAllTemp = [];
+  var layersThatHaveUnitsTemp = [];
+
+  for (var layer in oneUnit) {
+    var split = layer.split('__');
+    var unPrefix = split[split.length - 1];
+    layersAllTemp.push({ unPrefix: unPrefix, layer: layer });
+    if (units[unPrefix]) {
+      var prefixes = split.length > 1 ? split.slice(0, split.length - 1) : [];
+      var prefixesFormatted = prefixes.length > 0 ? prefixes.join(' ') + ' ' : '';
+      layersThatHaveUnitsTemp.push({ unPrefix: unPrefix, layer: layer });
+      legendObject[layer] = ['' + prefixesFormatted + abbrevs[unPrefix], '' + prefixesFormatted + labels[unPrefix], units[unPrefix]];
+    }
+  }
+
+  // sort by unprefixed layers so that like layers (e.g. "rain") are grouped, not like groups (e.g. "test 52")
+  layersAllTemp.sort(function (a, b) {
+    return a.unPrefix > b.unPrefix;
+  });
+  layersThatHaveUnitsTemp.sort(function (a, b) {
+    return a.unPrefix > b.unPrefix;
+  });
+  var layersAllPrefixed = layersAllTemp.map(function (l) {
+    return l.layer;
+  });
+  var layersThatHaveUnits = layersThatHaveUnitsTemp.map(function (l) {
+    return l.layer;
+  });
+
+  return {
+    layersThatHaveUnits: layersThatHaveUnits,
+    layersAllPrefixed: layersAllPrefixed,
+    legendObject: legendObject
+  };
+};
+
+var createLayerSelectors = function createLayerSelectors(state) {
+  var _createLayerSelectors = createLayerSelectorsInner({
+    data: state.dataType1Processed,
+    groups: state.groups,
+    groupsSub: state.groupsSub,
+    layersRawPrefixCount: state.layersRawPrefixCount,
+    units: state.legendUnits,
+    abbrevs: state.legendAbbrevs,
+    labels: state.legendLabels
+  }),
+      layersThatHaveUnits = _createLayerSelectors.layersThatHaveUnits,
+      layersAllPrefixed = _createLayerSelectors.layersAllPrefixed,
+      legendObject = _createLayerSelectors.legendObject;
+
+  var _groupLayersByUnit = groupLayersByUnit(layersThatHaveUnits, legendObject, undefined.state.indexUnits),
+      layersGroupedByUnits = _groupLayersByUnit.layersGroupedByUnits,
+      layerUnitsArray = _groupLayersByUnit.layerUnitsArray;
+
+  return {
+    layersThatHaveUnits: layersThatHaveUnits,
+    layersAllPrefixed: layersAllPrefixed,
+    legendObject: legendObject,
+    layersGroupedByUnits: layersGroupedByUnits,
+    layerUnitsArray: layerUnitsArray
+  };
+};
+
+var createLayersSelected = function createLayersSelected(key, layersSelected) {
+  console.log(14, 'createLayersSelected, with key', key);
+  if (!key) return;
+  var indexSelected = layersSelected.findIndex(function (s) {
+    return s === key;
+  });
+  var newLayersSelected = indexSelected >= 0 ? immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
+  immutableArrayInsert(null, layersSelected, key); // not selected, so add it
+  if (!Array.isArray(layersSelected)) {
+    // make sure at least 1 key is selected
+    console.warn('No keys are selected. Cancelling');
+    return;
+  } else if (layersSelected.length <= 0) {
+    console.warn('At least one key must be selected. Cancelling');
+    return;
+  }
+  return newLayersSelected;
+};
+
+var createGroupByData = function createGroupByData(theKey, dataType1Raw) {
+  console.log(6);
+  // convert data type 1 to type 2
+  if (!theKey) return;
+
+  var _subArrayByKey = subArrayByKey(dataType1Raw, theKey),
+      groupBy = _subArrayByKey.groupBy,
+      arraysOfDataObjects = _subArrayByKey.arraysOfDataObjects,
+      arrayOfDataGroups = _subArrayByKey.arrayOfDataGroups;
+
+  return {
+    dataType2Raw: arraysOfDataObjects,
+    dataConvertFrom: 2,
+    groupBy: groupBy,
+    groups: arrayOfDataGroups,
+    groupTrue: true
+  };
+};
+
+var parseDefaultLayerSelection = function parseDefaultLayerSelection(state) {
+  var firstLayerOnList = calcFirstLayerOnList(state);
+  var layersSelected = createLayersSelected(firstLayerOnList, state.layersSelected);
+  return {
+    firstLayerOnList: firstLayerOnList,
+    layersSelected: layersSelected
+  };
+};
+
 module.exports = {
   unPrefixLayers: unPrefixLayers,
   groupLayersByUnit: groupLayersByUnit,
   calcFirstLayerOnList: calcFirstLayerOnList,
-  toggleLayerGroup: toggleLayerGroup
+  toggleLayerGroup: toggleLayerGroup,
+  createLayerSelectors: createLayerSelectors,
+  createLayerSelectorsInner: createLayerSelectorsInner,
+  createLayersSelected: createLayersSelected,
+  parseDefaultLayerSelection: parseDefaultLayerSelection
 };

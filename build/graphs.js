@@ -15,6 +15,9 @@ var indexAbbrev = 0;
 var indexLabel = 1;
 var indexUnit = 2;
 
+var _require2 = require('./layers'),
+    createLayerSelectors = _require2.createLayerSelectors;
+
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
 var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, layersArray) {
@@ -748,6 +751,16 @@ var createGraph = function createGraph(input) {
   };
 };
 
+var createGraphInfoOnGroupOrMount = function createGraphInfoOnGroupOrMount(state) {
+  var newState = Object.assign({}, state, {
+    dataType: 1,
+    dataType1Processed: parseDataType1(state)
+  });
+  var layerSelectors = createLayerSelectors(newState);
+  var newState2 = Object.assign({}, newState, layerSelectors);
+  return newState2;
+};
+
 module.exports = {
   // data
   parseDataArraysByKeys: parseDataArraysByKeys,
@@ -774,5 +787,7 @@ module.exports = {
   // options
   createGraphOptions: createGraphOptions,
   checkForGraphRefresh: checkForGraphRefresh,
-  createGraph: createGraph
+  createGraph: createGraph,
+
+  createGraphInfoOnGroupOrMount: createGraphInfoOnGroupOrMount
 };

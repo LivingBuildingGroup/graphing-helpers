@@ -4,6 +4,9 @@ const {
   addAllItemsToArray,
   removeAllItemsFromArray,
   isObjectLiteral,
+  immutableArraySplice,
+  immutableArrayInsert,
+  subArrayByKey,
 } = require('conjunction-junction');
 
 const unPrefixLayers = (layers, prefixesToKeep) => {
@@ -114,9 +117,134 @@ const toggleLayerGroup = (state, groupOfLayers) => {
   return layersSelected;
 };
 
+const createLayerSelectorsInner = input => {
+
+  const {
+    data,
+    units,
+    abbrevs,
+    labels,
+  } = input;
+
+  // always receiving dataType1Processed
+  const oneUnit = data[0] ;
+
+  const legendObject       = {};
+  const layersAllTemp      = [];
+  const layersThatHaveUnitsTemp= [];
+
+  for(let layer in oneUnit){
+    const split = layer.split('__');
+    const unPrefix = split[split.length-1];
+    layersAllTemp.push({unPrefix, layer});
+    if(units[unPrefix]){
+      const prefixes = split.length > 1 ? split.slice(0,split.length-1) : [] ;
+      const prefixesFormatted = prefixes.length > 0 ? `${prefixes.join(' ')} ` : '' ;
+      layersThatHaveUnitsTemp.push({unPrefix, layer});
+      legendObject[layer] = [
+        `${prefixesFormatted}${abbrevs[unPrefix]}`, 
+        `${prefixesFormatted}${labels[unPrefix]}`, 
+        units[unPrefix],
+      ];
+    }
+  }
+
+  // sort by unprefixed layers so that like layers (e.g. "rain") are grouped, not like groups (e.g. "test 52")
+  layersAllTemp.sort(          (a,b)=>a.unPrefix>b.unPrefix);
+  layersThatHaveUnitsTemp.sort((a,b)=>a.unPrefix>b.unPrefix);
+  const layersAllPrefixed   = layersAllTemp.map(l=>l.layer);
+  const layersThatHaveUnits = layersThatHaveUnitsTemp.map(l=>l.layer);
+
+  return {
+    layersThatHaveUnits,
+    layersAllPrefixed,
+    legendObject,
+  };
+
+};
+
+const createLayerSelectors = state => {
+
+  const {
+    layersThatHaveUnits, // all layers with units, available for selection
+    layersAllPrefixed,      // all layers, regardless of unit or selection capability, such as ids and timestamps
+    legendObject,
+  } = createLayerSelectorsInner({
+    data:                state.dataType1Processed,
+    groups:              state.groups,
+    groupsSub:           state.groupsSub,
+    layersRawPrefixCount:state.layersRawPrefixCount,
+    units:               state.legendUnits,
+    abbrevs:             state.legendAbbrevs,
+    labels:              state.legendLabels,
+  });
+
+  const {
+    layersGroupedByUnits,
+    layerUnitsArray
+  } = groupLayersByUnit(layersThatHaveUnits, legendObject, this.state.indexUnits);
+
+  return {
+    layersThatHaveUnits, 
+    layersAllPrefixed,
+    legendObject,
+    layersGroupedByUnits,
+    layerUnitsArray,
+  };
+};
+
+const createLayersSelected = (key, layersSelected) => {
+  console.log(14, 'createLayersSelected, with key', key);
+  if(!key) return;
+  const indexSelected = layersSelected.findIndex(s=>s===key);
+  const newLayersSelected =
+    indexSelected >= 0 ? 
+    immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
+    immutableArrayInsert(null, layersSelected, key); // not selected, so add it
+  if(!Array.isArray(layersSelected)){ // make sure at least 1 key is selected
+    console.warn('No keys are selected. Cancelling');
+    return;
+  } else if(layersSelected.length <= 0){
+    console.warn('At least one key must be selected. Cancelling');
+    return;
+  }
+  return newLayersSelected;
+};
+
+const createGroupByData = (theKey, dataType1Raw) => {
+  console.log(6);
+  // convert data type 1 to type 2
+  if(!theKey) return;
+  const {
+    groupBy,
+    arraysOfDataObjects,  // arrays is parallel with values; i.e. arrays[0] is an array for 35, arrays[1] is an array for 36;
+    arrayOfDataGroups, // values: values of keys, e.g. if we find id_test: 35, 36, the array will be [35, 36];
+  } = subArrayByKey(dataType1Raw, theKey);
+  return {
+    dataType2Raw:        arraysOfDataObjects,
+    dataConvertFrom:     2,
+    groupBy,
+    groups:              arrayOfDataGroups,
+    groupTrue:           true,
+  };
+};
+
+const parseDefaultLayerSelection = state => {
+  const firstLayerOnList = calcFirstLayerOnList(state);
+  const layersSelected = createLayersSelected(firstLayerOnList, state.layersSelected);
+  return {
+    firstLayerOnList,
+    layersSelected,
+  };
+};
+
 module.exports = {
   unPrefixLayers,
   groupLayersByUnit,
   calcFirstLayerOnList,
   toggleLayerGroup,
+  createLayerSelectors,
+  createLayerSelectorsInner,
+  createLayersSelected,
+  parseDefaultLayerSelection,
 };

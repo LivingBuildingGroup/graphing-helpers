@@ -272,22 +272,23 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
       styles = input.styles,
       thisPreSet = input.thisPreSet;
 
+  console.log('layersAllPrefixed', layersAllPrefixed);
   console.log('styles as input to formatGroupsStyles', styles);
   console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
   // START BACK HERE --- STYLES ARE DEFAULTING TO EMPTY !!!!
   var isGrouped = groupTrue && Array.isArray(groups);
 
   var defaultObject = {
-    stylesAppended: styles,
+    stylesAppended: styles || {},
     newGroupColors: {},
     groupDotColors: {}
   };
   if (!isObjectLiteral(thisPreSet)) {
     // i.e. no material to read from
-    return Object.assign({}, defaultObject, { stylesAppended: {} });
+    return defaultObject;
   } else if (!isObjectLiteral(thisPreSet.styles)) {
     // i.e. no material to read from
-    return Object.assign({}, defaultObject, { stylesAppended: {} });
+    return defaultObject;
   } else if (!isGrouped && thisPreSet.useOnlyExplicitStylesWhenUngrouped) {
     // preSets may declare that when not grouped, ONLY explicit styles shall be used
     // this allows preSets to save specific styles for individual graphs
