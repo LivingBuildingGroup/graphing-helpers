@@ -342,7 +342,7 @@ const formatGroupsStyles = input => {
   };
 };
 
-const extractSettingsFromPreSet = (state, thisPreSet, id) => {
+const unpackPreSet = (state, thisPreSet, id) => {
   const { 
     groupTrue, 
     groups,
@@ -353,7 +353,7 @@ const extractSettingsFromPreSet = (state, thisPreSet, id) => {
     layersAllPrefixed,
     styles,
   } = state;
-  console.log('state in extractSettingsFromPreSet', state);
+  console.log('state in unpackPreSet', state);
   const {
     selectorsRemaining,
     selectors      } = formatSelectors(
@@ -430,6 +430,6 @@ module.exports = {
   formatAllStyles,
   assignPreSetGroupColors,
   formatGroupsStyles,
-  extractSettingsFromPreSet,
+  unpackPreSet,
   selectDefaultPreSet,
 };

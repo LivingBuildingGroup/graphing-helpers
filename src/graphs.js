@@ -884,45 +884,52 @@ const createGraph = input => {
 };
 
 const createGraphInfoOnGroupOrMount = state => {
+  const data = {
+    dataType: 1,
+    dataType1Processed: parseDataType1(state),
+  };
   const newState = Object.assign({},
     state,
-    {
-      dataType: 1,
-      dataType1Processed: parseDataType1(state)
-    }
+    data
   );
   const layerSelectors = createLayerSelectors(newState);
-  const newState2 = Object.assign({},
-    newState,
+  /* createLayerSelectors returns
+    layersThatHaveUnits, 
+    layersAllPrefixed,
+    legendObject,
+    layersGroupedByUnits,
+    layerUnitsArray,
+  */
+  return Object.assign({},
+    data,
     layerSelectors
   );
-  return newState2;
 };
 
-const formatGraphKeysInput = changeInput => {
+const formatGraphKeysInput = (changeInput, state) => {
   // changeInput can include any of the keys below
   // keys are sent individually
   const defaultInput = {
-    layersSelected:    this.state.layersSelected,
-    xIdealTickSpacing: this.state.xIdealTickSpacing,
-    cssBackground:     this.state.cssBackground,
-    xStart:            this.state.xStart,
-    xEnd:              this.state.xEnd, 
-    legendPosition:    this.state.cssLegendPosition,
-    xLabel:            this.state.xLabel,
-    xLabelKey:         this.state.xLabelKey,
-    xLabelStartAt:     this.state.xLabelStartAt,
-    yAxisUnitOptions:  this.state.yAxisUnitOptions,
+    layersSelected:    state.layersSelected,
+    xIdealTickSpacing: state.xIdealTickSpacing,
+    cssBackground:     state.cssBackground,
+    xStart:            state.xStart,
+    xEnd:              state.xEnd, 
+    legendPosition:    state.cssLegendPosition,
+    xLabel:            state.xLabel,
+    xLabelKey:         state.xLabelKey,
+    xLabelStartAt:     state.xLabelStartAt,
+    yAxisUnitOptions:  state.yAxisUnitOptions,
   };
 
   const constantInputs = {
     // constant, never change
-    legendObject:           this.state.legendObject,
+    legendObject:           state.legendObject,
     // these are used to check for refresh
-    cssBackgroundPrior:     this.state.cssBackground,
-    graphOptionsPrior:      this.state.graphOptions,
-    dataType1Processed:     this.state.dataType1Processed,
-    xIdealTickSpacingPrior: this.state.xIdealTickSpacingPrior,
+    cssBackgroundPrior:     state.cssBackground,
+    graphOptionsPrior:      state.graphOptions,
+    dataType1Processed:     state.dataType1Processed,
+    xIdealTickSpacingPrior: state.xIdealTickSpacingPrior,
   };
 
   const input = Object.assign({},
@@ -933,9 +940,9 @@ const formatGraphKeysInput = changeInput => {
 
   input.stylesArray = createStylesArray(
     input.layersSelected,
-    this.state.styles,
-    this.state.cssStyleColorsNamed,
-    this.state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
+    state.styles,
+    state.cssStyleColorsNamed,
+    state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
   );
   // END INPUTS ~~~ UPDATA GRAPH KEYS
   return input;

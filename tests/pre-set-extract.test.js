@@ -12,7 +12,7 @@ const {
   formatAllStyles,
   assignPreSetGroupColors,
   formatGroupsStyles,
-  extractSettingsFromPreSet,
+  unpackPreSet,
   selectDefaultPreSet,} = require('../index');
 
 describe('pre-set-extract', ()=> { 
@@ -1676,7 +1676,7 @@ describe('pre-set-extract', ()=> {
     prefixesToKeepGroups: [],    
     prefixesToKeepGroupsSub: [],
   };
-  it('extractSettingsFromPreSet groupTrue = true', () => {
+  it('unpackPreSet groupTrue = true', () => {
     const thisPreSet = Object.assign({},
       formatPreSetToLoadPreSet,
       {
@@ -1692,10 +1692,10 @@ describe('pre-set-extract', ()=> {
       }
     );
     const expectedResult = formatPreSetToLoadExpectedResultGrouped;
-    const result = extractSettingsFromPreSet(input, thisPreSet, id);
+    const result = unpackPreSet(input, thisPreSet, id);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('extractSettingsFromPreSet groupTrue = false', () => {
+  it('unpackPreSet groupTrue = false', () => {
     const thisPreSet = Object.assign({},
       formatPreSetToLoadPreSet,
       {
@@ -1719,10 +1719,10 @@ describe('pre-set-extract', ()=> {
         ],
       }
     );
-    const result = extractSettingsFromPreSet(input, thisPreSet, id);
+    const result = unpackPreSet(input, thisPreSet, id);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('extractSettingsFromPreSet type is not group', () => {
+  it('unpackPreSet type is not group', () => {
     const thisPreSet = Object.assign({},
       formatPreSetToLoadPreSet,
       {
@@ -1746,10 +1746,10 @@ describe('pre-set-extract', ()=> {
         ],
       }
     );
-    const result = extractSettingsFromPreSet(input, thisPreSet, id);
+    const result = unpackPreSet(input, thisPreSet, id);
     expect(result).to.deep.equal(expectedResult);
   });
-  it('extractSettingsFromPreSet explicit only', () => {
+  it('unpackPreSet explicit only', () => {
     const thisPreSet = Object.assign({},
       formatPreSetToLoadPreSet,
       {
@@ -1809,7 +1809,7 @@ describe('pre-set-extract', ()=> {
       prefixesToKeepGroups: [],  
       prefixesToKeepGroupsSub: [],  
     };
-    const result = extractSettingsFromPreSet(input, thisPreSet, id);
+    const result = unpackPreSet(input, thisPreSet, id);
     expect(result).to.deep.equal(expectedResult);
   });
 

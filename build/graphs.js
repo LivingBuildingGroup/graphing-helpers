@@ -755,44 +755,51 @@ var createGraph = function createGraph(input) {
 };
 
 var createGraphInfoOnGroupOrMount = function createGraphInfoOnGroupOrMount(state) {
-  var newState = Object.assign({}, state, {
+  var data = {
     dataType: 1,
     dataType1Processed: parseDataType1(state)
-  });
+  };
+  var newState = Object.assign({}, state, data);
   var layerSelectors = createLayerSelectors(newState);
-  var newState2 = Object.assign({}, newState, layerSelectors);
-  return newState2;
+  /* createLayerSelectors returns
+    layersThatHaveUnits, 
+    layersAllPrefixed,
+    legendObject,
+    layersGroupedByUnits,
+    layerUnitsArray,
+  */
+  return Object.assign({}, data, layerSelectors);
 };
 
-var formatGraphKeysInput = function formatGraphKeysInput(changeInput) {
+var formatGraphKeysInput = function formatGraphKeysInput(changeInput, state) {
   // changeInput can include any of the keys below
   // keys are sent individually
   var defaultInput = {
-    layersSelected: undefined.state.layersSelected,
-    xIdealTickSpacing: undefined.state.xIdealTickSpacing,
-    cssBackground: undefined.state.cssBackground,
-    xStart: undefined.state.xStart,
-    xEnd: undefined.state.xEnd,
-    legendPosition: undefined.state.cssLegendPosition,
-    xLabel: undefined.state.xLabel,
-    xLabelKey: undefined.state.xLabelKey,
-    xLabelStartAt: undefined.state.xLabelStartAt,
-    yAxisUnitOptions: undefined.state.yAxisUnitOptions
+    layersSelected: state.layersSelected,
+    xIdealTickSpacing: state.xIdealTickSpacing,
+    cssBackground: state.cssBackground,
+    xStart: state.xStart,
+    xEnd: state.xEnd,
+    legendPosition: state.cssLegendPosition,
+    xLabel: state.xLabel,
+    xLabelKey: state.xLabelKey,
+    xLabelStartAt: state.xLabelStartAt,
+    yAxisUnitOptions: state.yAxisUnitOptions
   };
 
   var constantInputs = {
     // constant, never change
-    legendObject: undefined.state.legendObject,
+    legendObject: state.legendObject,
     // these are used to check for refresh
-    cssBackgroundPrior: undefined.state.cssBackground,
-    graphOptionsPrior: undefined.state.graphOptions,
-    dataType1Processed: undefined.state.dataType1Processed,
-    xIdealTickSpacingPrior: undefined.state.xIdealTickSpacingPrior
+    cssBackgroundPrior: state.cssBackground,
+    graphOptionsPrior: state.graphOptions,
+    dataType1Processed: state.dataType1Processed,
+    xIdealTickSpacingPrior: state.xIdealTickSpacingPrior
   };
 
   var input = Object.assign({}, defaultInput, changeInput, constantInputs);
 
-  input.stylesArray = createStylesArray(input.layersSelected, undefined.state.styles, undefined.state.cssStyleColorsNamed, undefined.state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
+  input.stylesArray = createStylesArray(input.layersSelected, state.styles, state.cssStyleColorsNamed, state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
   );
   // END INPUTS ~~~ UPDATA GRAPH KEYS
   return input;

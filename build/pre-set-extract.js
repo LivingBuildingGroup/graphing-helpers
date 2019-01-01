@@ -322,7 +322,7 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
   };
 };
 
-var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPreSet, id) {
+var unpackPreSet = function unpackPreSet(state, thisPreSet, id) {
   var groupTrue = state.groupTrue,
       groups = state.groups,
       groupColors = state.groupColors,
@@ -332,7 +332,7 @@ var extractSettingsFromPreSet = function extractSettingsFromPreSet(state, thisPr
       layersAllPrefixed = state.layersAllPrefixed,
       styles = state.styles;
 
-  console.log('state in extractSettingsFromPreSet', state);
+  console.log('state in unpackPreSet', state);
 
   var _formatSelectors = formatSelectors(thisPreSet, groupTrue, groups),
       selectorsRemaining = _formatSelectors.selectorsRemaining,
@@ -401,6 +401,6 @@ module.exports = {
   formatAllStyles: formatAllStyles,
   assignPreSetGroupColors: assignPreSetGroupColors,
   formatGroupsStyles: formatGroupsStyles,
-  extractSettingsFromPreSet: extractSettingsFromPreSet,
+  unpackPreSet: unpackPreSet,
   selectDefaultPreSet: selectDefaultPreSet
 };
