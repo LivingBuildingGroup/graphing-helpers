@@ -13,6 +13,7 @@ const indexLabel  = 1;
 const indexUnit   = 2;
 
 const { createLayerSelectors } = require('./layers');
+const { createStylesArray }    = require('./styles');
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
@@ -898,6 +899,48 @@ const createGraphInfoOnGroupOrMount = state => {
   return newState2;
 };
 
+const formatGraphKeysInput = changeInput => {
+  // changeInput can include any of the keys below
+  // keys are sent individually
+  const defaultInput = {
+    layersSelected:    this.state.layersSelected,
+    xIdealTickSpacing: this.state.xIdealTickSpacing,
+    cssBackground:     this.state.cssBackground,
+    xStart:            this.state.xStart,
+    xEnd:              this.state.xEnd, 
+    legendPosition:    this.state.cssLegendPosition,
+    xLabel:            this.state.xLabel,
+    xLabelKey:         this.state.xLabelKey,
+    xLabelStartAt:     this.state.xLabelStartAt,
+    yAxisUnitOptions:  this.state.yAxisUnitOptions,
+  };
+
+  const constantInputs = {
+    // constant, never change
+    legendObject:           this.state.legendObject,
+    // these are used to check for refresh
+    cssBackgroundPrior:     this.state.cssBackground,
+    graphOptionsPrior:      this.state.graphOptions,
+    dataType1Processed:     this.state.dataType1Processed,
+    xIdealTickSpacingPrior: this.state.xIdealTickSpacingPrior,
+  };
+
+  const input = Object.assign({},
+    defaultInput,
+    changeInput,
+    constantInputs
+  );
+
+  input.stylesArray = createStylesArray(
+    input.layersSelected,
+    this.state.styles,
+    this.state.cssStyleColorsNamed,
+    this.state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
+  );
+  // END INPUTS ~~~ UPDATA GRAPH KEYS
+  return input;
+};
+
 module.exports = { 
   // data
   parseDataArraysByKeys,
@@ -927,4 +970,5 @@ module.exports = {
   createGraph,
 
   createGraphInfoOnGroupOrMount,
+  formatGraphKeysInput,
 };

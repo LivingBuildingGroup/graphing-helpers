@@ -29,7 +29,11 @@ const {
   // options
   createGraphOptions,
   checkForGraphRefresh,
-  createGraph,} = require('../index');
+  createGraph,
+  
+  createGraphInfoOnGroupOrMount,
+  formatGraphKeysInput,
+} = require('../index');
 
 describe('graphs', ()=> { 
 

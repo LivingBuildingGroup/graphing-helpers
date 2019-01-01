@@ -507,5 +507,5 @@ module.exports = {
   createPalette23,
   selectPalette,
   createNamed,
-  createPreSetGlobalPalettes
+  createPreSetGlobalPalettes,
 };

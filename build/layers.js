@@ -152,7 +152,7 @@ var createLayerSelectors = function createLayerSelectors(state) {
       layersAllPrefixed = _createLayerSelectors.layersAllPrefixed,
       legendObject = _createLayerSelectors.legendObject;
 
-  var _groupLayersByUnit = groupLayersByUnit(layersThatHaveUnits, legendObject, undefined.state.indexUnits),
+  var _groupLayersByUnit = groupLayersByUnit(layersThatHaveUnits, legendObject, state.indexUnits),
       layersGroupedByUnits = _groupLayersByUnit.layersGroupedByUnits,
       layerUnitsArray = _groupLayersByUnit.layerUnitsArray;
 
@@ -166,11 +166,10 @@ var createLayerSelectors = function createLayerSelectors(state) {
 };
 
 var createLayersSelected = function createLayersSelected(key, layersSelected) {
-  console.log(14, 'createLayersSelected, with key', key);
   if (!key) return;
-  var indexSelected = layersSelected.findIndex(function (s) {
+  var indexSelected = Array.isArray(layersSelected) ? layersSelected.findIndex(function (s) {
     return s === key;
-  });
+  }) : -1;
   var newLayersSelected = indexSelected >= 0 ? immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
   immutableArrayInsert(null, layersSelected, key); // not selected, so add it
   if (!Array.isArray(layersSelected)) {
@@ -185,7 +184,6 @@ var createLayersSelected = function createLayersSelected(key, layersSelected) {
 };
 
 var createGroupByData = function createGroupByData(theKey, dataType1Raw) {
-  console.log(6);
   // convert data type 1 to type 2
   if (!theKey) return;
 
@@ -220,5 +218,6 @@ module.exports = {
   createLayerSelectors: createLayerSelectors,
   createLayerSelectorsInner: createLayerSelectorsInner,
   createLayersSelected: createLayersSelected,
+  createGroupByData: createGroupByData,
   parseDefaultLayerSelection: parseDefaultLayerSelection
 };

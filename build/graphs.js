@@ -18,6 +18,9 @@ var indexUnit = 2;
 var _require2 = require('./layers'),
     createLayerSelectors = _require2.createLayerSelectors;
 
+var _require3 = require('./styles'),
+    createStylesArray = _require3.createStylesArray;
+
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
 var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, layersArray) {
@@ -761,6 +764,40 @@ var createGraphInfoOnGroupOrMount = function createGraphInfoOnGroupOrMount(state
   return newState2;
 };
 
+var formatGraphKeysInput = function formatGraphKeysInput(changeInput) {
+  // changeInput can include any of the keys below
+  // keys are sent individually
+  var defaultInput = {
+    layersSelected: undefined.state.layersSelected,
+    xIdealTickSpacing: undefined.state.xIdealTickSpacing,
+    cssBackground: undefined.state.cssBackground,
+    xStart: undefined.state.xStart,
+    xEnd: undefined.state.xEnd,
+    legendPosition: undefined.state.cssLegendPosition,
+    xLabel: undefined.state.xLabel,
+    xLabelKey: undefined.state.xLabelKey,
+    xLabelStartAt: undefined.state.xLabelStartAt,
+    yAxisUnitOptions: undefined.state.yAxisUnitOptions
+  };
+
+  var constantInputs = {
+    // constant, never change
+    legendObject: undefined.state.legendObject,
+    // these are used to check for refresh
+    cssBackgroundPrior: undefined.state.cssBackground,
+    graphOptionsPrior: undefined.state.graphOptions,
+    dataType1Processed: undefined.state.dataType1Processed,
+    xIdealTickSpacingPrior: undefined.state.xIdealTickSpacingPrior
+  };
+
+  var input = Object.assign({}, defaultInput, changeInput, constantInputs);
+
+  input.stylesArray = createStylesArray(input.layersSelected, undefined.state.styles, undefined.state.cssStyleColorsNamed, undefined.state.cssRgbArray // this is a default, ignored if 2 prior keys are satisfactory
+  );
+  // END INPUTS ~~~ UPDATA GRAPH KEYS
+  return input;
+};
+
 module.exports = {
   // data
   parseDataArraysByKeys: parseDataArraysByKeys,
@@ -789,5 +826,6 @@ module.exports = {
   checkForGraphRefresh: checkForGraphRefresh,
   createGraph: createGraph,
 
-  createGraphInfoOnGroupOrMount: createGraphInfoOnGroupOrMount
+  createGraphInfoOnGroupOrMount: createGraphInfoOnGroupOrMount,
+  formatGraphKeysInput: formatGraphKeysInput
 };

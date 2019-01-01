@@ -182,7 +182,7 @@ const createLayerSelectors = state => {
   const {
     layersGroupedByUnits,
     layerUnitsArray
-  } = groupLayersByUnit(layersThatHaveUnits, legendObject, this.state.indexUnits);
+  } = groupLayersByUnit(layersThatHaveUnits, legendObject, state.indexUnits);
 
   return {
     layersThatHaveUnits, 
@@ -194,13 +194,12 @@ const createLayerSelectors = state => {
 };
 
 const createLayersSelected = (key, layersSelected) => {
-  console.log(14, 'createLayersSelected, with key', key);
   if(!key) return;
-  const indexSelected = layersSelected.findIndex(s=>s===key);
+  const indexSelected = Array.isArray(layersSelected) ? layersSelected.findIndex(s=>s===key) : -1 ;
   const newLayersSelected =
     indexSelected >= 0 ? 
-    immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
-    immutableArrayInsert(null, layersSelected, key); // not selected, so add it
+      immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
+      immutableArrayInsert(null, layersSelected, key); // not selected, so add it
   if(!Array.isArray(layersSelected)){ // make sure at least 1 key is selected
     console.warn('No keys are selected. Cancelling');
     return;
@@ -212,7 +211,6 @@ const createLayersSelected = (key, layersSelected) => {
 };
 
 const createGroupByData = (theKey, dataType1Raw) => {
-  console.log(6);
   // convert data type 1 to type 2
   if(!theKey) return;
   const {
@@ -246,5 +244,6 @@ module.exports = {
   createLayerSelectors,
   createLayerSelectorsInner,
   createLayersSelected,
+  createGroupByData,
   parseDefaultLayerSelection,
 };

@@ -272,10 +272,8 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
       styles = input.styles,
       thisPreSet = input.thisPreSet;
 
-  console.log('layersAllPrefixed', layersAllPrefixed);
-  console.log('styles as input to formatGroupsStyles', styles);
+  console.log('input to formatGroupsStyles', styles);
   console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
-  // START BACK HERE --- STYLES ARE DEFAULTING TO EMPTY !!!!
   var isGrouped = groupTrue && Array.isArray(groups);
 
   var defaultObject = {

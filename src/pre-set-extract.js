@@ -291,10 +291,8 @@ const formatGroupsStyles = input => {
     layersAllPrefixed,
     styles,
     thisPreSet,  } = input;
-    console.log('layersAllPrefixed',layersAllPrefixed);
-    console.log('styles as input to formatGroupsStyles', styles);
-console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
-// START BACK HERE --- STYLES ARE DEFAULTING TO EMPTY !!!!
+  console.log('input to formatGroupsStyles', styles);
+  console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
   const isGrouped = groupTrue && Array.isArray(groups);
 
   const defaultObject = {

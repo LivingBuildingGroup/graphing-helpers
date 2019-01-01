@@ -5,168 +5,11 @@ const expect = chai.expect;
 
 const { 
   applyPreSetGlobalColorToStyles,
-  parseNameIdIconType,
   correctPrefixOfLayersSelected,
   editOnePreSetStyle,
-  formatPreSetToSave,} = require('../index');
+} = require('../index');
 
 describe('pre-set-edit', ()=> { 
-
-  it('parseNameIdIconType default return on state not an object', () => {
-    const state = 'not an object';
-    const expectedResult = {
-      id: undefined, 
-      name: 'preset', 
-      icon: 'puzzle', 
-      type: 'single',
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType most common new options', () => {
-    const state = {
-      preSetSaveType: 'new', 
-      preSets: {
-        '33' : {
-          name: 'preSet33',
-          icon: 'snake',
-        }
-      },
-      preSetIdActive: 44,
-      preSetNameNew: 'newName',
-      preSetIconOptions: ['cat','dog','rabbit'],
-      preSetIconNew: 'beaver',
-      preSetGroupEditMode: true,
-    };
-    const expectedResult = {
-      id:   null,      // b/c preSetSaveType = new
-      name: 'newName', // b/c new and specified
-      icon: 'beaver',  // b/c specified 
-      type: 'group'    // b/c preSetGroupEditMode = true
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType new default options', () => {
-    const state = {
-      preSetSaveType: 'new', 
-      preSets: {
-        '33' : {
-          name: 'preSet33',
-          icon: 'snake',
-        }
-      },
-      preSetIdActive: 44,
-      // preSetNameNew: 'newName',
-      preSetIconOptions: ['cat','dog','rabbit'],
-      // preSetIconNew: ,
-      preSetGroupEditMode: false,
-    };
-    const expectedResult = {
-      id:   null,      // b/c preSetSaveType = new
-      name: 'preset',  // b/c new and NOT specified
-      icon: 'cat',     // b/c NOT specified 
-      type: 'single'   // b/c preSetGroupEditMode = false
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType re-save existing options', () => {
-    const state = {
-      preSetSaveType: 'NOT new', 
-      preSets: {
-        '33' : {
-          name: 'preSet33',
-          icon: 'snake',
-        }
-      },
-      preSetIdActive: 33,
-      // preSetNameNew: 'newName',
-      preSetIconOptions: ['cat','dog','rabbit'],
-      // preSetIconNew: ,
-      preSetGroupEditMode: false,
-    };
-    const expectedResult = {
-      id:   33,        // b/c preSetSaveType = new
-      name: 'preSet33',// b/c existing and specified
-      icon: 'snake',   // b/c existing and specified 
-      type: 'single'   // b/c preSetGroupEditMode = false
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType re-save with updates', () => {
-    const state = {
-      preSetSaveType: 'NOT new', 
-      preSets: {
-        '33' : {
-          name: 'preSet33',
-          icon: 'snake',
-        }
-      },
-      preSetIdActive: 33,
-      preSetNameNew: 'NEW!',
-      preSetIconOptions: ['cat','dog','rabbit'],
-      preSetIconNew: 'banana',
-      preSetGroupEditMode: false,
-    };
-    const expectedResult = {
-      id:   33,        // b/c preSetSaveType = new
-      name: 'NEW!',    // b/c specified
-      icon: 'banana',  // b/c specified 
-      type: 'single'   // b/c preSetGroupEditMode = false
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType re-save default options', () => {
-    const state = {
-      preSetSaveType: 'NOT new', 
-      preSets: {
-        // '33' : {
-        //   name: 'preSet33',
-        //   icon: 'snake',
-        // }
-      },
-      preSetIdActive: 33,
-      // preSetNameNew: 'newName',
-      preSetIconOptions: ['cat','dog','rabbit'],
-      // preSetIconNew: ,
-      preSetGroupEditMode: false,
-    };
-    const expectedResult = {
-      id:   33,        // b/c preSetSaveType = new
-      name: 'preset',  // b/c existing but NOT specified
-      icon: 'cat',     // b/c existing but NOT specified 
-      type: 'single'   // b/c preSetGroupEditMode = false
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
-  it('parseNameIdIconType new save default options', () => {
-    const state = {
-      preSetSaveType: 'new', 
-      preSets: {
-        // '33' : {
-        //   name: 'preSet33',
-        //   icon: 'snake',
-        // }
-      },
-      preSetIdActive: 33,
-      // preSetNameNew: 'newName',
-      // preSetIconOptions: ['cat','dog','rabbit'],
-      // preSetIconNew: ,
-      preSetGroupEditMode: true,
-    };
-    const expectedResult = {
-      id:   null,      // b/c preSetSaveType = new
-      name: 'preset',  // b/c existing but NOT specified
-      icon: 'puzzle',  // b/c NOT specified 
-      type: 'group'    // b/c preSetGroupEditMode = true
-    };
-    const result = parseNameIdIconType(state);
-    expect(result).to.deep.equal(expectedResult);
-  });
 
   it('correctPrefixOfLayersSelected empty array if no state', () => {
     const state = 'not an object';
@@ -814,15 +657,6 @@ describe('pre-set-edit', ()=> {
       }  
     );
     const result = editOnePreSetStyle(input);
-    expect(result).to.deep.equal(expectedResult);
-  });
-
-  it.skip('formatPreSetToSave', () => {
-    const input = {};
-    const expectedResult = {
-      
-    };
-    const result = formatPreSetToSave(input);
     expect(result).to.deep.equal(expectedResult);
   });
 
