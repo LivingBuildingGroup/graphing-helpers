@@ -1,5 +1,3 @@
-'use strict';
-
 const {
   addAllItemsToArray,
   removeAllItemsFromArray,
@@ -9,7 +7,7 @@ const {
   subArrayByKey,
 } = require('conjunction-junction');
 
-const unPrefixLayers = (layers, prefixesToKeep) => {
+export const unPrefixLayers = (layers, prefixesToKeep) => {
   const pre2K = Array.isArray(prefixesToKeep) ? prefixesToKeep : [] ;
   const newLayerObj = {};
   layers.forEach(l=>{
@@ -31,7 +29,7 @@ const unPrefixLayers = (layers, prefixesToKeep) => {
   return newLayers;
 };
 
-const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
+export const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
   const layersGroupedByUnits = {};
   layersThatHaveUnits.forEach(key=>{
     const thisUnit =
@@ -63,7 +61,7 @@ const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
   };
 };
 
-const calcFirstLayerOnList = state => {
+export const calcFirstLayerOnList = state => {
   // find the first layer listed, which is used to toggle a single layer on as a default condition if there is no preSet
   // if layers are supplied, just read the first one
   // if layers are not supplied (something else is wrong), but at least try to find a layer
@@ -81,7 +79,7 @@ const calcFirstLayerOnList = state => {
   return firstLayerOnList;
 };
 
-const toggleLayerGroup = (state, groupOfLayers) => {
+export const toggleLayerGroup = (state, groupOfLayers) => {
   // add or remove an entire group of layer from the layers selected
   let action = 
     !Array.isArray(state.layersSelected) ?
@@ -117,7 +115,7 @@ const toggleLayerGroup = (state, groupOfLayers) => {
   return layersSelected;
 };
 
-const createLayerSelectorsInner = input => {
+export const createLayerSelectorsInner = input => {
 
   const {
     data,
@@ -163,7 +161,7 @@ const createLayerSelectorsInner = input => {
 
 };
 
-const createLayerSelectors = state => {
+export const createLayerSelectors = state => {
 
   const {
     layersThatHaveUnits, // all layers with units, available for selection
@@ -192,7 +190,7 @@ const createLayerSelectors = state => {
   };
 };
 
-const createLayersSelected = (key, layersSelected) => {
+export const createLayersSelected = (key, layersSelected) => {
   if(!key) return;
   const indexSelected = Array.isArray(layersSelected) ? layersSelected.findIndex(s=>s===key) : -1 ;
   const newLayersSelected =
@@ -209,7 +207,7 @@ const createLayersSelected = (key, layersSelected) => {
   return newLayersSelected;
 };
 
-const createGroupByData = (theKey, dataType1Raw) => {
+export const createGroupByData = (theKey, dataType1Raw) => {
   // convert data type 1 to type 2
   if(!theKey) return;
   const {
@@ -226,7 +224,7 @@ const createGroupByData = (theKey, dataType1Raw) => {
   };
 };
 
-const parseDefaultLayerSelection = state => {
+export const parseDefaultLayerSelection = state => {
   const firstLayerOnList = calcFirstLayerOnList(state);
   const layersSelected = createLayersSelected(firstLayerOnList, state.layersSelected);
   return {
@@ -235,14 +233,14 @@ const parseDefaultLayerSelection = state => {
   };
 };
 
-module.exports = {
-  unPrefixLayers,
-  groupLayersByUnit,
-  calcFirstLayerOnList,
-  toggleLayerGroup,
-  createLayerSelectors,
-  createLayerSelectorsInner,
-  createLayersSelected,
-  createGroupByData,
-  parseDefaultLayerSelection,
-};
+// export default {
+//   unPrefixLayers,
+//   groupLayersByUnit,
+//   calcFirstLayerOnList,
+//   toggleLayerGroup,
+//   createLayerSelectors,
+//   createLayerSelectorsInner,
+//   createLayersSelected,
+//   createGroupByData,
+//   parseDefaultLayerSelection,
+// };

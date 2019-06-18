@@ -1,11 +1,9 @@
-'use strict';
-
-const { 
-  isObjectLiteral, } = require('conjunction-junction');
+const { isObjectLiteral,
+} = require('conjunction-junction');
 const { listBright,
-  createPreSetGlobalPalettes } = require('palettes');
+  createPreSetGlobalPalettes } = require('./palettes');
 
-const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
+export const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
   const groups = Array.isArray(groupsRaw) ? groupsRaw : [] ;
   let selectors = [''];
   if(Array.isArray(thisPreSet.layersSelected)){
@@ -27,13 +25,13 @@ const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
     }
   }
   const selectorsRemaining = 
-      selectors.length <= 1 ? [] :
-        selectors.slice(1,selectors.length);
-  
+    selectors.length <= 1 ? [] :
+      selectors.slice(1,selectors.length);
+
   return { selectors, selectorsRemaining };
 };
-  
-const _validateFormatAllStylesInput = input => {
+
+export const _validateFormatAllStylesInput = input => {
   if(!isObjectLiteral(input)){
     return 'input is not an object';
   }
@@ -67,8 +65,8 @@ const _validateFormatAllStylesInput = input => {
   }
   return 'ok';
 };
-  
-const parseGroupsFromLayer = (layer, groups, groupsSub) => {
+
+export const parseGroupsFromLayer = (layer, groups, groupsSub) => {
   let group, groupSub;
   groups.forEach(g=>{
     if(layer.includes(`${g}__`)){
@@ -86,31 +84,31 @@ const parseGroupsFromLayer = (layer, groups, groupsSub) => {
   const s_ = s       ? `${s}__`      : '' ;
   return { g, g_, s, s_ };
 };
-  
-const selectBestStyleMatch = (thisPreSet, styles, layer, unPrefix, g_, s_) => {
+
+export const selectBestStyleMatch = (thisPreSet, styles, layer, unPrefix, g_, s_) => {
   const preSetStyle = isObjectLiteral(thisPreSet.styles) ? thisPreSet.styles : {} ;
   const s =
-      isObjectLiteral(preSetStyle[layer]) ?
-        Object.assign({},preSetStyle[layer]) : 
-        isObjectLiteral(preSetStyle[unPrefix]) ?
-          Object.assign({},preSetStyle[unPrefix]) : 
-          isObjectLiteral(preSetStyle[`${g_}${s_}${layer}`]) ?
-            Object.assign({},preSetStyle[`${g_}${s_}${layer}`]) : 
-            isObjectLiteral(preSetStyle[`${g_}${layer}`]) ?
-              Object.assign({},preSetStyle[`${g_}${layer}`]) : 
-              isObjectLiteral(preSetStyle[`${s_}${layer}`]) ?
-                Object.assign({},preSetStyle[`${s_}${layer}`]) : 
-                isObjectLiteral(styles[layer]) ?
-                  Object.assign({},styles[layer]) : 
-                  isObjectLiteral(styles[unPrefix]) ?
-                    Object.assign({},styles[unPrefix]) : 
-                    {style:{}} ;
-    // make nested style consistent
+    isObjectLiteral(preSetStyle[layer]) ?
+      Object.assign({},preSetStyle[layer]) : 
+      isObjectLiteral(preSetStyle[unPrefix]) ?
+        Object.assign({},preSetStyle[unPrefix]) : 
+        isObjectLiteral(preSetStyle[`${g_}${s_}${layer}`]) ?
+          Object.assign({},preSetStyle[`${g_}${s_}${layer}`]) : 
+          isObjectLiteral(preSetStyle[`${g_}${layer}`]) ?
+            Object.assign({},preSetStyle[`${g_}${layer}`]) : 
+            isObjectLiteral(preSetStyle[`${s_}${layer}`]) ?
+              Object.assign({},preSetStyle[`${s_}${layer}`]) : 
+              isObjectLiteral(styles[layer]) ?
+                Object.assign({},styles[layer]) : 
+                isObjectLiteral(styles[unPrefix]) ?
+                  Object.assign({},styles[unPrefix]) : 
+                  {style:{}} ;
+  // make nested style consistent
   s.style = isObjectLiteral(s.style) ? s.style : {} ;
   return s;
 };
-  
-const selectBestColorMatch = (thisStyle, newGroupColors, preSetGlobalPalettes, shade, group) => {
+
+export const selectBestColorMatch = (thisStyle, newGroupColors, preSetGlobalPalettes, shade, group) => {
   let color = isObjectLiteral(thisStyle) ? thisStyle.color : '80, 80, 80';
   // type check newGroupColors
   const ngc = isObjectLiteral(newGroupColors) ? newGroupColors : {} ;
@@ -129,8 +127,8 @@ const selectBestColorMatch = (thisStyle, newGroupColors, preSetGlobalPalettes, s
   color = color ? color : '80, 80, 80';
   return color;
 };
-  
-const formatAllStyles = input => {
+
+export const formatAllStyles = input => {
   const {
     layersAllPrefixed,
     groups, 
@@ -139,37 +137,37 @@ const formatAllStyles = input => {
     thisPreSet, 
     newGroupColors, 
     preSetGlobalPalettes } = input;
-  
+
   const validated = _validateFormatAllStylesInput(input);
   if(validated !== 'ok') return { message: validated };
-  
+
   const theseStyles = {};
-  
+
   layersAllPrefixed.forEach(layer=>{
     // double underscore denotes prefix
     const unPrefixedArr = layer.split('__');
     // un-prefixed layer is LAST part after last double-underscore.  We can have multiple prefixes.
     // e.g. "layer" >> "layer" ; "A__layer" >> "layer" ; "53__A__layer" >> "layer"
     const unPrefix = unPrefixedArr[unPrefixedArr.length-1];
-      
+    
     const { g, g_, s, s_} = parseGroupsFromLayer(layer, groups, groupsSub);
     const thisStyle = selectBestStyleMatch(thisPreSet, styles, layer, unPrefix, g_, s_);
     const shade = 
-        !isObjectLiteral(thisStyle.style) ? 
-          0 :
-          thisStyle.style.shade > 0 ?
-            thisStyle.style.shade : 
-            0 ;
+      !isObjectLiteral(thisStyle.style) ? 
+        0 :
+        thisStyle.style.shade > 0 ?
+          thisStyle.style.shade : 
+          0 ;
     thisStyle.color = selectBestColorMatch(thisStyle, newGroupColors, preSetGlobalPalettes, shade, g);
     theseStyles[layer] = thisStyle;
   });
-  
+
   return theseStyles;
 };
-  
-const prioritizeGroups = (groups, groupColors) => {
+
+export const prioritizeGroups = (groups, groupColors) => {
   const gc = isObjectLiteral(groupColors) ? groupColors : {} ;
-    
+  
   // list priorities
   // in the event of conflicts, the first request in the ordered array 'groups' is given first priority
   // if group color not already used
@@ -179,7 +177,7 @@ const prioritizeGroups = (groups, groupColors) => {
       gcPriority[gc[g]] = g; 
     }
   });
-  
+
   // sort groups according to priority
   const groups1 = [];
   const groups2 = [];
@@ -190,62 +188,62 @@ const prioritizeGroups = (groups, groupColors) => {
       groups2.push(g);
     }
   });
-    
+  
   return {
     groupsPrioritized: [...groups1, ...groups2],
     gc,
     gcPriority,
   };
 };
-  
-const assignPreSetGroupColors = input => {
+
+export const assignPreSetGroupColors = input => {
   const {
     groups, 
     groupColors, 
     preSetGlobalColorOptions,
     preSetGlobalPalettes, } = input;
-  
+
   const defaultReturn = {
     newGroupColors: {},
     groupDotColors: {},
   };
   if(!Array.isArray(groups)) return defaultReturn;
-    
+  
   const psgpFromUser = isObjectLiteral(preSetGlobalPalettes) ? preSetGlobalPalettes : {} ;
   const psgp = Object.assign({}, createPreSetGlobalPalettes(), psgpFromUser );
   const psgco = Array.isArray(preSetGlobalColorOptions) ? preSetGlobalColorOptions : listBright() ;
-  
+
   const defaultColor = '80, 80, 80';
   const colorsUsed     = {};
   const newGroupColors = {};
   const groupDotColors = {};
-  
+
   const {gc, 
     gcPriority, 
     groupsPrioritized } = prioritizeGroups(groups, groupColors);
-  
+
   const _useSpecifiedColor = _group => {
     // LOCAL MUTATING FUNCTION
     colorsUsed[gc[_group]] = true;
     newGroupColors[_group] = gc[_group];
     groupDotColors[_group] = 
-        Array.isArray(psgp[newGroupColors[_group]]) ? 
-          psgp[newGroupColors[_group]][0] : 
-          defaultColor;
+      Array.isArray(psgp[newGroupColors[_group]]) ? 
+        psgp[newGroupColors[_group]][0] : 
+        defaultColor;
   };
-  
+
   const _useDefaultColor = (_group, _color) => {
     // LOCAL MUTATING FUNCTION
     if(!colorsUsed[_color]){
       colorsUsed[_color]     = true;
       newGroupColors[_group] = _color;
       groupDotColors[_group] = 
-          Array.isArray(psgp[newGroupColors[_group]]) ? 
-            psgp[newGroupColors[_group]][0] : 
-            defaultColor;
+        Array.isArray(psgp[newGroupColors[_group]]) ? 
+          psgp[newGroupColors[_group]][0] : 
+          defaultColor;
     }
   };
-  
+
   // these run in priority order, so we don't need to check for priority during the loop
   groupsPrioritized.forEach(group=>{
     // if we did supply a group color
@@ -253,7 +251,7 @@ const assignPreSetGroupColors = input => {
       // prioritized fill up colors used first
       if(!colorsUsed[gc[group]]){
         _useSpecifiedColor(group);
-        // else if group color is already used (priority is used first)
+      // else if group color is already used (priority is used first)
       } else {
         psgco.forEach(color=>{
           if(!newGroupColors[group]){
@@ -261,7 +259,7 @@ const assignPreSetGroupColors = input => {
           }
         });
       }
-      // we did not supply a group color
+    // we did not supply a group color
     } else {
       psgco.forEach(color=>{
         if(!newGroupColors[group]){
@@ -279,8 +277,8 @@ const assignPreSetGroupColors = input => {
     groupDotColors,
   };
 };
-  
-const formatGroupsStyles = input => {
+
+export const formatGroupsStyles = input => {
   const {
     groupTrue, 
     groups, 
@@ -291,10 +289,10 @@ const formatGroupsStyles = input => {
     layersAllPrefixed,
     styles,
     thisPreSet,  } = input;
-    // console.log('input to formatGroupsStyles', styles);
-    // console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
+  // console.log('input to formatGroupsStyles', styles);
+  // console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
   const isGrouped = groupTrue && Array.isArray(groups);
-  
+
   const defaultObject = {
     stylesAppended:  styles || {},
     newGroupColors: {},
@@ -324,7 +322,7 @@ const formatGroupsStyles = input => {
     preSetGlobalPalettes,
     preSetGlobalColorOptions,
   });
-  
+
   const stylesAppended = formatAllStyles({
     groups, 
     groupsSub,
@@ -334,15 +332,15 @@ const formatGroupsStyles = input => {
     styles,
     thisPreSet, 
   });
-  
+
   return {
     newGroupColors,
     groupDotColors,
     stylesAppended,
   };
 };
-  
-const unpackPreSet = (state, thisPreSet, id) => {
+
+export const unpackPreSet = (state, thisPreSet, id) => {
   const { 
     groupTrue, 
     groups,
@@ -353,7 +351,7 @@ const unpackPreSet = (state, thisPreSet, id) => {
     layersAllPrefixed,
     styles,
   } = state;
-    // console.log('state in unpackPreSet', state);
+  // console.log('state in unpackPreSet', state);
   const {
     selectorsRemaining,
     selectors      } = formatSelectors(
@@ -375,21 +373,21 @@ const unpackPreSet = (state, thisPreSet, id) => {
     styles,
     layersAllPrefixed,
   });
-  
+
   // this prefixes as determined by state, i.e. parent
   // this does not allow individual presets to decide what to prefix (see above)
   const prefixesToKeepGroups =
-        !Array.isArray(state.groups) ? [] :
-          !state.preSetSaveSettings ? [] :
-            !state.preSetSaveSettings.prefixGroups ? [] :
-              state.groups ;
-  
+      !Array.isArray(state.groups) ? [] :
+        !state.preSetSaveSettings ? [] :
+          !state.preSetSaveSettings.prefixGroups ? [] :
+            state.groups ;
+
   const prefixesToKeepGroupsSub =
-        !Array.isArray(state.groupsSub) ? [] :
-          !state.preSetSaveSettings ? [] :
-            !state.preSetSaveSettings.prefixGroupsSub ? [] :
-              state.groupsSub ;
-  
+      !Array.isArray(state.groupsSub) ? [] :
+        !state.preSetSaveSettings ? [] :
+          !state.preSetSaveSettings.prefixGroupsSub ? [] :
+            state.groupsSub ;
+
   return {
     groupColors:    newGroupColors,
     groupDotColors,
@@ -401,8 +399,8 @@ const unpackPreSet = (state, thisPreSet, id) => {
     prefixesToKeepGroupsSub,
   };
 };
-  
-const selectDefaultPreSet = (preSets, graphName) => {
+
+export const selectDefaultPreSet = (preSets, graphName) => {
   let preSetIdActive;
   for(let id in preSets){
     if(preSets[id].graph === graphName && preSets[id].def){
@@ -411,25 +409,25 @@ const selectDefaultPreSet = (preSets, graphName) => {
   }
   if(preSetIdActive) return preSetIdActive;
   // worst case, no default and id list didn't load yet
-  
+
   for(let id in preSets){
     if(preSets[id].graph === graphName){
       preSetIdActive = id;
     }
   }
-  
+
   return preSetIdActive;
 };
 
-module.exports = {
-  formatSelectors,
-  _validateFormatAllStylesInput,
-  parseGroupsFromLayer,
-  selectBestStyleMatch,
-  selectBestColorMatch,
-  formatAllStyles,
-  assignPreSetGroupColors,
-  formatGroupsStyles,
-  unpackPreSet,
-  selectDefaultPreSet,
-};
+// export default {
+//   formatSelectors,
+//   _validateFormatAllStylesInput,
+//   parseGroupsFromLayer,
+//   selectBestStyleMatch,
+//   selectBestColorMatch,
+//   formatAllStyles,
+//   assignPreSetGroupColors,
+//   formatGroupsStyles,
+//   unpackPreSet,
+//   selectDefaultPreSet,
+// };

@@ -1,9 +1,7 @@
-'use strict';
-
 const { isObjectLiteral} = require('conjunction-junction');
 const { unPrefixLayers } = require('./layers');
 
-const correctPrefixOfLayersSelected = state => {
+export const correctPrefixOfLayersSelected = state => {
   // state.layersSelected is expected to have the maximum amount of prefix
   // i.e. we may strip off prefixes, but we won't add them
   const defaultReturn = {
@@ -39,7 +37,7 @@ const correctPrefixOfLayersSelected = state => {
   };
 };
 
-const _parseValue = (type, value) => {
+export const _parseValue = (type, value) => {
   let v = value;
   if(type === 'number' || type === 'shade'){
     v = parseFloat(value, 10);
@@ -54,7 +52,7 @@ const _parseValue = (type, value) => {
   return v;
 };
 
-const editOneStyle = input => {
+export const editOneStyle = input => {
   if(!isObjectLiteral(input)) return {};
   const { styles, 
     value, 
@@ -112,7 +110,7 @@ const editOneStyle = input => {
   return stylesNew;
 };
 
-const applyPreSetGlobalColorToStyles = input => {
+export const applyPreSetGlobalColorToStyles = input => {
   // invoked by <GraphWrapper/>
   const { styles, 
     preSetGlobalPalette } = input;
@@ -132,8 +130,8 @@ const applyPreSetGlobalColorToStyles = input => {
   return s;
 };
 
-module.exports = {
-  applyPreSetGlobalColorToStyles,
-  correctPrefixOfLayersSelected,
-  editOneStyle,
-};
+// export default {
+//   applyPreSetGlobalColorToStyles,
+//   correctPrefixOfLayersSelected,
+//   editOneStyle,
+// };

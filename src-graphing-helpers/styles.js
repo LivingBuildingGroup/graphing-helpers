@@ -1,12 +1,10 @@
-'use strict';
-
 const { 
   selectPalette,
-  createNamed }           = require('palettes');
+  createNamed }           = require('./palettes');
 const { isObjectLiteral,
   generateRandomNumber } = require('conjunction-junction');
 
-const createStyle = input => {
+export const createStyle = input => {
   const defaultGeneral = {
     fill:                   true,
     opacityBackground:      0.1, 
@@ -75,7 +73,7 @@ const createStyle = input => {
   );
 };
 
-const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray) => {
+export const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray) => {
   if(!Array.isArray(layersSelected)) return [];
   const sk = styleKey;
   const nc = isObjectLiteral(namedColors) ? namedColors : createNamed('bright') ;
@@ -115,7 +113,7 @@ const createStylesArray = (layersSelected, styleKey, namedColors, fallbackArray)
   return stylesArray;
 };
 
-module.exports = {
-  createStyle,
-  createStylesArray,
-};
+// export default {
+//   createStyle,
+//   createStylesArray,
+// };

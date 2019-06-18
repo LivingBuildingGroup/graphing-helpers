@@ -1,5 +1,3 @@
-'use strict';
-
 const { isPrimitiveNumber, 
   isObjectLiteral,
   immutableArrayInsert, 
@@ -17,7 +15,7 @@ const { createStylesArray }    = require('./styles');
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
+export const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
   if(!Array.isArray(dataObjectsArray)) return [[]];
   if(!Array.isArray(layersArray)) return [[]];
   const dataType0Processed = layersArray.map(key=>{
@@ -26,7 +24,7 @@ const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
   return dataType0Processed;
 };
 
-const parseLabelsByKeys = (legendObject, layersArray) => {
+export const parseLabelsByKeys = (legendObject, layersArray) => {
   const dataLabelArray = layersArray.map(key=>{
     const label = 
       typeof legendObject[key] === 'string' ?
@@ -41,7 +39,7 @@ const parseLabelsByKeys = (legendObject, layersArray) => {
   return dataLabelArray;
 };
 
-const parseYAxisByKeys = (legendObject, layersArray) => {
+export const parseYAxisByKeys = (legendObject, layersArray) => {
   const axesUsed = [];
   const yAxisIdArray = [];
   const yAxisArray = layersArray.map((key,i)=>{
@@ -68,7 +66,7 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
   };
 };
 
-const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
+export const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
   if(
     !Array.isArray(dataType1Processed) ||
     !Array.isArray(layersArray) ||
@@ -96,7 +94,7 @@ const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
   };
 };
 
-const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) => {
+export const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arraysOfDataObjects[0]) ||
@@ -141,7 +139,7 @@ const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
   };
 };
 
-const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => {
+export const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arrayOfDataGroups)
@@ -215,7 +213,7 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => 
   };
 };
 
-const parseDataType1 = state => {
+export const parseDataType1 = state => {
 
   const keysSkip = ['xLabel'];
 
@@ -240,7 +238,7 @@ const parseDataType1 = state => {
   return dataType1Processed;
 };
 
-const calcDataLength = (dataType0Raw, start, end) => {
+export const calcDataLength = (dataType0Raw, start, end) => {
   const oneDataset = !Array.isArray(dataType0Raw) ? null :
     !Array.isArray(dataType0Raw[0]) ? null :
       dataType0Raw[0];
@@ -266,7 +264,7 @@ const calcDataLength = (dataType0Raw, start, end) => {
   };
 };
 
-const conformDataLength = (dataType0Raw, first, length, pointsToAdd) => {
+export const conformDataLength = (dataType0Raw, first, length, pointsToAdd) => {
   // assume 
   const oneDataset = !Array.isArray(dataType0Raw) ? [] :
     !Array.isArray(dataType0Raw[0]) ? [] :
@@ -289,7 +287,7 @@ const conformDataLength = (dataType0Raw, first, length, pointsToAdd) => {
   return dataType0Processed;
 };
 
-const addDataset = input => {
+export const addDataset = input => {
   const { graphData, data, label, style, styles } = input;
   const gd = Object.assign({}, graphData);
   const theLabel = typeof label === 'string' ? label : `dataset ${gd.datasets.length}`;
@@ -313,7 +311,7 @@ const addDataset = input => {
   );
 };
 
-const addDatapoints = input => {
+export const addDatapoints = input => {
   const { graphData, data, label } = input;
   const newLabel =
     typeof label === 'string' ? label :
@@ -337,7 +335,7 @@ const addDatapoints = input => {
   );
 };
 
-const editDatapoint = input => {
+export const editDatapoint = input => {
   const { graphData, data, setIndex, index } = input;
   if(!isPrimitiveNumber(setIndex)) return graphData;
   if(!isPrimitiveNumber(index)) return graphData;
@@ -360,7 +358,7 @@ const editDatapoint = input => {
   );
 };
 
-const createGraphData = input => {
+export const createGraphData = input => {
   // create entirely new data
   const { 
     // the following 7 keys are parallel format
@@ -414,7 +412,7 @@ const createGraphData = input => {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-const calcTicks = (dataLength, idealSpacing) => {
+export const calcTicks = (dataLength, idealSpacing) => {
   // dataLength should be the data we want to show, i.e. after cropping, if any
   // dataLength should be 1 over ideal, so the final label is an even increment
   const maxTicksLimitDown = Math.floor(dataLength/idealSpacing);
@@ -473,7 +471,7 @@ const defaultXAxis = {
   }
 };
 
-const createXAxis = options => {
+export const createXAxis = options => {
   const { label, cssBackground, min, max, maxTicksLimit } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
@@ -541,7 +539,7 @@ const defaultYAxis = {
   },
 };
 
-const createYAxis = options => {
+export const createYAxis = options => {
   const { label, id, position, cssBackground, min, max, maxTicksLimitY } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
@@ -591,7 +589,7 @@ const createYAxis = options => {
   );
 };
 
-const createYAxesOptions = options => {
+export const createYAxesOptions = options => {
   const { labels, cssBackground, yAxisUnitOptions } = options;
   const _yAxisUnitOptions = isObjectLiteral(yAxisUnitOptions) ? yAxisUnitOptions : {} ;
   let labelsUsed = [];
@@ -621,7 +619,7 @@ const createYAxesOptions = options => {
   return subOptions;
 };
 
-const createYAxes = arrayOfOptions => {
+export const createYAxes = arrayOfOptions => {
   const yAxes = arrayOfOptions.map(o=>{
     return createYAxis(o);
   });
@@ -631,7 +629,7 @@ const createYAxes = arrayOfOptions => {
 // @@@@@@@@@@@@@@@ LEGEND @@@@@@@@@@@@@@@
 
 
-const defaultLegend = {
+export const defaultLegend = {
   display: true,
   position: 'bottom',
   fullWidth: true,
@@ -639,7 +637,7 @@ const defaultLegend = {
   labels: {}  
 };
 
-const createLegend = options => {
+export const createLegend = options => {
   const { position, cssBackground } = options;
   const legendFontColor = 
     cssBackground === 'white' ?
@@ -662,7 +660,7 @@ const createLegend = options => {
 
 // @@@@@@@@@@@@@@@ OPTIONS @@@@@@@@@@@@@@@
 
-const defaultOptions = {
+export const defaultOptions = {
   responsive: true,
   tooltips: {
     mode: 'label'
@@ -670,7 +668,7 @@ const defaultOptions = {
   maintainAspectRatio: true,
 };
 
-const createGraphOptions = options => {
+export const createGraphOptions = options => {
   const {
     yLabel, 
     xLabel, 
@@ -713,7 +711,7 @@ const createGraphOptions = options => {
 
 // @@@@@@@@@@@@@ REFRESH @@@@@@@@@@@
 
-const checkForGraphRefresh = (graphOptions, graphOptionsPrior, cssBackground, cssBackgroundPrior, ticksXChanged) => {
+export const checkForGraphRefresh = (graphOptions, graphOptionsPrior, cssBackground, cssBackgroundPrior, ticksXChanged) => {
   let message = 'ok';
   let needRefresh = cssBackground !== cssBackgroundPrior ;
   if(needRefresh) return {needRefresh, message: 'background changed'};
@@ -763,7 +761,7 @@ const checkForGraphRefresh = (graphOptions, graphOptionsPrior, cssBackground, cs
 
 // @@@@@@@@@@@@@ FULL GRAPH @@@@@@@@@@@
 
-const createGraph = input => {
+export const createGraph = input => {
 
   const {
     dataType1Processed,
@@ -884,7 +882,7 @@ const createGraph = input => {
   };
 };
 
-const createGraphInfoOnGroupOrMount = state => {
+export const createGraphInfoOnGroupOrMount = state => {
   const data = {
     dataType: 1,
     dataType1Processed: parseDataType1(state),
@@ -907,7 +905,7 @@ const createGraphInfoOnGroupOrMount = state => {
   );
 };
 
-const formatGraphKeysInput = (changeInput, state) => {
+export const formatGraphKeysInput = (changeInput, state) => {
   // changeInput can include any of the keys below
   // keys are sent individually
   const defaultInput = {
@@ -949,34 +947,34 @@ const formatGraphKeysInput = (changeInput, state) => {
   return input;
 };
 
-module.exports = { 
-  // data
-  parseDataArraysByKeys,
-  parseLabelsByKeys,
-  parseYAxisByKeys,
-  parseDataType1To0,
-  parseDataType2To1,
-  parseDataType2To0,
-  parseDataType1,
-  calcDataLength,
-  conformDataLength,
-  addDataset, 
-  addDatapoints,
-  editDatapoint,
-  createGraphData,
-  // axes
-  calcTicks,
-  createXAxis,
-  createYAxis, // tested via createYAxes
-  createYAxesOptions,
-  createYAxes,
-  // legend
-  createLegend,
-  // options
-  createGraphOptions,
-  checkForGraphRefresh,
-  createGraph,
+// export default { 
+//   // data
+//   parseDataArraysByKeys,
+//   parseLabelsByKeys,
+//   parseYAxisByKeys,
+//   parseDataType1To0,
+//   parseDataType2To1,
+//   parseDataType2To0,
+//   parseDataType1,
+//   calcDataLength,
+//   conformDataLength,
+//   addDataset, 
+//   addDatapoints,
+//   editDatapoint,
+//   createGraphData,
+//   // axes
+//   calcTicks,
+//   createXAxis,
+//   createYAxis, // tested via createYAxes
+//   createYAxesOptions,
+//   createYAxes,
+//   // legend
+//   createLegend,
+//   // options
+//   createGraphOptions,
+//   checkForGraphRefresh,
+//   createGraph,
 
-  createGraphInfoOnGroupOrMount,
-  formatGraphKeysInput,
-};
+//   createGraphInfoOnGroupOrMount,
+//   formatGraphKeysInput,
+// };

@@ -1,7 +1,7 @@
 {
   "name": "graphing-helpers",
-  "version": "4.12.0",
-  "description": "Helper library as a data preprocessor for react-chartjs-2",
+  "version": "5.0.0",
+  "description": "Helper library for react-chart-js-preprocessor",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha --colors  tests/*.test.js",
@@ -23,14 +23,12 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.2",
-    "mocha": "^3.5.3",
-    "nyc": "^11.2.1"
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
   },
   "dependencies": {
-    "conjunction-junction": "^3.9.0",
-    "icon-indexer": "^1.6.0"
+    "conjunction-junction": "^3.9.0"
   },
   "directories": {
     "test": "tests"

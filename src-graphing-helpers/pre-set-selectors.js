@@ -1,6 +1,4 @@
-'use strict';
-
-const formatPreSetSelectorColumns = cssStyleColorsNamed => {
+export const formatPreSetSelectorColumns = cssStyleColorsNamed => {
   // this is only the names of the colors to use for selectors
   const cssStyleColorsNamedArray = [];
   for(let key in cssStyleColorsNamed){
@@ -84,7 +82,7 @@ const formatPreSetSelectorColumns = cssStyleColorsNamed => {
   };
 };
 
-const parseSelectorValue = (thisLayer, c, preSetGroupEditMode) => {
+export const parseSelectorValue = (thisLayer, c, preSetGroupEditMode) => {
   let value = 
     !thisLayer ? c.defaultValue :
       c.type === 'color' && preSetGroupEditMode && thisLayer.shade > 0 && thisLayer.colorOld ?
@@ -99,7 +97,7 @@ const parseSelectorValue = (thisLayer, c, preSetGroupEditMode) => {
   return Array.isArray(value) ? value.join(',') : value ;
 };
 
-module.exports = {
-  formatPreSetSelectorColumns,
-  parseSelectorValue,
-};
+// export default {
+//   formatPreSetSelectorColumns,
+//   parseSelectorValue
+// };
