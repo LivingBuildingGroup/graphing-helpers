@@ -3,7 +3,7 @@
 var _require = require('conjunction-junction'),
     isObjectLiteral = _require.isObjectLiteral;
 
-var _require2 = require('./palettes'),
+var _require2 = require('pretty-colors'),
     listBright = _require2.listBright,
     createPreSetGlobalPalettes = _require2.createPreSetGlobalPalettes;
 
@@ -271,9 +271,9 @@ var formatGroupsStyles = function formatGroupsStyles(input) {
       layersAllPrefixed = input.layersAllPrefixed,
       styles = input.styles,
       thisPreSet = input.thisPreSet;
+  // console.log('input to formatGroupsStyles', styles);
+  // console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
 
-  console.log('input to formatGroupsStyles', styles);
-  console.log('isGrouped', isGrouped, 'thisPreset', thisPreSet);
   var isGrouped = groupTrue && Array.isArray(groups);
 
   var defaultObject = {
@@ -331,8 +331,7 @@ var unpackPreSet = function unpackPreSet(state, thisPreSet, id) {
       preSetGlobalColorOptions = state.preSetGlobalColorOptions,
       layersAllPrefixed = state.layersAllPrefixed,
       styles = state.styles;
-
-  console.log('state in unpackPreSet', state);
+  // console.log('state in unpackPreSet', state);
 
   var _formatSelectors = formatSelectors(thisPreSet, groupTrue, groups),
       selectorsRemaining = _formatSelectors.selectorsRemaining,

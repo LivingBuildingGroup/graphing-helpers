@@ -75,6 +75,12 @@ var formatPreSetSelectorColumns = function formatPreSetSelectorColumns(cssStyleC
   };
 };
 
+var parseSelectorValue = function parseSelectorValue(thisLayer, c, preSetGroupEditMode) {
+  var value = !thisLayer ? c.defaultValue : c.type === 'color' && preSetGroupEditMode && thisLayer.shade > 0 && thisLayer.colorOld ? thisLayer.colorOld : c.type === 'color' ? thisLayer.color : !thisLayer.style ? c.defaultValue : typeof thisLayer.style[c.key] === 'boolean' && thisLayer.style[c.key] ? 'true' : typeof thisLayer.style[c.key] === 'boolean' ? 'false' : !thisLayer.style[c.key] ? c.defaultValue : thisLayer.style[c.key];
+  return Array.isArray(value) ? value.join(',') : value;
+};
+
 module.exports = {
-  formatPreSetSelectorColumns: formatPreSetSelectorColumns
+  formatPreSetSelectorColumns: formatPreSetSelectorColumns,
+  parseSelectorValue: parseSelectorValue
 };

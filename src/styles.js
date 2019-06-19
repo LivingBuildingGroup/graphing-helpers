@@ -2,8 +2,9 @@
 
 const { 
   selectPalette,
-  createNamed }           = require('palettes');
-const { isObjectLiteral,
+  createNamed }           = require('pretty-colors');
+const { 
+  isObjectLiteral,
   generateRandomNumber } = require('conjunction-junction');
 
 const createStyle = input => {

@@ -2,11 +2,6 @@
   "name": "graphing-helpers",
   "version": "5.1.0",
   "description": "Helper library for react-chart-js-preprocessor",
-  "main": "index.js",
-  "scripts": {
-    "test": "nyc mocha --colors  tests/*.test.js",
-    "build": "babel src -d build"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bradcgarner/graphing-helpers.git"
@@ -16,21 +11,27 @@
   ],
   "author": "Brad C. Garner <brad@bradgarner.com> (http://bradgarner.com)",
   "license": "MIT",
+  "homepage": "https://github.com/bradcgarner/graphing-helpers#readme",
   "bugs": {
     "url": "https://github.com/bradcgarner/graphing-helpers/issues"
   },
-  "homepage": "https://github.com/bradcgarner/graphing-helpers#readme",
-  "devDependencies": {
+  "scripts": {
+    "test": "nyc mocha --colors  tests/*.test.js",
+    "build": "babel src -d build"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "conjunction-junction": "^3.13.7",
+    "pretty-colors": "0.0.0"
+  },
+   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1"
-  },
-  "dependencies": {
-    "conjunction-junction": "^3.9.0"
-  },
-  "directories": {
-    "test": "tests"
   }
 }

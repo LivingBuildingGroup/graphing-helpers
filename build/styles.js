@@ -2,7 +2,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _require = require('./palettes'),
+var _require = require('pretty-colors'),
     selectPalette = _require.selectPalette,
     createNamed = _require.createNamed;
 

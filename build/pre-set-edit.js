@@ -53,8 +53,7 @@ var _parseValue = function _parseValue(type, value) {
   return v;
 };
 
-var editOnePreSetStyle = function editOnePreSetStyle(input) {
-  // invoked by <GraphWrapper/>
+var editOneStyle = function editOneStyle(input) {
   if (!isObjectLiteral(input)) return {};
   var styles = input.styles,
       value = input.value,
@@ -134,5 +133,5 @@ var applyPreSetGlobalColorToStyles = function applyPreSetGlobalColorToStyles(inp
 module.exports = {
   applyPreSetGlobalColorToStyles: applyPreSetGlobalColorToStyles,
   correctPrefixOfLayersSelected: correctPrefixOfLayersSelected,
-  editOnePreSetStyle: editOnePreSetStyle
+  editOneStyle: editOneStyle
 };

@@ -3,7 +3,7 @@
 const { 
   isObjectLiteral, } = require('conjunction-junction');
 const { listBright,
-  createPreSetGlobalPalettes } = require('palettes');
+  createPreSetGlobalPalettes } = require('pretty-colors');
 
 const formatSelectors = (thisPreSet, groupTrue, groupsRaw) => {
   const groups = Array.isArray(groupsRaw) ? groupsRaw : [] ;

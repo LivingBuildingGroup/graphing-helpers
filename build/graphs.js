@@ -335,7 +335,7 @@ var createGraphData = function createGraphData(input) {
       xLabelStartAt = input.xLabelStartAt;
 
 
-  var datasets = layersSelected.map(function (k, i) {
+  var datasets = Array.isArray(layersSelected) ? layersSelected.map(function (k, i) {
     var units = yAxisArray[i];
     var unitsIndex = yAxisArray.findIndex(function (u) {
       return u === units;
@@ -346,7 +346,7 @@ var createGraphData = function createGraphData(input) {
       yAxisID: yAxisID,
       data: dataType0Processed[i]
     });
-  });
+  }) : [];
 
   var startAt = isPrimitiveNumber(xLabelStartAt) ? xLabelStartAt : 0;
   var labels = Array.isArray(xLabelsArray) ? xLabelsArray : !Array.isArray(dataType0Processed) ? [] : !Array.isArray(dataType0Processed[0]) ? [] : dataType0Processed[0].map(function (x, i) {
