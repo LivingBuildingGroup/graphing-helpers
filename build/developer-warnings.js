@@ -282,3 +282,7 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
     }
   }
 };
+
+module.exports = {
+  consoleDeveloperWarnings: consoleDeveloperWarnings
+};

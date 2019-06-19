@@ -296,3 +296,7 @@ const consoleDeveloperWarnings =(props, options={}) => {
     }
   }
 };
+
+module.exports = {
+  consoleDeveloperWarnings,
+};
