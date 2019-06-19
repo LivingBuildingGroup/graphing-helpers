@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "conjunction-junction": "^3.13.7",
-    "pretty-colors": "0.0.0"
+    "pretty-colors": "0.0.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
