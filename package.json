@@ -1,6 +1,6 @@
 {
   "name": "graphing-helpers",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Helper library for react-chart-js-preprocessor",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "conjunction-junction": "^3.13.7",
     "pretty-colors": "0.0.0"
   },
-   "devDependencies": {
+  "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
