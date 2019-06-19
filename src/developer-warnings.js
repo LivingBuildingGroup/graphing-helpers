@@ -4,7 +4,7 @@ const {
   isPrimitiveNumber,
   isObjectLiteral } = require('conjunction-junction');
 
-const consoleDeveloperWarnings =(props, options={}) => {
+const consoleDeveloperWarnings = (props, options={}) => {
   const expected = {
     layersSelected: {
       type: 'array',
