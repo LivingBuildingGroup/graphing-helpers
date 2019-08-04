@@ -71,7 +71,7 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
     },
     titleText: {
       required: 'preferred',
-      type: 'string',
+      type: ['string', 'object'],
       notes: 'title will be "data" if nothing is provided'
     },
     styles: {
@@ -242,7 +242,7 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
       notes: 'overall label for the X axis, such as "hourly measurements"'
     },
     yAxisUnitOptions: {
-      type: 'object',
+      type: 'array',
       required: 'preferred',
       notes: 'this defaults to an empty object, which is "squish to fit" if omitted'
     },
@@ -275,7 +275,7 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
   for (var prop in expected) {
     var theProp = expected[prop];
     var youSent = props[prop];
-    var problem = expected[prop].type === 'object' && !isObjectLiteral(youSent) ? 'not object' : expected[prop].type === 'array' && !Array.isArray(youSent) ? 'not array' : expected[prop].type === 'number' && !isPrimitiveNumber(youSent) ? 'not number' : expected[prop].type === 'string' && typeof youSent !== 'string' ? 'not string' : expected[prop].type === 'boolean' && typeof youSent !== 'boolean' ? 'not boolean' : null;
+    var problem = expected[prop].type === ['string', 'object'] && !(isObjectLiteral(youSent) || typeof youSent === 'string') ? 'not object or string' : expected[prop].type === 'object' && !isObjectLiteral(youSent) ? 'not object' : expected[prop].type === 'array' && !Array.isArray(youSent) ? 'not array' : expected[prop].type === 'number' && !isPrimitiveNumber(youSent) ? 'not number' : expected[prop].type === 'string' && typeof youSent !== 'string' ? 'not string' : expected[prop].type === 'boolean' && typeof youSent !== 'boolean' ? 'not boolean' : null;
     var method = theProp.required === true && problem ? 'error' : theProp.required && problem ? 'warn' : problem && options.all ? 'log' : null;
     if (method) {
       console[method](prop, theProp.type, theProp.notes, 'you sent: ', Array.isArray(youSent) ? 'array' : typeof youSent === 'undefined' ? 'undefined' : _typeof(youSent), youSent);
