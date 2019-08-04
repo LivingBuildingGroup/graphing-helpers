@@ -67,7 +67,7 @@ const consoleDeveloperWarnings = (props, options={}) => {
     },
     titleText: {
       required: 'preferred',
-      type: 'string',
+      type: ['string','object'],
       notes: 'title will be "data" if nothing is provided',
     },
     styles: {
@@ -238,7 +238,7 @@ const consoleDeveloperWarnings = (props, options={}) => {
       notes: 'overall label for the X axis, such as "hourly measurements"',
     },
     yAxisUnitOptions: {
-      type: 'object',
+      type: 'array',
       required: 'preferred',
       notes: 'this defaults to an empty object, which is "squish to fit" if omitted',
     },
@@ -272,6 +272,9 @@ const consoleDeveloperWarnings = (props, options={}) => {
     const theProp = expected[prop];
     const youSent = props[prop];
     const problem = 
+    (expected[prop].type === ['string','object'] && 
+      !(isObjectLiteral(youSent) || typeof youSent === 'string') )?
+      'not object or string' :
       ( expected[prop].type === 'object' && !isObjectLiteral(youSent)) ?
         'not object' :
         ( expected[prop].type === 'array' && !Array.isArray(youSent)) ?
