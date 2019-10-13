@@ -6,7 +6,7 @@ var _require = require('conjunction-junction'),
     isPrimitiveNumber = _require.isPrimitiveNumber,
     isObjectLiteral = _require.isObjectLiteral,
     immutableArrayInsert = _require.immutableArrayInsert,
-    convertCcToSpace = _require.convertCcToSpace,
+    convertCcToSc = _require.convertCcToSc,
     convertScToSpace = _require.convertScToSpace;
 
 var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
@@ -484,7 +484,7 @@ var createYAxis = function createYAxis(options) {
     maxTicksLimit: maxTicksLimitY
   });
   var scaleLabel = Object.assign({}, defaultYAxis.scaleLabel, {
-    labelString: convertCcToSpace(label),
+    labelString: convertCcToSc(label, ' '),
     fontColor: scaleAndTickColor
   });
   return Object.assign({}, defaultYAxis, {
