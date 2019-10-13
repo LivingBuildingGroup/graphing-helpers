@@ -3,7 +3,7 @@
 const { isPrimitiveNumber, 
   isObjectLiteral,
   immutableArrayInsert, 
-  convertCcToSpace,
+  convertCcToSc,
   convertScToSpace }  = require('conjunction-junction');
 
 const alpha = ['A','B','C','D','E','F','G','H'];
@@ -575,7 +575,7 @@ const createYAxis = options => {
   const scaleLabel = Object.assign({},
     defaultYAxis.scaleLabel,
     {
-      labelString: convertCcToSpace(label),
+      labelString: convertCcToSc(label, ' '),
       fontColor: scaleAndTickColor,
     }
   );
