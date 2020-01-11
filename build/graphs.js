@@ -757,11 +757,12 @@ var createGraph = function createGraph(input) {
       dataLabelArray: dataLabelArray,
       first: first,
       dataLength: dataLength,
-      maxTicksLimitDown: maxTicksLimitDown,
-      maxTicksLimitUp: maxTicksLimitUp,
-      lengthRoundDown: lengthRoundDown,
+      maxTicks: maxTicks,
+      // maxTicksLimitDown,
+      // maxTicksLimitUp,
+      // lengthRoundDown,
       lengthRoundUp: lengthRoundUp,
-      pointsToRemove: pointsToRemove,
+      // pointsToRemove,
       pointsToAdd: pointsToAdd,
       ticksXChanged: ticksXChanged
     }
