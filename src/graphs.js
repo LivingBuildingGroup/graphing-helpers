@@ -489,7 +489,7 @@ const defaultXAxis = {
 };
 
 const createXAxis = options => {
-  const { label, cssBackground, min, max, maxTicksLimit } = options;
+  const { label, cssBackground, min, max, maxTicksLimit, beginAtZero, stepSize } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
       'black':
@@ -517,6 +517,8 @@ const createXAxis = options => {
       min: min || 0,
       max: max || 500,
       maxTicksLimit: maxTicksLimit || 100,
+      beginAtZero,
+      stepSize,
     }
   );
   const scaleLabel = 
@@ -696,6 +698,8 @@ const createGraphOptions = options => {
     maxTicksLimitX,
     legendPosition,
     yAxisUnitOptions,
+    beginAtZeroX,
+    stepSizeX
   } = options;
 
   const yAxesOptions = {
@@ -710,6 +714,8 @@ const createGraphOptions = options => {
     min: minX,
     max: maxX,
     maxTicksLimit: maxTicksLimitX,
+    beginAtZero: beginAtZeroX, 
+    stepSize: stepSizeX,
   };
   const legendOptions = {
     cssBackground,
@@ -798,6 +804,8 @@ const createGraph = input => {
     xLabelKey,
     xLabelStartAt,
     yAxisUnitOptions,
+    beginAtZeroX,
+    stepSizeX
   } = input;
 
   const {
@@ -844,6 +852,8 @@ const createGraph = input => {
     maxTicksLimitX: maxTicks,
     legendPosition,
     yAxisUnitOptions,
+    beginAtZeroX,
+    stepSizeX
   };
   
   const graphOptions = createGraphOptions(optionsInput);
@@ -941,6 +951,8 @@ const formatGraphKeysInput = (changeInput, state) => {
     xLabelKey:         state.xLabelKey,
     xLabelStartAt:     state.xLabelStartAt,
     yAxisUnitOptions:  state.yAxisUnitOptions,
+    beginAtZeroX:      state.beginAtZeroX,
+    stepSizeX:         state.stepSizeX,
   };
 
   const constantInputs = {

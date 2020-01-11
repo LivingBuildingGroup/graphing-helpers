@@ -431,7 +431,9 @@ var createXAxis = function createXAxis(options) {
       cssBackground = options.cssBackground,
       min = options.min,
       max = options.max,
-      maxTicksLimit = options.maxTicksLimit;
+      maxTicksLimit = options.maxTicksLimit,
+      beginAtZero = options.beginAtZero,
+      stepSize = options.stepSize;
 
   var zeroLineColor = cssBackground === 'white' ? 'black' : 'white';
   var gridLinesColor = cssBackground === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
@@ -445,7 +447,9 @@ var createXAxis = function createXAxis(options) {
     fontColor: scaleAndTickColor,
     min: min || 0,
     max: max || 500,
-    maxTicksLimit: maxTicksLimit || 100
+    maxTicksLimit: maxTicksLimit || 100,
+    beginAtZero: beginAtZero,
+    stepSize: stepSize
   });
   var scaleLabel = label ? Object.assign({}, defaultXAxis.scaleLabel, {
     labelString: label,
@@ -601,7 +605,9 @@ var createGraphOptions = function createGraphOptions(options) {
       maxX = options.maxX,
       maxTicksLimitX = options.maxTicksLimitX,
       legendPosition = options.legendPosition,
-      yAxisUnitOptions = options.yAxisUnitOptions;
+      yAxisUnitOptions = options.yAxisUnitOptions,
+      beginAtZeroX = options.beginAtZeroX,
+      stepSizeX = options.stepSizeX;
 
 
   var yAxesOptions = {
@@ -615,7 +621,9 @@ var createGraphOptions = function createGraphOptions(options) {
     cssBackground: cssBackground,
     min: minX,
     max: maxX,
-    maxTicksLimit: maxTicksLimitX
+    maxTicksLimit: maxTicksLimitX,
+    beginAtZero: beginAtZeroX,
+    stepSize: stepSizeX
   };
   var legendOptions = {
     cssBackground: cssBackground,
@@ -685,7 +693,9 @@ var createGraph = function createGraph(input) {
       cssBackgroundPrior = input.cssBackgroundPrior,
       xLabelKey = input.xLabelKey,
       xLabelStartAt = input.xLabelStartAt,
-      yAxisUnitOptions = input.yAxisUnitOptions;
+      yAxisUnitOptions = input.yAxisUnitOptions,
+      beginAtZeroX = input.beginAtZeroX,
+      stepSizeX = input.stepSizeX;
 
   var _parseDataType1To = parseDataType1To0(dataType1Processed, legendObject, layersSelected),
       dataType0Raw = _parseDataType1To.dataType0Raw,
@@ -712,7 +722,9 @@ var createGraph = function createGraph(input) {
     maxX: lengthRoundUp + 1,
     maxTicksLimitX: maxTicks,
     legendPosition: legendPosition,
-    yAxisUnitOptions: yAxisUnitOptions
+    yAxisUnitOptions: yAxisUnitOptions,
+    beginAtZeroX: beginAtZeroX,
+    stepSizeX: stepSizeX
   };
 
   var graphOptions = createGraphOptions(optionsInput);
@@ -799,7 +811,9 @@ var formatGraphKeysInput = function formatGraphKeysInput(changeInput, state) {
     xLabel: state.xLabel,
     xLabelKey: state.xLabelKey,
     xLabelStartAt: state.xLabelStartAt,
-    yAxisUnitOptions: state.yAxisUnitOptions
+    yAxisUnitOptions: state.yAxisUnitOptions,
+    beginAtZeroX: state.beginAtZeroX,
+    stepSizeX: state.stepSizeX
   };
 
   var constantInputs = {
