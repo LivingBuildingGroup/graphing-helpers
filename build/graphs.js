@@ -361,7 +361,7 @@ var createGraphData = function createGraphData(input) {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-var calcTicks = function calcTicks(dataLength, idealSpacing) {
+var calcTicksOld = function calcTicksOld(dataLength, idealSpacing) {
   // dataLength should be the data we want to show, i.e. after cropping, if any
   // dataLength should be 1 over ideal, so the final label is an even increment
   var maxTicksLimitDown = Math.floor(dataLength / idealSpacing);
@@ -382,6 +382,21 @@ var calcTicks = function calcTicks(dataLength, idealSpacing) {
     lengthRoundDown: lengthRoundDown,
     pointsToRemove: pointsToRemove,
     maxTicksLimitUp: maxTicksLimitUp,
+    lengthRoundUp: lengthRoundUp,
+    pointsToAdd: pointsToAdd
+  };
+};
+
+var calcTicks = function calcTicks(dataLength, idealSpacing) {
+  // dataLength should be the data we want to show, i.e. after cropping (by the user), if any
+  // dataLength should be 1 over ideal, so the final label is an even increment
+  var maxTicks = Math.ceil(dataLength / idealSpacing);
+  var lengthRoundUp = idealSpacing * maxTicks;
+
+  var pointsToAdd = lengthRoundUp - dataLength;
+
+  return {
+    maxTicks: maxTicks,
     lengthRoundUp: lengthRoundUp,
     pointsToAdd: pointsToAdd
   };
@@ -435,7 +450,9 @@ var createXAxis = function createXAxis(options) {
   var scaleLabel = label ? Object.assign({}, defaultXAxis.scaleLabel, {
     labelString: label,
     fontColor: scaleAndTickColor
-  }) : { display: false };
+  }) : {
+    display: false
+  };
   return Object.assign({}, defaultXAxis, {
     gridLines: gridLines,
     ticks: ticks,
@@ -681,10 +698,7 @@ var createGraph = function createGraph(input) {
       dataLength = _calcDataLength.dataLength;
 
   var _calcTicks = calcTicks(dataLength, xIdealTickSpacing),
-      maxTicksLimitDown = _calcTicks.maxTicksLimitDown,
-      lengthRoundDown = _calcTicks.lengthRoundDown,
-      pointsToRemove = _calcTicks.pointsToRemove,
-      maxTicksLimitUp = _calcTicks.maxTicksLimitUp,
+      maxTicks = _calcTicks.maxTicks,
       lengthRoundUp = _calcTicks.lengthRoundUp,
       pointsToAdd = _calcTicks.pointsToAdd;
 
@@ -696,7 +710,7 @@ var createGraph = function createGraph(input) {
     cssBackground: cssBackground,
     minX: first,
     maxX: lengthRoundUp + 1,
-    maxTicksLimitX: maxTicksLimitUp,
+    maxTicksLimitX: maxTicks,
     legendPosition: legendPosition,
     yAxisUnitOptions: yAxisUnitOptions
   };
