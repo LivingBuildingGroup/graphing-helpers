@@ -422,6 +422,7 @@ const calcTicks = (dataLength, idealSpacing) => {
 
   const pointsToAdd = lengthRoundUp - dataLength;
 
+  console.log('dataLength',dataLength,'/','idealSpacing',idealSpacing, '=',maxTicks, 'round up to',lengthRoundUp)
   return {
     maxTicks,
     lengthRoundUp,
