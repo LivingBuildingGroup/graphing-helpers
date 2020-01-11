@@ -414,7 +414,7 @@ const createGraphData = input => {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-const calcTicks = (dataLength, idealSpacing) => {
+const calcTicksOld = (dataLength, idealSpacing) => {
   // dataLength should be the data we want to show, i.e. after cropping, if any
   // dataLength should be 1 over ideal, so the final label is an even increment
   const maxTicksLimitDown = Math.floor(dataLength/idealSpacing);
@@ -444,6 +444,21 @@ const calcTicks = (dataLength, idealSpacing) => {
     lengthRoundDown,
     pointsToRemove,
     maxTicksLimitUp,
+    lengthRoundUp,
+    pointsToAdd,
+  };
+};
+
+const calcTicks = (dataLength, idealSpacing) => {
+  // dataLength should be the data we want to show, i.e. after cropping (by the user), if any
+  // dataLength should be 1 over ideal, so the final label is an even increment
+  const maxTicks = Math.ceil(dataLength/idealSpacing);
+  const lengthRoundUp = idealSpacing * maxTicks;
+
+  const pointsToAdd = lengthRoundUp - dataLength;
+
+  return {
+    maxTicks,
     lengthRoundUp,
     pointsToAdd,
   };
@@ -512,8 +527,9 @@ const createXAxis = options => {
           labelString: label,
           fontColor: scaleAndTickColor,
         } 
-      ):
-      { display: false } ;
+      ): { 
+        display: false
+      } ;
   return Object.assign({},
     defaultXAxis,
     {
@@ -801,10 +817,13 @@ const createGraph = input => {
   } = calcDataLength(dataType0Raw,xStart, xEnd);
 
   const {
-    maxTicksLimitDown, // testing only
-    lengthRoundDown,   // testing only
-    pointsToRemove,    // testing only
-    maxTicksLimitUp,
+    // maxTicksLimitDown, // testing only
+    // lengthRoundDown,   // testing only
+    // pointsToRemove,    // testing only
+    // maxTicksLimitUp,
+    // lengthRoundUp,
+    // pointsToAdd,
+    maxTicks, // testing only
     lengthRoundUp,
     pointsToAdd,
   } = calcTicks(dataLength, xIdealTickSpacing);
@@ -822,7 +841,7 @@ const createGraph = input => {
     cssBackground,
     minX: first,
     maxX: lengthRoundUp + 1, 
-    maxTicksLimitX: maxTicksLimitUp,
+    maxTicksLimitX: maxTicks,
     legendPosition,
     yAxisUnitOptions,
   };
