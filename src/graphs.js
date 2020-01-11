@@ -414,41 +414,6 @@ const createGraphData = input => {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-const calcTicksOld = (dataLength, idealSpacing) => {
-  // dataLength should be the data we want to show, i.e. after cropping, if any
-  // dataLength should be 1 over ideal, so the final label is an even increment
-  const maxTicksLimitDown = Math.floor(dataLength/idealSpacing);
-  const lengthRoundDown = 
-    ((maxTicksLimitDown * idealSpacing) + 1) > dataLength ?
-      (maxTicksLimitDown * idealSpacing) + 1 - idealSpacing :
-      (maxTicksLimitDown * idealSpacing) + 1 ;
-
-  const pointsToRemove = dataLength - lengthRoundDown;
-
-  const maxTicksLimitUp = pointsToRemove === 0 ?
-    maxTicksLimitDown :
-    maxTicksLimitDown + 1;
-
-  const lengthRoundUp = 
-    // do not round up, if increments of 1
-    idealSpacing === 1 ? 
-      maxTicksLimitUp : 
-      ((maxTicksLimitUp * idealSpacing) + 1) > dataLength + idealSpacing ?
-        (maxTicksLimitUp * idealSpacing) + 1 - idealSpacing :
-        (maxTicksLimitUp * idealSpacing) + 1 ;
-
-  const pointsToAdd = lengthRoundUp - dataLength;
-
-  return {
-    maxTicksLimitDown,
-    lengthRoundDown,
-    pointsToRemove,
-    maxTicksLimitUp,
-    lengthRoundUp,
-    pointsToAdd,
-  };
-};
-
 const calcTicks = (dataLength, idealSpacing) => {
   // dataLength should be the data we want to show, i.e. after cropping (by the user), if any
   // dataLength should be 1 over ideal, so the final label is an even increment
@@ -848,7 +813,7 @@ const createGraph = input => {
     xLabel, 
     cssBackground,
     minX: first,
-    maxX: lengthRoundUp + 1, 
+    maxX: lengthRoundUp, 
     maxTicksLimitX: maxTicks,
     legendPosition,
     yAxisUnitOptions,

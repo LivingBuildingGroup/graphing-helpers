@@ -361,32 +361,6 @@ var createGraphData = function createGraphData(input) {
 
 // @@@@@@@@@@@@@@@@ AXES @@@@@@@@@@@@@@
 
-var calcTicksOld = function calcTicksOld(dataLength, idealSpacing) {
-  // dataLength should be the data we want to show, i.e. after cropping, if any
-  // dataLength should be 1 over ideal, so the final label is an even increment
-  var maxTicksLimitDown = Math.floor(dataLength / idealSpacing);
-  var lengthRoundDown = maxTicksLimitDown * idealSpacing + 1 > dataLength ? maxTicksLimitDown * idealSpacing + 1 - idealSpacing : maxTicksLimitDown * idealSpacing + 1;
-
-  var pointsToRemove = dataLength - lengthRoundDown;
-
-  var maxTicksLimitUp = pointsToRemove === 0 ? maxTicksLimitDown : maxTicksLimitDown + 1;
-
-  var lengthRoundUp =
-  // do not round up, if increments of 1
-  idealSpacing === 1 ? maxTicksLimitUp : maxTicksLimitUp * idealSpacing + 1 > dataLength + idealSpacing ? maxTicksLimitUp * idealSpacing + 1 - idealSpacing : maxTicksLimitUp * idealSpacing + 1;
-
-  var pointsToAdd = lengthRoundUp - dataLength;
-
-  return {
-    maxTicksLimitDown: maxTicksLimitDown,
-    lengthRoundDown: lengthRoundDown,
-    pointsToRemove: pointsToRemove,
-    maxTicksLimitUp: maxTicksLimitUp,
-    lengthRoundUp: lengthRoundUp,
-    pointsToAdd: pointsToAdd
-  };
-};
-
 var calcTicks = function calcTicks(dataLength, idealSpacing) {
   // dataLength should be the data we want to show, i.e. after cropping (by the user), if any
   // dataLength should be 1 over ideal, so the final label is an even increment
@@ -719,7 +693,7 @@ var createGraph = function createGraph(input) {
     xLabel: xLabel,
     cssBackground: cssBackground,
     minX: first,
-    maxX: lengthRoundUp + 1,
+    maxX: lengthRoundUp,
     maxTicksLimitX: maxTicks,
     legendPosition: legendPosition,
     yAxisUnitOptions: yAxisUnitOptions,
