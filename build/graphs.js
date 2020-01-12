@@ -364,12 +364,12 @@ var createGraphData = function createGraphData(input) {
 var calcTicks = function calcTicks(dataLength, idealSpacing) {
   // dataLength should be the data we want to show, i.e. after cropping (by the user), if any
   // dataLength should be 1 over ideal, so the final label is an even increment
-  var maxTicks = Math.ceil(dataLength / idealSpacing);
+  var maxTicks = Math.ceil(dataLength - 1 / idealSpacing);
   var lengthRoundUp = idealSpacing * maxTicks;
 
-  var pointsToAdd = lengthRoundUp - dataLength;
+  var pointsToAdd = lengthRoundUp - dataLength - 1;
 
-  console.log('dataLength', dataLength, '/', 'idealSpacing', idealSpacing, '=', maxTicks, 'round up to', lengthRoundUp);
+  console.log('dataLength-1', dataLength - 1, '/', 'idealSpacing', idealSpacing, '=', maxTicks, 'round up to', lengthRoundUp);
   return {
     maxTicks: maxTicks,
     lengthRoundUp: lengthRoundUp,
