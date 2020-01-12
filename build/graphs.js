@@ -371,9 +371,9 @@ var calcTicks = function calcTicks(dataLength, idealSpacing) {
 
   console.log('(dataLength-1)', dataLength - 1, '/', 'idealSpacing', idealSpacing, '=', _maxTicks, 'round up to', lengthRoundUp, 'use', _maxTicks + 1, 'ticks');
   return {
-    // maxTicks: _maxTicks + 1,
-    // lengthRoundUp,
-    // pointsToAdd,
+    maxTicks: _maxTicks + 1,
+    lengthRoundUp: lengthRoundUp,
+    pointsToAdd: pointsToAdd
   };
 };
 
@@ -405,6 +405,8 @@ var createXAxis = function createXAxis(options) {
   var label = options.label,
       cssBackground = options.cssBackground,
       min = options.min,
+      max = options.max,
+      maxTicksLimit = options.maxTicksLimit,
       beginAtZero = options.beginAtZero,
       stepSize = options.stepSize;
 
@@ -419,8 +421,8 @@ var createXAxis = function createXAxis(options) {
   var ticks = Object.assign({}, defaultXAxis.ticks, {
     fontColor: scaleAndTickColor,
     min: min || 0,
-    // max: max || 500,
-    // maxTicksLimit: maxTicksLimit || 100,
+    max: max || 500,
+    maxTicksLimit: maxTicksLimit || 100,
     beginAtZero: beginAtZero,
     stepSize: stepSize
   });
@@ -575,6 +577,8 @@ var createGraphOptions = function createGraphOptions(options) {
       xLabel = options.xLabel,
       cssBackground = options.cssBackground,
       minX = options.minX,
+      maxX = options.maxX,
+      maxTicksLimitX = options.maxTicksLimitX,
       legendPosition = options.legendPosition,
       yAxisUnitOptions = options.yAxisUnitOptions,
       beginAtZeroX = options.beginAtZeroX,
@@ -591,8 +595,8 @@ var createGraphOptions = function createGraphOptions(options) {
     label: xLabel ? xLabel : null,
     cssBackground: cssBackground,
     min: minX,
-    // max: maxX,
-    // maxTicksLimit: maxTicksLimitX,
+    max: maxX,
+    maxTicksLimit: maxTicksLimitX,
     beginAtZero: beginAtZeroX,
     stepSize: stepSizeX
   };
@@ -690,8 +694,8 @@ var createGraph = function createGraph(input) {
     xLabel: xLabel,
     cssBackground: cssBackground,
     minX: first,
-    // maxX: lengthRoundUp, 
-    // maxTicksLimitX: maxTicks,
+    maxX: lengthRoundUp,
+    maxTicksLimitX: maxTicks,
     legendPosition: legendPosition,
     yAxisUnitOptions: yAxisUnitOptions,
     beginAtZeroX: beginAtZeroX,

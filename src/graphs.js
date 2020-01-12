@@ -424,9 +424,9 @@ const calcTicks = (dataLength, idealSpacing) => {
 
   console.log('(dataLength-1)',dataLength-1,'/','idealSpacing',idealSpacing, '=',_maxTicks, 'round up to',lengthRoundUp, 'use',_maxTicks + 1, 'ticks' );
   return {
-    // maxTicks: _maxTicks + 1,
-    // lengthRoundUp,
-    // pointsToAdd,
+    maxTicks: _maxTicks + 1,
+    lengthRoundUp,
+    pointsToAdd,
   };
 };
 
@@ -455,8 +455,7 @@ const defaultXAxis = {
 };
 
 const createXAxis = options => {
-  const { label, cssBackground, min, //max, maxTicksLimit, 
-    beginAtZero, stepSize } = options;
+  const { label, cssBackground, min, max, maxTicksLimit, beginAtZero, stepSize } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
       'black':
@@ -482,8 +481,8 @@ const createXAxis = options => {
     {
       fontColor: scaleAndTickColor,
       min: min || 0,
-      // max: max || 500,
-      // maxTicksLimit: maxTicksLimit || 100,
+      max: max || 500,
+      maxTicksLimit: maxTicksLimit || 100,
       beginAtZero,
       stepSize,
     }
@@ -661,8 +660,8 @@ const createGraphOptions = options => {
     xLabel, 
     cssBackground, 
     minX, 
-    // maxX, 
-    // maxTicksLimitX,
+    maxX, 
+    maxTicksLimitX,
     legendPosition,
     yAxisUnitOptions,
     beginAtZeroX,
@@ -679,8 +678,8 @@ const createGraphOptions = options => {
     label: xLabel ? xLabel : null ,
     cssBackground,
     min: minX,
-    // max: maxX,
-    // maxTicksLimit: maxTicksLimitX,
+    max: maxX,
+    maxTicksLimit: maxTicksLimitX,
     beginAtZero: beginAtZeroX, 
     stepSize: stepSizeX,
   };
@@ -815,8 +814,8 @@ const createGraph = input => {
     xLabel, 
     cssBackground,
     minX: first,
-    // maxX: lengthRoundUp, 
-    // maxTicksLimitX: maxTicks,
+    maxX: lengthRoundUp, 
+    maxTicksLimitX: maxTicks,
     legendPosition,
     yAxisUnitOptions,
     beginAtZeroX,
