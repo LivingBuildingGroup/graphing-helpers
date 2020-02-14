@@ -205,6 +205,7 @@ var parseDataType2To1 = function parseDataType2To1(arraysOfDataObjects, arrayOfD
 
 var parseDataType1 = function parseDataType1(state) {
 
+  console.log('parseDataType1, dataType1Raw[0]', state.dataType1Raw[0]);
   var keysSkip = ['xLabel'];
 
   var dataType1ParsedFrom2 = Array.isArray(state.dataType2Raw) ? parseDataType2To1(state.dataType2Raw, state.groups, keysSkip).dataObjectsArray : [];
@@ -750,6 +751,7 @@ var createGraphInfoOnGroupOrMount = function createGraphInfoOnGroupOrMount(state
     dataType1Processed: parseDataType1(state)
   };
   var newState = Object.assign({}, state, data);
+  console.log('createGraphInfoOnGroupOrMount', 'newState.dataType1Processed[0]', newState.dataType1Processed[0]);
   var layerSelectors = createLayerSelectors(newState);
   /* createLayerSelectors returns
     layersThatHaveUnits, 

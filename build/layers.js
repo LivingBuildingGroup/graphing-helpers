@@ -100,7 +100,7 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   // always receiving dataType1Processed
 
   var oneUnit = data[0];
-  console.log('createLayerSelectorsInner', 'oneUnit', oneUnit);
+  console.log('createLayerSelectorsInner', 'oneUnit.gradient', oneUnit.gradient, oneUnit);
   console.log('createLayerSelectorsInner units', units);
 
   var legendObject = {};
