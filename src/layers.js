@@ -128,6 +128,8 @@ const createLayerSelectorsInner = input => {
 
   // always receiving dataType1Processed
   const oneUnit = data[0] ;
+  console.log('createLayerSelectorsInner','oneUnit',oneUnit);
+  console.log('createLayerSelectorsInner units', units)
 
   const legendObject       = {};
   const layersAllTemp      = [];
@@ -152,6 +154,7 @@ const createLayerSelectorsInner = input => {
   // sort by unprefixed layers so that like layers (e.g. "rain") are grouped, not like groups (e.g. "test 52")
   layersAllTemp.sort(          (a,b)=>a.unPrefix>b.unPrefix);
   layersThatHaveUnitsTemp.sort((a,b)=>a.unPrefix>b.unPrefix);
+  console.log('layersThatHaveUnitsTemp',layersThatHaveUnitsTemp)
   const layersAllPrefixed   = layersAllTemp.map(l=>l.layer);
   const layersThatHaveUnits = layersThatHaveUnitsTemp.map(l=>l.layer);
 

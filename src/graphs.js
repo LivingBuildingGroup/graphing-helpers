@@ -780,7 +780,7 @@ const createGraph = input => {
     first,
     // last,
     dataLength,
-  } = calcDataLength(dataType0Raw,xStart, xEnd);
+  } = calcDataLength(dataType0Raw, xStart, xEnd);
 
   const {
     // maxTicksLimitDown, // testing only
