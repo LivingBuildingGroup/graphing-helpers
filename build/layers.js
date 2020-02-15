@@ -100,8 +100,6 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   // always receiving dataType1Processed
 
   var oneUnit = data[0];
-  console.log('createLayerSelectorsInner', 'oneUnit.gradient', oneUnit.gradient, oneUnit);
-  console.log('createLayerSelectorsInner units', units);
 
   var legendObject = {};
   var layersAllTemp = [];
@@ -126,7 +124,6 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   layersThatHaveUnitsTemp.sort(function (a, b) {
     return a.unPrefix > b.unPrefix;
   });
-  console.log('layersThatHaveUnitsTemp', layersThatHaveUnitsTemp);
   var layersAllPrefixed = layersAllTemp.map(function (l) {
     return l.layer;
   });

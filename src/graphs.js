@@ -217,7 +217,6 @@ const parseDataType2To1 = (arraysOfDataObjects, arrayOfDataGroups, keysSkip) => 
 
 const parseDataType1 = state => {
 
-  console.log('parseDataType1, dataType1Raw[0]', state.dataType1Raw[0])
   const keysSkip = ['xLabel'];
 
   const dataType1ParsedFrom2 = 
@@ -880,7 +879,6 @@ const createGraphInfoOnGroupOrMount = state => {
     state,
     data
   );
-  console.log('createGraphInfoOnGroupOrMount','newState.dataType1Processed[0]',newState.dataType1Processed[0])
   const layerSelectors = createLayerSelectors(newState);
   /* createLayerSelectors returns
     layersThatHaveUnits, 
