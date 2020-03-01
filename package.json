@@ -24,7 +24,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "conjunction-junction": "^3.13.38",
+    "conjunction-junction": "^3.13.47",
     "pretty-colors": "0.0.2"
   },
   "devDependencies": {
