@@ -124,6 +124,7 @@ const createLayerSelectorsInner = input => {
     units,
     abbrevs,
     labels,
+    defs,
   } = input;
 
   // always receiving dataType1Processed
@@ -142,9 +143,10 @@ const createLayerSelectorsInner = input => {
       const prefixesFormatted = prefixes.length > 0 ? `${prefixes.join(' ')} ` : '' ;
       layersThatHaveUnitsTemp.push({unPrefix, layer});
       legendObject[layer] = [
-        `${prefixesFormatted}${abbrevs[unPrefix]}`, 
-        `${prefixesFormatted}${labels[unPrefix]}`, 
-        units[unPrefix],
+        `${prefixesFormatted}${abbrevs[unPrefix]}`,  // 0
+        `${prefixesFormatted}${labels[unPrefix]}`,   // 1
+        units[unPrefix],                             // 2
+        `${prefixesFormatted}${defs[unPrefix]}`,     // 3
       ];
     }
   }
@@ -176,6 +178,7 @@ const createLayerSelectors = state => {
     units:               state.legendUnits,
     abbrevs:             state.legendAbbrevs,
     labels:              state.legendLabels,
+    defs:                state.legendDefinitions,
   });
 
   const {

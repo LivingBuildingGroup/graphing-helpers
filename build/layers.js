@@ -95,7 +95,8 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   var data = input.data,
       units = input.units,
       abbrevs = input.abbrevs,
-      labels = input.labels;
+      labels = input.labels,
+      defs = input.defs;
 
   // always receiving dataType1Processed
 
@@ -113,7 +114,10 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
       var prefixes = split.length > 1 ? split.slice(0, split.length - 1) : [];
       var prefixesFormatted = prefixes.length > 0 ? prefixes.join(' ') + ' ' : '';
       layersThatHaveUnitsTemp.push({ unPrefix: unPrefix, layer: layer });
-      legendObject[layer] = ['' + prefixesFormatted + abbrevs[unPrefix], '' + prefixesFormatted + labels[unPrefix], units[unPrefix]];
+      legendObject[layer] = ['' + prefixesFormatted + abbrevs[unPrefix], // 0
+      '' + prefixesFormatted + labels[unPrefix], // 1
+      units[unPrefix], // 2
+      '' + prefixesFormatted + defs[unPrefix]];
     }
   }
 
@@ -145,7 +149,8 @@ var createLayerSelectors = function createLayerSelectors(state) {
     groupsSub: state.groupsSub,
     units: state.legendUnits,
     abbrevs: state.legendAbbrevs,
-    labels: state.legendLabels
+    labels: state.legendLabels,
+    defs: state.legendDefinitions
   }),
       layersThatHaveUnits = _createLayerSelectors.layersThatHaveUnits,
       layersAllPrefixed = _createLayerSelectors.layersAllPrefixed,
