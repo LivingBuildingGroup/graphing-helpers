@@ -124,11 +124,6 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
       required: false,
       notes: 'required only to fix the height of selectors, which we used to do frequently, but it is better just to let them flow with the window, so prefer to omit this prop'
     },
-    icons: {
-      type: 'object',
-      required: true,
-      notes: 'required for controls and other navigation; object must have certain named React components'
-    },
     selectorsAllow: {
       type: 'boolean',
       required: false,
