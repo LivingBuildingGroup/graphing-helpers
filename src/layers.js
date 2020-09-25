@@ -133,6 +133,7 @@ const createLayerSelectorsInner = input => {
   const legendObject       = {};
   const layersAllTemp      = [];
   const layersThatHaveUnitsTemp= [];
+  const layersThatHaveNoUnitsTemp = {};
 
   for(let layer in oneUnit){
     const split = layer.split('__');
@@ -148,6 +149,8 @@ const createLayerSelectorsInner = input => {
         units[unPrefix],                             // 2
         `${prefixesFormatted}${defs[unPrefix]}`,     // 3
       ];
+    } else {
+      layersThatHaveNoUnitsTemp[unPrefix] = true;
     }
   }
 
@@ -156,9 +159,14 @@ const createLayerSelectorsInner = input => {
   layersThatHaveUnitsTemp.sort((a,b)=>a.unPrefix>b.unPrefix);
   const layersAllPrefixed   = layersAllTemp.map(l=>l.layer);
   const layersThatHaveUnits = layersThatHaveUnitsTemp.map(l=>l.layer);
+  const layersThatHaveNoUnits = [];
+  for(let l in layersThatHaveNoUnitsTemp){
+    layersThatHaveNoUnits.push(l);
+  }
 
   return {
     layersThatHaveUnits,
+    layersThatHaveNoUnits,
     layersAllPrefixed,
     legendObject,
   };
@@ -169,6 +177,7 @@ const createLayerSelectors = state => {
 
   const {
     layersThatHaveUnits, // all layers with units, available for selection
+    layersThatHaveNoUnits,
     layersAllPrefixed,      // all layers, regardless of unit or selection capability, such as ids and timestamps
     legendObject,
   } = createLayerSelectorsInner({
@@ -188,6 +197,7 @@ const createLayerSelectors = state => {
 
   return {
     layersThatHaveUnits, 
+    layersThatHaveNoUnits,
     layersAllPrefixed,
     legendObject,
     layersGroupedByUnits,

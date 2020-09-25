@@ -753,6 +753,7 @@ var createGraphInfoOnGroupOrMount = function createGraphInfoOnGroupOrMount(state
   var layerSelectors = createLayerSelectors(newState);
   /* createLayerSelectors returns
     layersThatHaveUnits, 
+    layersThatHaveNoUnits,
     layersAllPrefixed,
     legendObject,
     layersGroupedByUnits,

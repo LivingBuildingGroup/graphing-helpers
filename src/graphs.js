@@ -882,6 +882,7 @@ const createGraphInfoOnGroupOrMount = state => {
   const layerSelectors = createLayerSelectors(newState);
   /* createLayerSelectors returns
     layersThatHaveUnits, 
+    layersThatHaveNoUnits,
     layersAllPrefixed,
     legendObject,
     layersGroupedByUnits,

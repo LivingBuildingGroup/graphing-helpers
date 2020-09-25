@@ -105,6 +105,7 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   var legendObject = {};
   var layersAllTemp = [];
   var layersThatHaveUnitsTemp = [];
+  var layersThatHaveNoUnitsTemp = {};
 
   for (var layer in oneUnit) {
     var split = layer.split('__');
@@ -118,6 +119,8 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
       '' + prefixesFormatted + labels[unPrefix], // 1
       units[unPrefix], // 2
       '' + prefixesFormatted + defs[unPrefix]];
+    } else {
+      layersThatHaveNoUnitsTemp[unPrefix] = true;
     }
   }
 
@@ -134,9 +137,14 @@ var createLayerSelectorsInner = function createLayerSelectorsInner(input) {
   var layersThatHaveUnits = layersThatHaveUnitsTemp.map(function (l) {
     return l.layer;
   });
+  var layersThatHaveNoUnits = [];
+  for (var l in layersThatHaveNoUnitsTemp) {
+    layersThatHaveNoUnits.push(l);
+  }
 
   return {
     layersThatHaveUnits: layersThatHaveUnits,
+    layersThatHaveNoUnits: layersThatHaveNoUnits,
     layersAllPrefixed: layersAllPrefixed,
     legendObject: legendObject
   };
@@ -153,6 +161,7 @@ var createLayerSelectors = function createLayerSelectors(state) {
     defs: state.legendDefinitions
   }),
       layersThatHaveUnits = _createLayerSelectors.layersThatHaveUnits,
+      layersThatHaveNoUnits = _createLayerSelectors.layersThatHaveNoUnits,
       layersAllPrefixed = _createLayerSelectors.layersAllPrefixed,
       legendObject = _createLayerSelectors.legendObject;
 
@@ -162,6 +171,7 @@ var createLayerSelectors = function createLayerSelectors(state) {
 
   return {
     layersThatHaveUnits: layersThatHaveUnits,
+    layersThatHaveNoUnits: layersThatHaveNoUnits,
     layersAllPrefixed: layersAllPrefixed,
     legendObject: legendObject,
     layersGroupedByUnits: layersGroupedByUnits,
