@@ -524,7 +524,7 @@ const defaultYAxis = {
 };
 
 const createYAxis = options => {
-  const { label, id, position, cssBackground, min, max, maxTicksLimitY } = options;
+  const { label, id, position, cssBackground, min, max, maxTicksLimitY, displayTicks, displayGridlines } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
       'black':
@@ -545,6 +545,9 @@ const createYAxis = options => {
       axisColor: gridLinesColor,
     }
   );
+  if(typeof displayGridlines === 'boolean' && !displayGridlines){
+    gridLines.display = false;
+  }
   const ticks = Object.assign({},
     defaultYAxis.ticks,
     {
@@ -554,6 +557,9 @@ const createYAxis = options => {
       maxTicksLimit: maxTicksLimitY,
     }
   );
+  if(typeof displayTicks === 'boolean' && !displayTicks){
+    ticks.display = false;
+  }
   const scaleLabel = Object.assign({},
     defaultYAxis.scaleLabel,
     {

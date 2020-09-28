@@ -459,7 +459,9 @@ var createYAxis = function createYAxis(options) {
       cssBackground = options.cssBackground,
       min = options.min,
       max = options.max,
-      maxTicksLimitY = options.maxTicksLimitY;
+      maxTicksLimitY = options.maxTicksLimitY,
+      displayTicks = options.displayTicks,
+      displayGridlines = options.displayGridlines;
 
   var zeroLineColor = cssBackground === 'white' ? 'black' : 'white';
   var gridLinesColor = cssBackground === 'white' ? 'rgba(68,68,68,0.5)' : 'rgba(119,119,119,0.5)';
@@ -469,12 +471,18 @@ var createYAxis = function createYAxis(options) {
     color: gridLinesColor,
     axisColor: gridLinesColor
   });
+  if (typeof displayGridlines === 'boolean' && !displayGridlines) {
+    gridLines.display = false;
+  }
   var ticks = Object.assign({}, defaultYAxis.ticks, {
     fontColor: scaleAndTickColor,
     min: min,
     max: max,
     maxTicksLimit: maxTicksLimitY
   });
+  if (typeof displayTicks === 'boolean' && !displayTicks) {
+    ticks.display = false;
+  }
   var scaleLabel = Object.assign({}, defaultYAxis.scaleLabel, {
     labelString: convertCcToSc(label, ' '),
     fontColor: scaleAndTickColor
