@@ -459,7 +459,6 @@ var createYAxis = function createYAxis(options) {
       cssBackground = options.cssBackground,
       min = options.min,
       max = options.max,
-      maxTicksLimitY = options.maxTicksLimitY,
       displayTicks = options.displayTicks,
       displayGridlines = options.displayGridlines;
 
@@ -472,6 +471,7 @@ var createYAxis = function createYAxis(options) {
     axisColor: gridLinesColor
   });
   if (typeof displayGridlines === 'boolean' && !displayGridlines) {
+    console.log();
     gridLines.display = false;
   }
   var ticks = Object.assign({}, defaultYAxis.ticks, {
@@ -516,7 +516,8 @@ var createYAxesOptions = function createYAxesOptions(options) {
         labelsUsed.push(l);
         id = alpha[labelsUsed.length - 1];
         position = 'left'; // labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
-        subOptions.push({
+
+        var optionsToPush = {
           label: l,
           id: id,
           position: position,
@@ -524,7 +525,14 @@ var createYAxesOptions = function createYAxesOptions(options) {
           min: thisOption.min,
           max: thisOption.max,
           maxTicksLimitY: thisOption.maxTicksLimitY
-        });
+        };
+        if (typeof thisOption.displayTicks === 'boolean') {
+          optionsToPush.displayTicks = thisOption.displayTicks;
+        }
+        if (typeof thisOption.displayGridlines === 'boolean') {
+          optionsToPush.displayGridlines = thisOption.displayGridlines;
+        }
+        subOptions.push(optionsToPush);
       }
     });
   }

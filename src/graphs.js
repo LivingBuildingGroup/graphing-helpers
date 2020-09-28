@@ -524,7 +524,7 @@ const defaultYAxis = {
 };
 
 const createYAxis = options => {
-  const { label, id, position, cssBackground, min, max, maxTicksLimitY, displayTicks, displayGridlines } = options;
+  const { label, id, position, cssBackground, min, max, displayTicks, displayGridlines } = options;
   const zeroLineColor = 
     cssBackground === 'white' ?
       'black':
@@ -546,6 +546,7 @@ const createYAxis = options => {
     }
   );
   if(typeof displayGridlines === 'boolean' && !displayGridlines){
+    console.log()
     gridLines.display = false;
   }
   const ticks = Object.assign({},
@@ -593,7 +594,8 @@ const createYAxesOptions = options => {
         labelsUsed.push(l);
         id = alpha[labelsUsed.length-1];
         position = 'left' ; // labelsUsed.length % 2 === 0 ? 'right' : 'left' ;
-        subOptions.push({
+          
+        const optionsToPush = {
           label: l,
           id,
           position,
@@ -601,7 +603,14 @@ const createYAxesOptions = options => {
           min: thisOption.min,
           max: thisOption.max,
           maxTicksLimitY: thisOption.maxTicksLimitY,
-        });
+        };
+        if(typeof thisOption.displayTicks === 'boolean'){
+          optionsToPush.displayTicks = thisOption.displayTicks;
+        }
+        if(typeof thisOption.displayGridlines === 'boolean'){
+          optionsToPush.displayGridlines = thisOption.displayGridlines;
+        }
+        subOptions.push(optionsToPush);
       }
     });
   }
