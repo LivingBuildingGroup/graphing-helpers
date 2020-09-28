@@ -471,14 +471,12 @@ var createYAxis = function createYAxis(options) {
     axisColor: gridLinesColor
   });
   if (typeof displayGridlines === 'boolean' && !displayGridlines) {
-    console.log();
     gridLines.display = false;
   }
   var ticks = Object.assign({}, defaultYAxis.ticks, {
     fontColor: scaleAndTickColor,
     min: min,
-    max: max,
-    maxTicksLimit: maxTicksLimitY
+    max: max
   });
   if (typeof displayTicks === 'boolean' && !displayTicks) {
     ticks.display = false;

@@ -546,7 +546,6 @@ const createYAxis = options => {
     }
   );
   if(typeof displayGridlines === 'boolean' && !displayGridlines){
-    console.log()
     gridLines.display = false;
   }
   const ticks = Object.assign({},
@@ -555,7 +554,6 @@ const createYAxis = options => {
       fontColor: scaleAndTickColor,
       min,
       max,
-      maxTicksLimit: maxTicksLimitY,
     }
   );
   if(typeof displayTicks === 'boolean' && !displayTicks){
