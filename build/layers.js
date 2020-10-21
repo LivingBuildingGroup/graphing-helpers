@@ -188,11 +188,11 @@ var createLayersSelected = function createLayersSelected(key, layersSelected) {
   immutableArrayInsert(null, layersSelected, key); // not selected, so add it
   if (!Array.isArray(layersSelected)) {
     // make sure at least 1 key is selected
-    console.warn('No keys are selected. Cancelling');
+    console.warn('No layers are selected. Cancelling');
     return;
-  } else if (layersSelected.length <= 0) {
-    console.warn('At least one key must be selected. Cancelling');
-    return;
+    // } else if(layersSelected.length <= 0){
+    //   console.warn('At least one layer must be selected. Cancelling');
+    //   return;
   }
   return newLayersSelected;
 };

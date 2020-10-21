@@ -17,17 +17,17 @@ const { createStylesArray }    = require('./styles');
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-const parseDataArraysByKeys = (dataObjectsArray, layersArray) => {
+const parseDataArraysByKeys = (dataObjectsArray, layersSelected) => {
   if(!Array.isArray(dataObjectsArray)) return [[]];
-  if(!Array.isArray(layersArray)) return [[]];
-  const dataType0Processed = layersArray.map(key=>{
+  if(!Array.isArray(layersSelected)) return [[]];
+  const dataType0Processed = layersSelected.map(key=>{
     return dataObjectsArray.map(k=>k[key]);
   });
   return dataType0Processed;
 };
 
-const parseLabelsByKeys = (legendObject, layersArray) => {
-  const dataLabelArray = layersArray.map(key=>{
+const parseLabelsByKeys = (legendObject, layersSelected) => {
+  const dataLabelArray = layersSelected.map(key=>{
     const label = 
       typeof legendObject[key] === 'string' ?
         legendObject[key] : 
@@ -41,18 +41,16 @@ const parseLabelsByKeys = (legendObject, layersArray) => {
   return dataLabelArray;
 };
 
-const parseYAxisByKeys = (legendObject, layersArray) => {
+const parseYAxisByKeys = (legendObject, layersSelected) => {
   const axesUsed = [];
   const yAxisIdArray = [];
-  const yAxisArray = layersArray.map((key,i)=>{
+  const yAxisArray = layersSelected.map((key,i)=>{
     const yAxisLabel = 
-      typeof legendObject[key] === 'string' ?
-        'units' : 
-        !Array.isArray(legendObject[key]) ? 
-          'units' :
-          typeof legendObject[key][indexUnit] === 'string' ?
-            convertScToSpace(legendObject[key][indexUnit]) :
-            'units' ;
+      legendObject && 
+      Array.isArray(legendObject[key]) &&
+        typeof legendObject[key][indexUnit] === 'string' ?
+        convertScToSpace(legendObject[key][indexUnit]) :
+        'units' ;
     const axisIndex = axesUsed.findIndex(a=>a===yAxisLabel);
     if(axisIndex<0){
       yAxisIdArray[i] = alpha[axesUsed.length];
@@ -68,10 +66,10 @@ const parseYAxisByKeys = (legendObject, layersArray) => {
   };
 };
 
-const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
+const parseDataType1To0 = (dataType1Processed, legendObject, layersSelected) => {
   if(
     !Array.isArray(dataType1Processed) ||
-    !Array.isArray(layersArray) ||
+    !Array.isArray(layersSelected) ||
     !isObjectLiteral(legendObject)
   ) {
     return {
@@ -82,12 +80,12 @@ const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
     };
   }
 
-  const dataType0Raw = parseDataArraysByKeys(dataType1Processed, layersArray);
-  const dataLabelArray = parseLabelsByKeys(legendObject, layersArray);
+  const dataType0Raw = parseDataArraysByKeys(dataType1Processed, layersSelected);
+  const dataLabelArray = parseLabelsByKeys(legendObject, layersSelected);
   const {
     yAxisArray,
     yAxisIdArray,
-  } = parseYAxisByKeys(legendObject, layersArray);
+  } = parseYAxisByKeys(legendObject, layersSelected);
   return {
     dataType0Raw,
     dataLabelArray,
@@ -96,11 +94,11 @@ const parseDataType1To0 = (dataType1Processed, legendObject, layersArray) => {
   };
 };
 
-const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) => {
+const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject, layersSelectedRaw) => {
   if(
     !Array.isArray(arraysOfDataObjects) ||
     !Array.isArray(arraysOfDataObjects[0]) ||
-    !Array.isArray(layersArrayRaw) ||
+    !Array.isArray(layersSelectedRaw) ||
     !Array.isArray(arrayOfDataGroups) ||
     !isObjectLiteral(legendObject)
   ) {
@@ -114,30 +112,30 @@ const parseDataType2To0 = (arraysOfDataObjects, arrayOfDataGroups, legendObject,
 
   let dataType0Raw = [];
   arraysOfDataObjects.forEach(group=>{
-    const subgroup = parseDataArraysByKeys(group, layersArrayRaw);
+    const subgroup = parseDataArraysByKeys(group, layersSelectedRaw);
     dataType0Raw = [...dataType0Raw, ...subgroup];
   });
 
-  const rawLabels = parseLabelsByKeys(legendObject, layersArrayRaw);
+  const rawLabels = parseLabelsByKeys(legendObject, layersSelectedRaw);
   let dataLabelArray = [];
-  let layersArray = [];
+  let layersSelected = [];
   arrayOfDataGroups.forEach(group=>{
     const prefixedLabels = rawLabels.map(l=>`${group} ${l}`);
-    const prefixedKeys   = layersArrayRaw.map(k=>`${group}${k}`);
+    const prefixedKeys   = layersSelectedRaw.map(k=>`${group}${k}`);
     dataLabelArray  = [...dataLabelArray , ...prefixedLabels];
-    layersArray = [...layersArray, ...prefixedKeys];
+    layersSelected = [...layersSelected, ...prefixedKeys];
   });
 
   const {
     yAxisArray,
     yAxisIdArray,
-  } = parseYAxisByKeys(legendObject, layersArrayRaw);
+  } = parseYAxisByKeys(legendObject, layersSelectedRaw);
   return {
     dataType0Raw,
     dataLabelArray,
     yAxisArray,
     yAxisIdArray,
-    layersArray,
+    layersSelected,
   };
 };
 
@@ -403,7 +401,7 @@ const createGraphData = input => {
         [] :
         !Array.isArray(dataType0Processed[0]) ?
           [] :
-          dataType0Processed[0].map((x,i)=>i+startAt);
+          dataType0Processed[0].map((_,i)=>i+startAt);
 
   return {
     labels,

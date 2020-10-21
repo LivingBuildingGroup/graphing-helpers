@@ -128,7 +128,7 @@ const createLayerSelectorsInner = input => {
   } = input;
 
   // always receiving dataType1Processed
-  const oneUnit = data[0] ;
+  const oneUnit = data[0];
 
   const legendObject       = {};
   const layersAllTemp      = [];
@@ -207,17 +207,21 @@ const createLayerSelectors = state => {
 
 const createLayersSelected = (key, layersSelected) => {
   if(!key) return;
+  if(key==='de-select-all'){
+    return [];
+  }
   const indexSelected = Array.isArray(layersSelected) ? layersSelected.findIndex(s=>s===key) : -1 ;
   const newLayersSelected =
     indexSelected >= 0 ? 
       immutableArraySplice(indexSelected, layersSelected) : // it is selected, so remove it
       immutableArrayInsert(null, layersSelected, key); // not selected, so add it
   if(!Array.isArray(layersSelected)){ // make sure at least 1 key is selected
-    console.warn('No keys are selected. Cancelling');
+    // eslint-disable-next-line no-console
+    console.warn('No layers are selected. Cancelling');
     return;
-  } else if(layersSelected.length <= 0){
-    console.warn('At least one key must be selected. Cancelling');
-    return;
+  // } else if(layersSelected.length <= 0){
+  //   console.warn('At least one layer must be selected. Cancelling');
+  //   return;
   }
   return newLayersSelected;
 };

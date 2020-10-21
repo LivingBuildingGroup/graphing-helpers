@@ -23,10 +23,10 @@ var _require3 = require('./styles'),
 
 // @@@@@@@@@@@@@@@ DATA @@@@@@@@@@@@@@@
 
-var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, layersArray) {
+var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, layersSelected) {
   if (!Array.isArray(dataObjectsArray)) return [[]];
-  if (!Array.isArray(layersArray)) return [[]];
-  var dataType0Processed = layersArray.map(function (key) {
+  if (!Array.isArray(layersSelected)) return [[]];
+  var dataType0Processed = layersSelected.map(function (key) {
     return dataObjectsArray.map(function (k) {
       return k[key];
     });
@@ -34,19 +34,19 @@ var parseDataArraysByKeys = function parseDataArraysByKeys(dataObjectsArray, lay
   return dataType0Processed;
 };
 
-var parseLabelsByKeys = function parseLabelsByKeys(legendObject, layersArray) {
-  var dataLabelArray = layersArray.map(function (key) {
+var parseLabelsByKeys = function parseLabelsByKeys(legendObject, layersSelected) {
+  var dataLabelArray = layersSelected.map(function (key) {
     var label = typeof legendObject[key] === 'string' ? legendObject[key] : !Array.isArray(legendObject[key]) ? key : typeof legendObject[key][indexLabel] === 'string' ? legendObject[key][indexLabel] : key;
     return label;
   });
   return dataLabelArray;
 };
 
-var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersArray) {
+var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersSelected) {
   var axesUsed = [];
   var yAxisIdArray = [];
-  var yAxisArray = layersArray.map(function (key, i) {
-    var yAxisLabel = typeof legendObject[key] === 'string' ? 'units' : !Array.isArray(legendObject[key]) ? 'units' : typeof legendObject[key][indexUnit] === 'string' ? convertScToSpace(legendObject[key][indexUnit]) : 'units';
+  var yAxisArray = layersSelected.map(function (key, i) {
+    var yAxisLabel = legendObject && Array.isArray(legendObject[key]) && typeof legendObject[key][indexUnit] === 'string' ? convertScToSpace(legendObject[key][indexUnit]) : 'units';
     var axisIndex = axesUsed.findIndex(function (a) {
       return a === yAxisLabel;
     });
@@ -64,8 +64,8 @@ var parseYAxisByKeys = function parseYAxisByKeys(legendObject, layersArray) {
   };
 };
 
-var parseDataType1To0 = function parseDataType1To0(dataType1Processed, legendObject, layersArray) {
-  if (!Array.isArray(dataType1Processed) || !Array.isArray(layersArray) || !isObjectLiteral(legendObject)) {
+var parseDataType1To0 = function parseDataType1To0(dataType1Processed, legendObject, layersSelected) {
+  if (!Array.isArray(dataType1Processed) || !Array.isArray(layersSelected) || !isObjectLiteral(legendObject)) {
     return {
       dataType0Raw: [[]],
       dataLabelArray: [],
@@ -74,10 +74,10 @@ var parseDataType1To0 = function parseDataType1To0(dataType1Processed, legendObj
     };
   }
 
-  var dataType0Raw = parseDataArraysByKeys(dataType1Processed, layersArray);
-  var dataLabelArray = parseLabelsByKeys(legendObject, layersArray);
+  var dataType0Raw = parseDataArraysByKeys(dataType1Processed, layersSelected);
+  var dataLabelArray = parseLabelsByKeys(legendObject, layersSelected);
 
-  var _parseYAxisByKeys = parseYAxisByKeys(legendObject, layersArray),
+  var _parseYAxisByKeys = parseYAxisByKeys(legendObject, layersSelected),
       yAxisArray = _parseYAxisByKeys.yAxisArray,
       yAxisIdArray = _parseYAxisByKeys.yAxisIdArray;
 
@@ -89,8 +89,8 @@ var parseDataType1To0 = function parseDataType1To0(dataType1Processed, legendObj
   };
 };
 
-var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfDataGroups, legendObject, layersArrayRaw) {
-  if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arraysOfDataObjects[0]) || !Array.isArray(layersArrayRaw) || !Array.isArray(arrayOfDataGroups) || !isObjectLiteral(legendObject)) {
+var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfDataGroups, legendObject, layersSelectedRaw) {
+  if (!Array.isArray(arraysOfDataObjects) || !Array.isArray(arraysOfDataObjects[0]) || !Array.isArray(layersSelectedRaw) || !Array.isArray(arrayOfDataGroups) || !isObjectLiteral(legendObject)) {
     return {
       dataType0Raw: [[]],
       dataLabelArray: [],
@@ -101,25 +101,25 @@ var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfD
 
   var dataType0Raw = [];
   arraysOfDataObjects.forEach(function (group) {
-    var subgroup = parseDataArraysByKeys(group, layersArrayRaw);
+    var subgroup = parseDataArraysByKeys(group, layersSelectedRaw);
     dataType0Raw = [].concat(_toConsumableArray(dataType0Raw), _toConsumableArray(subgroup));
   });
 
-  var rawLabels = parseLabelsByKeys(legendObject, layersArrayRaw);
+  var rawLabels = parseLabelsByKeys(legendObject, layersSelectedRaw);
   var dataLabelArray = [];
-  var layersArray = [];
+  var layersSelected = [];
   arrayOfDataGroups.forEach(function (group) {
     var prefixedLabels = rawLabels.map(function (l) {
       return group + ' ' + l;
     });
-    var prefixedKeys = layersArrayRaw.map(function (k) {
+    var prefixedKeys = layersSelectedRaw.map(function (k) {
       return '' + group + k;
     });
     dataLabelArray = [].concat(_toConsumableArray(dataLabelArray), _toConsumableArray(prefixedLabels));
-    layersArray = [].concat(_toConsumableArray(layersArray), _toConsumableArray(prefixedKeys));
+    layersSelected = [].concat(_toConsumableArray(layersSelected), _toConsumableArray(prefixedKeys));
   });
 
-  var _parseYAxisByKeys2 = parseYAxisByKeys(legendObject, layersArrayRaw),
+  var _parseYAxisByKeys2 = parseYAxisByKeys(legendObject, layersSelectedRaw),
       yAxisArray = _parseYAxisByKeys2.yAxisArray,
       yAxisIdArray = _parseYAxisByKeys2.yAxisIdArray;
 
@@ -128,7 +128,7 @@ var parseDataType2To0 = function parseDataType2To0(arraysOfDataObjects, arrayOfD
     dataLabelArray: dataLabelArray,
     yAxisArray: yAxisArray,
     yAxisIdArray: yAxisIdArray,
-    layersArray: layersArray
+    layersSelected: layersSelected
   };
 };
 
@@ -349,7 +349,7 @@ var createGraphData = function createGraphData(input) {
   }) : [];
 
   var startAt = isPrimitiveNumber(xLabelStartAt) ? xLabelStartAt : 0;
-  var labels = Array.isArray(xLabelsArray) ? xLabelsArray : !Array.isArray(dataType0Processed) ? [] : !Array.isArray(dataType0Processed[0]) ? [] : dataType0Processed[0].map(function (x, i) {
+  var labels = Array.isArray(xLabelsArray) ? xLabelsArray : !Array.isArray(dataType0Processed) ? [] : !Array.isArray(dataType0Processed[0]) ? [] : dataType0Processed[0].map(function (_, i) {
     return i + startAt;
   });
 
