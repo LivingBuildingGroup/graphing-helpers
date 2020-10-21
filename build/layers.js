@@ -181,6 +181,9 @@ var createLayerSelectors = function createLayerSelectors(state) {
 
 var createLayersSelected = function createLayersSelected(key, layersSelected) {
   if (!key) return;
+  if (key === 'de-select-all') {
+    return [];
+  }
   var indexSelected = Array.isArray(layersSelected) ? layersSelected.findIndex(function (s) {
     return s === key;
   }) : -1;
@@ -188,6 +191,7 @@ var createLayersSelected = function createLayersSelected(key, layersSelected) {
   immutableArrayInsert(null, layersSelected, key); // not selected, so add it
   if (!Array.isArray(layersSelected)) {
     // make sure at least 1 key is selected
+    // eslint-disable-next-line no-console
     console.warn('No layers are selected. Cancelling');
     return;
     // } else if(layersSelected.length <= 0){
