@@ -1,6 +1,6 @@
 {
   "name": "graphing-helpers",
-  "version": "5.2.21",
+  "version": "5.2.22",
   "description": "Helper library for react-chart-js-preprocessor",
   "repository": {
     "type": "git",
