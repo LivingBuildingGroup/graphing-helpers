@@ -74,11 +74,6 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
       type: ['string', 'object'],
       notes: 'title will be "data" if nothing is provided'
     },
-    styles: {
-      required: true,
-      type: 'object',
-      notes: 'required to style the graph; without styles, graph will render, but will use defaults'
-    },
     cssStyleColorsNamed: {
       required: false,
       type: 'array',
@@ -184,20 +179,10 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
       required: false,
       notes: 'defualts to undefined, this is used to prefix layers within a group; typical use use is to 1) search for platform events, 2) platform events get grouped by event #, 3) platforms A, B, C, D are passed in as groupsSub, 4) GraphWrapper then formats layers as EVENT_PLATFORM_LAYER'
     },
-    preSetGroupEditMode: {
-      type: 'boolean',
-      required: false,
-      notes: 'defaults to false; setting this to true means "if you edit a pre-set, your pre-set will be set to be applied to groups"; typical use case: 1) load a single test, and set to true, 2) edit and save a pre-set which saves with LAYERS UN-PREFIXED, 3) load multiple tests, 4) activate the pre-set, 5) pre-set is "unpacked" and then layers are prefixed, corresponding with the groups loaded.'
-    },
-    preSetSaveSettings: {
+    presets: {
       type: 'object',
       required: true,
-      notes: 'instructions for how to save a pre-set, will get a TypeError if this is not provided'
-    },
-    preSets: {
-      type: 'object',
-      required: true,
-      notes: 'no data will initially load without pre-sets; you could potentially just allow the user to use selectors, but that is not a good option'
+      notes: 'no data will initially load without presets; you could potentially just allow the user to use selectors, but that is not a good option'
     },
     keyToCompareOnNewData: {
       type: 'string',
@@ -245,11 +230,6 @@ var consoleDeveloperWarnings = function consoleDeveloperWarnings(props) {
       type: 'function',
       required: props.backgroundAllow,
       notes: 'defaults to an empty function; GraphWrapper always has a transparent background, but changes its colors to work over a white or dark gray/black background; it is outside the scope of GraphWrapper to change the background, since you might want the background to be larger than the graph'
-    },
-    handlePreSetSave: {
-      type: 'function',
-      required: props.selectorsAllow ? 'preferred' : false,
-      notes: 'GraphWrapper does not save your presets, you need to do that outside the widget; if you do not pass a function, this defaults to empty function, so the user thinks they are saving, but they are not'
     },
     handleFetchAdvanceRequest: {
       type: 'function',

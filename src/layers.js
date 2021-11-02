@@ -64,7 +64,7 @@ const groupLayersByUnit = (layersThatHaveUnits, legendObject, indexUnits) => {
 };
 
 const calcFirstLayerOnList = state => {
-  // find the first layer listed, which is used to toggle a single layer on as a default condition if there is no preSet
+  // find the first layer listed, which is used to toggle a single layer on as a default condition if there is no preset
   // if layers are supplied, just read the first one
   // if layers are not supplied (something else is wrong), but at least try to find a layer
   const { layersGroupedByUnits, layerUnitsArray, layersThatHaveUnits } = state;

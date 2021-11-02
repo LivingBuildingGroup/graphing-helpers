@@ -1,6 +1,7 @@
 'use strict';
 
-const { isPrimitiveNumber, 
+const { 
+  isPrimitiveNumber, 
   isObjectLiteral,
   immutableArrayInsert, 
   convertCcToSc,
@@ -8,7 +9,6 @@ const { isPrimitiveNumber,
 
 const alpha = ['A','B','C','D','E','F','G','H'];
 
-const indexAbbrev = 0;
 const indexLabel  = 1;
 const indexUnit   = 2;
 

@@ -11,7 +11,6 @@ var _require = require('conjunction-junction'),
 
 var alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-var indexAbbrev = 0;
 var indexLabel = 1;
 var indexUnit = 2;
 
