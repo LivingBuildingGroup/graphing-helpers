@@ -1,1 +1,3 @@
 Library of helper functions to preprocess data for react-chartjs-2.  More info to come...
+
+Will be replaced by the new version of RCJSPP.
